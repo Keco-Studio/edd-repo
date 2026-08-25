@@ -40,3 +40,13 @@ test('blocks expired sessions', async () => {
   const session = await store.createSession({ gameTitle: 'A', resultDocument: 'a.md', aiCoreScore: 40, aiExperienceScore: 40, minimumResponses: 5, expiresAt: new Date(Date.now() - 1000).toISOString() });
   await assert.rejects(store.upsertRating(session.id, 'x', { coreScore: 3, experienceScore: 3, coreReasons: [], experienceReasons: [], comment: '' }), /过期/);
 });
+
+test('deletes a failed workflow session and its ratings', async () => {
+  const dir = await mkdtemp(join(tmpdir(), 'edd-store-'));
+  const store = await new JsonStore(join(dir, 'store.json')).init();
+  const session = await store.createSession({ gameTitle: 'Paws', expiresAt: new Date(Date.now() + 60_000).toISOString() });
+  await store.upsertRating(session.id, 'respondent', { coreScore: 5, experienceScore: 5 });
+  await store.deleteSession(session.id);
+  assert.equal(store.getSession(session.id), null);
+  assert.equal(store.getRatings(session.id).length, 0);
+});

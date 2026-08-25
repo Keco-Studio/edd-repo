@@ -1,6 +1,6 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 
 const root = new URL('../public/', import.meta.url);
 
@@ -16,13 +16,9 @@ test('player page exposes two labelled five-point groups and feedback controls',
   assert.match(html, /UI 视觉风格与可玩性/);
 });
 
-test('admin page has complete workflow controls and no embedded token', async () => {
-  const html = await readFile(new URL('admin.html', root), 'utf8');
-  for (const field of ['evaluationId', 'gameTitle', 'gddReference', 'runtimeEvidence', 'aiCoreScore', 'aiExperienceScore', 'expiryDays']) assert.match(html, new RegExp(`name="${field}"`));
-  assert.match(html, /id="add-issue"/);
-  assert.match(html, /id="issue-template"/);
-  assert.doesNotMatch(html, /name="resultDocument"|name="minimumResponses"/);
-  assert.doesNotMatch(html, /admin-test-token|EDD_ADMIN_TOKEN/);
+test('public assets contain no browser-based AI or admin workflow', async () => {
+  await assert.rejects(access(new URL('admin.html', root)));
+  await assert.rejects(access(new URL('admin.js', root)));
 });
 
 test('styles include focus, responsive, and stable target rules', async () => {

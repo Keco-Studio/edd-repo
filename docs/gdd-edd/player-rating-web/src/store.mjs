@@ -44,6 +44,13 @@ export class JsonStore {
     });
   }
 
+  async deleteSession(id) {
+    return this.#mutate(() => {
+      this.data.sessions = this.data.sessions.filter((session) => session.id !== id);
+      this.data.ratings = this.data.ratings.filter((rating) => rating.sessionId !== id);
+    });
+  }
+
   async setSyncError(id, message) {
     return this.#mutate(() => {
       const session = this.getSession(id);

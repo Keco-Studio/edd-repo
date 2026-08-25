@@ -3,7 +3,7 @@ import { readFile } from 'node:fs/promises';
 
 const root = new URL('../', import.meta.url);
 const template = await readFile(new URL('../result/评价模板-v5.md', root), 'utf8');
-const sourceFiles = ['src/scoring.mjs', 'src/server.mjs', 'public/index.html', 'public/admin.html', 'public/admin.js'];
+const sourceFiles = ['src/scoring.mjs', 'src/server.mjs', 'src/ai-evaluator.mjs', 'public/index.html'];
 const sources = await Promise.all(sourceFiles.map((path) => readFile(new URL(path, root), 'utf8')));
 
 assert.match(template, /核心玩法 50%/);

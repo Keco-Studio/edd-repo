@@ -1,15 +1,13 @@
-import { randomBytes } from 'node:crypto';
 import { createServer } from 'node:http';
 import { networkInterfaces } from 'node:os';
 import { extname, join, normalize } from 'node:path';
 import { fileURLToPath, pathToFileURL } from 'node:url';
-import { readFile, readdir } from 'node:fs/promises';
+import { access, readFile } from 'node:fs/promises';
 import { aggregateRatings, combineScores } from './scoring.mjs';
-import { renderRatingSection, syncResultDocument } from './markdown-sync.mjs';
+import { renderProgressRatingSection, renderRatingSection, syncProgressDocument, syncResultDocument } from './markdown-sync.mjs';
 import { createRateLimiter } from './rate-limit.mjs';
 import { JsonStore, hashRespondent } from './store.mjs';
-import { resolveResultDocument, validateRating, validateSessionInput } from './validation.mjs';
-import { createWorkflowDocuments } from './workflow.mjs';
+import { resolveResultDocument, validateRating } from './validation.mjs';
 
 const HERE = fileURLToPath(new URL('.', import.meta.url));
 const PROJECT_ROOT = fileURLToPath(new URL('..', import.meta.url));
@@ -59,8 +57,7 @@ export async function createRatingServer(options = {}) {
   const problemRoot = options.problemRoot || process.env.EDD_PROBLEM_ROOT || DEFAULT_PROBLEM_ROOT;
   const publicRoot = options.publicRoot instanceof URL ? fileURLToPath(options.publicRoot) : (options.publicRoot || join(PROJECT_ROOT, 'public'));
   const dataFile = options.dataFile || process.env.EDD_DATA_FILE || join(PROJECT_ROOT, 'data', 'store.json');
-  const adminToken = options.adminToken || process.env.EDD_ADMIN_TOKEN || randomBytes(24).toString('base64url');
-  const store = await new JsonStore(dataFile).init();
+  const store = options.store || await new JsonStore(dataFile).init();
   const limiter = createRateLimiter({ limit: options.rateLimit || 30 });
 
   const summary = (session, includePrivate = false) => {
@@ -74,9 +71,13 @@ export async function createRatingServer(options = {}) {
     try {
       const aggregate = aggregateRatings(store.getRatings(session.id));
       const combined = combineScores({ aiCoreScore: session.aiCoreScore, aiExperienceScore: session.aiExperienceScore, aggregate });
-      const path = await resolveResultDocument(session.resultDocument, resultRoot);
-      const section = renderRatingSection(session, aggregate, combined, new Date().toISOString());
-      await syncResultDocument(path, session.id, section);
+      const syncedAt = new Date().toISOString();
+      const resultPath = await resolveResultDocument(session.resultDocument, resultRoot);
+      const progressPath = await resolveResultDocument(session.progressDocument, progressRoot);
+      const resultSection = renderRatingSection(session, aggregate, combined, syncedAt);
+      const progressSection = renderProgressRatingSection(session, aggregate, combined, syncedAt);
+      await syncResultDocument(resultPath, session.id, resultSection, aggregate, combined);
+      await syncProgressDocument(progressPath, session.id, progressSection);
       if (session.lastSyncError) await store.setSyncError(session.id, null);
       return { aggregate, combined };
     } catch (error) {
@@ -85,51 +86,45 @@ export async function createRatingServer(options = {}) {
     }
   }
 
+  async function createSessionForDocuments(input) {
+    if (!/^[\p{L}\p{N}._-]+$/u.test(input.evaluationId || '')) throw new Error('执行标识无效');
+    const names = {
+      progress: `${input.evaluationId}-Progression.md`,
+      problem: `${input.evaluationId}-问题记录.md`,
+      result: `${input.evaluationId}-评价结果.md`,
+    };
+    await Promise.all([
+      access(join(progressRoot, names.progress)),
+      access(join(problemRoot, names.problem)),
+      access(join(resultRoot, names.result)),
+    ]);
+    const score = (value, label) => {
+      const number = Number(value);
+      if (!Number.isFinite(number) || number < 0 || number > 50) throw new Error(`${label}无效`);
+      return number;
+    };
+    const expiryDays = Number(input.expiryDays || 7);
+    const session = await store.createSession({
+      gameTitle: input.gameTitle,
+      resultDocument: names.result,
+      aiCoreScore: score(input.aiCoreScore, 'AI 核心玩法得分'),
+      aiExperienceScore: score(input.aiExperienceScore, 'AI 玩家体验得分'),
+      expiryDays,
+      evaluationId: input.evaluationId,
+      progressDocument: names.progress,
+      problemDocument: names.problem,
+      expiresAt: new Date(Date.now() + expiryDays * 86_400_000).toISOString(),
+    });
+    await sync(session);
+    return { session: summary(session, true), documents: names };
+  }
+
   const server = createServer(async (request, response) => {
     const url = new URL(request.url, `http://${request.headers.host || 'localhost'}`);
     const ip = request.socket.remoteAddress || 'unknown';
     try {
       if (url.pathname.startsWith('/api/')) {
         if (!limiter.allow(`${ip}:${url.pathname.split('/').slice(0, 5).join('/')}`)) return send(response, 429, { error: '请求过于频繁，请稍后再试' });
-        const adminRoute = url.pathname.startsWith('/api/admin/');
-        if (adminRoute && request.headers.authorization !== `Bearer ${adminToken}`) return send(response, 401, { error: '管理员令牌无效' });
-
-        if (request.method === 'GET' && url.pathname === '/api/admin/documents') {
-          const documents = (await readdir(resultRoot)).filter((name) => name.endsWith('.md')).sort();
-          return send(response, 200, { documents });
-        }
-        if (request.method === 'GET' && url.pathname === '/api/admin/sessions') return send(response, 200, { sessions: store.listSessions().map((session) => summary(session, true)) });
-        if (request.method === 'POST' && url.pathname === '/api/admin/workflows') {
-          const created = await createWorkflowDocuments(await bodyJson(request), { progressRoot, problemRoot, resultRoot });
-          const session = await store.createSession({
-            gameTitle: created.input.gameTitle,
-            resultDocument: created.names.result,
-            aiCoreScore: created.input.aiCoreScore,
-            aiExperienceScore: created.input.aiExperienceScore,
-            expiryDays: created.input.expiryDays,
-            evaluationId: created.input.evaluationId,
-            progressDocument: created.names.progress,
-            problemDocument: created.names.problem,
-            expiresAt: new Date(Date.now() + created.input.expiryDays * 86_400_000).toISOString(),
-          });
-          await sync(session);
-          return send(response, 201, { session: summary(session, true), documents: created.names });
-        }
-        if (request.method === 'POST' && url.pathname === '/api/admin/sessions') {
-          const input = validateSessionInput(await bodyJson(request));
-          await resolveResultDocument(input.resultDocument, resultRoot);
-          const session = await store.createSession({ ...input, expiresAt: new Date(Date.now() + input.expiryDays * 86_400_000).toISOString() });
-          await sync(session);
-          return send(response, 201, { session: summary(session, true) });
-        }
-        const adminAction = url.pathname.match(/^\/api\/admin\/sessions\/([^/]+)\/(close|sync)$/);
-        if (request.method === 'POST' && adminAction) {
-          let session = store.getSession(adminAction[1]);
-          if (!session) return send(response, 404, { error: '评分会话不存在' });
-          if (adminAction[2] === 'close') session = await store.closeSession(session.id);
-          const result = await sync(session);
-          return send(response, 200, { session: summary(session, true), ...result });
-        }
 
         const publicRead = url.pathname.match(/^\/api\/public\/sessions\/([^/]+)$/);
         if (request.method === 'GET' && publicRead) {
@@ -152,7 +147,7 @@ export async function createRatingServer(options = {}) {
         return send(response, 404, { error: '接口不存在' });
       }
 
-      const requested = url.pathname === '/' ? 'index.html' : url.pathname === '/admin' ? 'admin.html' : url.pathname.slice(1);
+      const requested = url.pathname === '/' ? 'index.html' : url.pathname.slice(1);
       const safe = normalize(requested).replace(/^(\.\.(\/|\\|$))+/, '');
       const filePath = join(publicRoot, safe);
       let content;
@@ -168,7 +163,7 @@ export async function createRatingServer(options = {}) {
   });
 
   const app = {
-    server, store, adminToken, baseUrl: null,
+    server, store, baseUrl: null, createSessionForDocuments,
     async listen() {
       await new Promise((resolve, reject) => { server.once('error', reject); server.listen(port, host, resolve); });
       const address = server.address();
@@ -185,7 +180,6 @@ async function startCli() {
   const app = await createRatingServer();
   await app.listen();
   console.log(`玩家评分：${app.baseUrl}/`);
-  console.log(`管理页面：${app.baseUrl}/admin#token=${app.adminToken}`);
   const port = app.server.address().port;
   for (const addresses of Object.values(networkInterfaces())) {
     for (const address of addresses || []) if (address.family === 'IPv4' && !address.internal) console.log(`局域网：http://${address.address}:${port}/`);

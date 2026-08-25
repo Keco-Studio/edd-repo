@@ -5,6 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node src/server.mjs",
+    "evaluate:paws": "node src/evaluate-paws.mjs",
     "share": "node src/server.mjs --share",
     "test": "node --test",
     "check": "npm test && node scripts/static-check.mjs"

@@ -31,11 +31,38 @@ export function validateWorkflowInput(input = {}) {
   if (total('experience') !== Math.round((50 - aiExperienceScore) * 10) / 10) fail('玩家体验问题扣分合计必须等于 50 减 AI 得分');
   const expiryDays = Number(input.expiryDays ?? 7);
   if (!Number.isInteger(expiryDays) || expiryDays < 1 || expiryDays > 30) fail('有效期必须为 1-30 天整数');
-  return { evaluationId, gameTitle: text(input.gameTitle, '游戏名称', 80), gddReference: text(input.gddReference, 'GDD 引用', 300), runtimeEvidence: String(input.runtimeEvidence || '').trim().slice(0, 1000), aiCoreScore, aiExperienceScore, expiryDays, issues };
+  const metricList = (values, label) => {
+    if (values == null) return [];
+    if (!Array.isArray(values) || values.length > 50) fail(`${label}指标必须为不超过 50 项的数组`);
+    return values.map((metric, index) => ({
+      name: text(metric.name, `${label}第 ${index + 1} 项名称`, 100),
+      value: text(metric.value, `${label}第 ${index + 1} 项数据`, 100),
+      evidence: text(metric.evidence, `${label}第 ${index + 1} 项证据`, 300),
+    }));
+  };
+  return {
+    evaluationId,
+    gameTitle: text(input.gameTitle, '游戏名称', 80),
+    gddReference: text(input.gddReference, 'GDD 引用', 300),
+    runtimeEvidence: String(input.runtimeEvidence || '').trim().slice(0, 1000),
+    aiCoreScore,
+    aiExperienceScore,
+    expiryDays,
+    issues,
+    metrics: {
+      core: metricList(input.metrics?.core, '核心玩法'),
+      experience: metricList(input.metrics?.experience, '玩家体验'),
+    },
+    provider: input.provider ? text(input.provider, 'AI provider', 50) : 'unspecified',
+    model: input.model ? text(input.model, '模型名称', 100) : 'unspecified',
+    sourceRevision: Number.isInteger(input.sourceRevision) ? input.sourceRevision : null,
+  };
 }
 
 const label = (dimension) => dimension === 'core' ? '核心玩法' : '玩家体验';
-const issueRows = (issues) => issues.length ? issues.map((issue, index) => `| P-${String(index + 1).padStart(2, '0')} | ${label(issue.dimension)} | -${issue.deduction} | ${issue.evidence} | ${issue.description} | ${issue.suggestion} |`).join('\n') : '| 无 | - | 0 | - | 未发现有证据的问题 | - |';
+const cell = (value) => String(value).replace(/\r?\n/g, ' ').replaceAll('|', '\\|');
+const issueRows = (issues) => issues.length ? issues.map((issue, index) => `| P-${String(index + 1).padStart(2, '0')} | ${label(issue.dimension)} | -${issue.deduction} | ${cell(issue.evidence)} | ${cell(issue.description)} | ${cell(issue.suggestion)} |`).join('\n') : '| 无 | - | 0 | - | 未发现有证据的问题 | - |';
+const metricRows = (metrics) => metrics.length ? metrics.map((metric) => `| ${cell(metric.name)} | ${cell(metric.value)} | ${cell(metric.evidence)} |`).join('\n') : '| 无 | - | GDD 未提供可量化数据 |';
 
 export function renderWorkflowDocuments(input, createdAt = new Date().toISOString()) {
   const names = { progress: `${input.evaluationId}-Progression.md`, problem: `${input.evaluationId}-问题记录.md`, result: `${input.evaluationId}-评价结果.md` };
@@ -54,6 +81,9 @@ export function renderWorkflowDocuments(input, createdAt = new Date().toISOStrin
 - AI 玩家体验：${input.aiExperienceScore}/50
 - 运行证据：${input.runtimeEvidence || '未提供'}
 - AI 问题数：${input.issues.length}
+- AI provider：${input.provider}
+- 模型：${input.model}
+- GDD 修订：${input.sourceRevision ?? '未记录'}
 
 ## 执行顺序
 
@@ -120,6 +150,20 @@ ${problemRows}${evidenceGap}`;
 - 最终总分：暂无玩家评分
 - 结论：暂无玩家评分
 
+## 指标数据
+
+### 核心玩法
+
+| 指标 | 数据 | 证据位置 |
+|---|---:|---|
+${metricRows(input.metrics.core)}
+
+### 玩家体验
+
+| 指标 | 数据 | 证据位置 |
+|---|---:|---|
+${metricRows(input.metrics.experience)}
+
 ## AI 全部问题与扣分
 
 | 编号 | 维度 | 扣分 | 证据位置 | 问题与影响 | 最小修改建议 |
@@ -132,6 +176,14 @@ ${rows}
 - 玩家体验：50 - ${50 - input.aiExperienceScore} = ${input.aiExperienceScore}
 - 重复根因合并：由评价输入确认
 - 跨维度重复扣分：无
+
+## AI 评价元信息
+
+\`\`\`yaml
+provider: ${input.provider}
+model: ${input.model}
+gdd_revision: ${input.sourceRevision ?? 'unknown'}
+\`\`\`
 `;
   return { names, progress, problem, result };
 }

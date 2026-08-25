@@ -1,0 +1,64 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["source", "model", "aiCoreScore", "aiExperienceScore", "metrics", "issues"],
+  "properties": {
+    "source": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["projectId", "documentId", "revision", "title"],
+      "properties": {
+        "projectId": { "type": "string" },
+        "documentId": { "type": "string" },
+        "revision": { "type": "integer", "minimum": 1 },
+        "title": { "type": "string", "minLength": 1, "maxLength": 100 }
+      }
+    },
+    "model": { "type": "string", "minLength": 1, "maxLength": 100 },
+    "aiCoreScore": { "type": "number", "minimum": 0, "maximum": 50 },
+    "aiExperienceScore": { "type": "number", "minimum": 0, "maximum": 50 },
+    "metrics": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["core", "experience"],
+      "properties": {
+        "core": { "$ref": "#/$defs/metrics" },
+        "experience": { "$ref": "#/$defs/metrics" }
+      }
+    },
+    "issues": {
+      "type": "array",
+      "maxItems": 100,
+      "items": { "$ref": "#/$defs/issue" }
+    }
+  },
+  "$defs": {
+    "metrics": {
+      "type": "array",
+      "maxItems": 50,
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["name", "value", "evidence"],
+        "properties": {
+          "name": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "value": { "type": "string", "minLength": 1, "maxLength": 100 },
+          "evidence": { "type": "string", "minLength": 1, "maxLength": 300 }
+        }
+      }
+    },
+    "issue": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["dimension", "deduction", "evidence", "description", "suggestion"],
+      "properties": {
+        "dimension": { "type": "string", "enum": ["core", "experience"] },
+        "deduction": { "type": "number", "exclusiveMinimum": 0, "maximum": 50 },
+        "evidence": { "type": "string", "minLength": 1, "maxLength": 300 },
+        "description": { "type": "string", "minLength": 1, "maxLength": 500 },
+        "suggestion": { "type": "string", "minLength": 1, "maxLength": 500 }
+      }
+    }
+  }
+}

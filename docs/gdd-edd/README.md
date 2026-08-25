@@ -28,34 +28,29 @@ docs/gdd-edd/
 - `result` 保存正式评分，不展开执行流水。
 - `problem` 保存无法确定、无法评分或需要人工处理的事项。
 
-## 3. 当前人工流程
+## 3. 当前自动流程
 
 ```text
-人工确认 GDS/GDD 目标和输入
-  -> Codex 生成 GDD
-  -> Codex 写入中文 Progression 执行记录
-  -> Codex 将疑惑点和证据缺口写入 problem
-  -> 人工审核 GDD、progress 和 problem
-  -> 人工将审核包上传到独立 Claude 评分窗口
-  -> Claude 严格按人工提供的模板评分
-  -> Claude 将评价结果写入 result，将未决事项写入 problem
-  -> 人工审核评分结果
-  -> 人工将结果回传给 Codex
-  -> Codex 根据人工确认的结果继续后续工作
+仓库内 Paws & Patience GDD r97
+  -> 本地命令读取 GDD 与锁定的 v5 模板
+  -> Codex 或 Claude 评价并创建 Progression、Problem、Result
+  -> 本地程序确认文件和分数可用
+  -> 创建并打印匿名玩家评分链接
+  -> 玩家评分自动聚合并写回 Result 摘要/明细和 Progression 同步记录
 ```
 
-双模型分工是当前人工操作约定，不属于本轮系统设计：Codex 负责生成 GDD；Claude 负责评分。当前不实现自动打开 CMD 窗口、自动选择模型、自动上传或自动回传。
+默认评分 provider 为 Claude Sonnet；可显式选择 Codex。AI 只允许读取固定 GDD/模板并写入本次三份目标文档；Node 不重写 AI 评价内容。
 
 ## 3.1 本地一键编排
 
-`player-rating-web/` 提供仅限本目录体系的自动编排。管理员提交执行标识、GDD 引用、AI 两项得分和全部问题后，服务自动创建：
+`player-rating-web/` 提供本地一键编排。运行 `npm run evaluate:paws` 后自动创建：
 
 - `progress/<执行标识>-Progression.md`；
 - `problem/<执行标识>-问题记录.md`；
 - `result/<执行标识>-评价结果.md`；
 - 绑定该 Result 的匿名玩家评分链接。
 
-玩家评分后，分布、原因和 AI 60%/玩家 40% 的合并结果自动写回对应 Result。服务不修改 Keco Studio 主应用或数据库，也不调用外部 AI。
+玩家评分后，分布、原因和 AI 60%/玩家 40% 的合并结果自动写回对应 Result 的顶部摘要和玩家评分区块，同时在对应 Progression 中记录玩家输入、合并输出和写回验证。Web 只提供玩家页面和公开评分接口，不提供管理页面。固定 GDD 位于 `gdd/paws-patience-gdd-r97.md`。
 
 ## 4. 人工模板约束
 
@@ -85,16 +80,16 @@ GDD 是设计证据，不是实际游戏运行证据。仅凭 GDD 不得断言�
 
 视觉评价应基于实际 UI、画面或人工体验证据；不能只根据 GDD 的美术描述给实际游戏视觉效果打分。
 
-## 6. 人工暂停点
+## 6. 人工审核点
 
-以下材料准备完成后必须暂停：
+以下材料生成后应由人工审核：
 
 - 待评价 GDD；
 - 对应的 `progress` 执行记录；
 - 对应的 `problem` 问题记录；
 - 人工提供并锁定的评价模板。
 
-暂停后由人工打开独立 Claude 评分窗口并上传材料。AI 不得自行跨过该暂停点。
+AI 评分不代替人工审核；审核者可检查 GDD revision、模型、指标、问题证据、扣分核对和玩家评分分布。
 
 ## 7. 文件关联
 
