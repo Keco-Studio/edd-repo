@@ -1,0 +1,62 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>玩家评分</title>
+  <link rel="stylesheet" href="/styles.css">
+</head>
+<body>
+  <main class="player-shell">
+    <header class="page-header">
+      <div class="cat-mark" aria-hidden="true">猫</div>
+      <div><p class="eyebrow">试玩反馈</p><h1 id="game-title">玩家评分</h1></div>
+    </header>
+
+    <div id="page-message" class="message" role="status">正在读取评分链接...</div>
+
+    <form id="rating-form" hidden>
+      <section class="rating-section">
+        <div class="section-heading"><span>01</span><div><h2>核心玩法</h2><p>目标、互动反馈和玩法循环是否清楚有趣？</p></div></div>
+        <div class="score-grid" role="radiogroup" aria-label="核心玩法评分">
+          <label><input type="radio" name="coreScore" value="1"><span><b>1</b>很差</span></label>
+          <label><input type="radio" name="coreScore" value="2"><span><b>2</b>较差</span></label>
+          <label><input type="radio" name="coreScore" value="3"><span><b>3</b>一般</span></label>
+          <label><input type="radio" name="coreScore" value="4"><span><b>4</b>不错</span></label>
+          <label><input type="radio" name="coreScore" value="5"><span><b>5</b>很好</span></label>
+        </div>
+        <fieldset class="reasons" id="core-reasons" hidden><legend>哪里需要改进？</legend>
+          <label><input type="checkbox" name="coreReasons" value="unclear_goal">目标不清晰</label>
+          <label><input type="checkbox" name="coreReasons" value="repetitive">玩法重复</label>
+          <label><input type="checkbox" name="coreReasons" value="weak_feedback">反馈不足</label>
+          <label><input type="checkbox" name="coreReasons" value="poor_pacing">节奏不佳</label>
+          <label><input type="checkbox" name="coreReasons" value="low_agency">选择影响弱</label>
+        </fieldset>
+      </section>
+
+      <section class="rating-section">
+        <div class="section-heading"><span>02</span><div><h2>玩家体验</h2><p>包含 UI 视觉风格与可玩性。</p></div></div>
+        <div class="score-grid" role="radiogroup" aria-label="玩家体验评分">
+          <label><input type="radio" name="experienceScore" value="1"><span><b>1</b>很差</span></label>
+          <label><input type="radio" name="experienceScore" value="2"><span><b>2</b>较差</span></label>
+          <label><input type="radio" name="experienceScore" value="3"><span><b>3</b>一般</span></label>
+          <label><input type="radio" name="experienceScore" value="4"><span><b>4</b>不错</span></label>
+          <label><input type="radio" name="experienceScore" value="5"><span><b>5</b>很好</span></label>
+        </div>
+        <fieldset class="reasons" id="experience-reasons" hidden><legend>哪里需要改进？</legend>
+          <label><input type="checkbox" name="experienceReasons" value="ui_clarity">UI 信息不清</label>
+          <label><input type="checkbox" name="experienceReasons" value="visual_style">视觉风格不协调</label>
+          <label><input type="checkbox" name="experienceReasons" value="controls">操作不顺畅</label>
+          <label><input type="checkbox" name="experienceReasons" value="difficulty">难度不合理</label>
+          <label><input type="checkbox" name="experienceReasons" value="low_engagement">吸引力不足</label>
+        </fieldset>
+      </section>
+
+      <label class="comment-label" for="comment">补充反馈 <small>选填，最多 300 字，仅保存在本地数据中</small></label>
+      <textarea id="comment" name="comment" maxlength="300" rows="4" placeholder="写下最希望改进的一点"></textarea>
+      <div class="form-footer"><span id="char-count">0 / 300</span><button id="submit-rating" type="submit" disabled>提交评分</button></div>
+    </form>
+  </main>
+  <script src="/player.js" type="module"></script>
+</body>
+</html>
