@@ -1,0 +1,8 @@
+{
+  "version": 1,
+  "tasks": [
+    {"id":"task-401","files":["paws_patience/main.gd"],"dependsOn":[],"servesEvaluations":["eval-401-shelter-options"],"red":{"command":"rg \"SHELTER_TYPES|_build_shelter|eval-401-shelter-options\" paws_patience/main.gd"},"green":{"command":"rg \"SHELTER_TYPES|_build_shelter|eval-401-shelter-options\" paws_patience/main.gd"},"review":{"spec":true,"quality":false}},
+    {"id":"task-402","files":["paws_patience/main.gd"],"dependsOn":["task-401"],"servesEvaluations":["eval-402-shelter-build","eval-403-shelter-feedback"],"red":{"command":"rg \"build_shelter|dialogue_branch = \"shelter\"\" paws_patience/main.gd"},"green":{"command":"run_project -> get_debug_output -> stop_project and parse eval-402/eval-403"},"review":{"spec":true,"quality":true}},
+    {"id":"task-403","files":["progress/paws-patience-20260825-1618.jsonl","result/paws-patience-20260825-1618.json","docs/keco-godot-slices/slice-004-shelter/eval-report.json"],"dependsOn":["task-402"],"servesEvaluations":["eval-401-shelter-options","eval-402-shelter-build","eval-403-shelter-feedback","eval-404-shelter-presentation"],"red":{"command":"Test-Path docs/keco-godot-slices/slice-004-shelter/eval-report.json"},"green":{"command":"python -m json.tool docs/keco-godot-slices/slice-004-shelter/eval-report.json"},"review":{"spec":true,"quality":true}}
+  ]
+}

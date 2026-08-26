@@ -1,0 +1,35 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-001-cozy-day",
+  "createdDate": "2026-08-25",
+  "updatedDate": "2026-08-25",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "repairIteration": 1,
+  "tasks": [
+    {"id": "task-001", "status": "completed"},
+    {"id": "task-002", "status": "completed"},
+    {"id": "task-003", "status": "completed"},
+    {"id": "task-004", "status": "completed"}
+  ],
+  "manualRequired": ["visual.cozy-style", "experience.player-fun"],
+  "humanScore": {
+    "artStyle": null,
+    "playerFun": null,
+    "tokenEfficiencyReview": null
+  },
+  "runtimeBatches": [
+    {
+      "batchId": "runtime-002-after-eval-harness-fix",
+      "evaluationIds": ["eval-001-startup", "eval-002-work-and-feed", "eval-003-cat-interaction", "eval-004-day-rollover", "eval-005-visual-experience"],
+      "runtimeSequence": ["run_project", "get_debug_output", "stop_project"],
+      "status": "partial",
+      "manualRequired": ["eval-005-visual-experience"]
+    }
+  ],
+  "evalReportDocumentId": "375e6741-5984-45f3-a8ff-3569797c3267"
+}

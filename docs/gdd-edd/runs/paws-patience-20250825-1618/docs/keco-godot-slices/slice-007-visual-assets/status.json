@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260826-visual-assets",
+  "sliceId": "slice-007-visual-assets",
+  "createdDate": "2026-08-26",
+  "updatedDate": "2026-08-26",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "currentTaskName": null,
+  "repairIteration": 1,
+  "writeLease": "issued",
+  "writeLeaseScope": "paws-patience-20260826-visual-assets/slice-007-visual-assets/iteration-0",
+  "planReview": {"status": "passed", "validator": "passed", "taskCount": 3, "qualityReviews": 3},
+  "executionPreflight": {"keco": "ready", "godot": "ready", "pixelLab": "not_required"},
+  "tasks": [
+    {"id": "task-701", "name": "在 Keco 登记并物化同款图片", "status": "completed"},
+    {"id": "task-702", "name": "接入地图背景和病弱猫图片", "status": "completed"},
+    {"id": "task-703", "name": "运行回归、文档回读和人工评价空位", "status": "completed"}
+  ],
+  "assetEvidence": {
+    "tableId": "e431f55e-93f6-443c-9d79-ceff078e2f1e",
+    "readyRows": ["paws-neighborhood-background", "paws-sick-cat-south"],
+    "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa"
+  },
+  "mainGdHash": "sha256:66bea5266e4c00358c3a3f076eb93f89169170a7da11f41944432453f07447f8",
+  "runtimeBatch": {
+    "batchId": "runtime-010-slice-007-responsive-final",
+    "sequence": ["run_project", "get_debug_output", "stop_project"],
+    "passed": 19,
+    "manualRequired": 6,
+    "errors": []
+  },
+  "visualInspection": {
+    "dpi": 144,
+    "windowPixels": [1302, 776],
+    "croppingObserved": false,
+    "humanScoreAssigned": false
+  },
+  "evalReportDocument": {
+    "id": "18337013-8d03-4e6e-9884-8440ee9114dc",
+    "name": "slice-007-visual-assets-eval-report",
+    "revision": 2,
+    "status": "partial"
+  },
+  "review": {
+    "requirementsCompliance": "passed",
+    "regressionRisk": "passed",
+    "claudeStatus": "unavailable_in_current_toolset"
+  },
+  "humanReview": {
+    "artStyle": {"score": null, "comment": null, "nextIteration": null},
+    "playerFun": {"score": null, "comment": null, "nextIteration": null},
+    "tokenEfficiency": {"score": null, "comment": null, "nextIteration": null}
+  }
+}

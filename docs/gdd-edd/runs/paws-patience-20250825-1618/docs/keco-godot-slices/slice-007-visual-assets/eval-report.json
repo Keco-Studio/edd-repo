@@ -1,0 +1,96 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260826-visual-assets",
+  "sliceId": "slice-007-visual-assets",
+  "status": "partial",
+  "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "mainGdHash": "sha256:66bea5266e4c00358c3a3f076eb93f89169170a7da11f41944432453f07447f8",
+  "evaluations": [
+    {"evalId":"eval-001-startup","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-002-work-and-feed","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-003-cat-interaction","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-004-day-rollover","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-005-visual-experience","status":"manual_required","evidence":["human-review-slot"]},
+    {"evalId":"eval-201-dialogue-branches","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-202-emotion-feedback","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-301-weather-startup","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-302-severe-weather-ap","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-303-day-weather-advance","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-304-weather-presentation","status":"manual_required","evidence":["human-review-slot"]},
+    {"evalId":"eval-401-shelter-options","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-402-shelter-build","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-403-shelter-feedback","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-404-shelter-presentation","status":"manual_required","evidence":["human-review-slot"]},
+    {"evalId":"eval-501-probability-bounds","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-502-bond-shelter-modifier","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-503-probability-presentation","status":"manual_required","evidence":["human-review-slot"]},
+    {"evalId":"eval-601-save-roundtrip","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-602-forward-only-day","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-603-bond-home-ending","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-604-lifetime-farewell","status":"passed","evidence":["runtime-010-slice-007-responsive-final:KECO_EVAL"]},
+    {"evalId":"eval-605-ending-presentation","status":"manual_required","evidence":["human-review-slot"]},
+    {"evalId":"eval-701-visual-assets-loaded","status":"passed","evidence":["runtime-010-slice-007-responsive-final: exact Keco hashes and dimensions"]},
+    {"evalId":"eval-702-visual-presentation","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [
+    {
+      "batchId": "runtime-010-slice-007-responsive-final",
+      "evaluationIds": ["eval-001-startup","eval-002-work-and-feed","eval-003-cat-interaction","eval-004-day-rollover","eval-005-visual-experience","eval-201-dialogue-branches","eval-202-emotion-feedback","eval-301-weather-startup","eval-302-severe-weather-ap","eval-303-day-weather-advance","eval-304-weather-presentation","eval-401-shelter-options","eval-402-shelter-build","eval-403-shelter-feedback","eval-404-shelter-presentation","eval-501-probability-bounds","eval-502-bond-shelter-modifier","eval-503-probability-presentation","eval-601-save-roundtrip","eval-602-forward-only-day","eval-603-bond-home-ending","eval-604-lifetime-farewell","eval-605-ending-presentation","eval-701-visual-assets-loaded","eval-702-visual-presentation"],
+      "runtimeSequence": ["run_project","get_debug_output","stop_project"],
+      "splitReason": ""
+    }
+  ],
+  "changedFiles": [
+    "paws_patience/assets/backgrounds/neighborhood.png",
+    "paws_patience/assets/backgrounds/neighborhood.png.import",
+    "paws_patience/assets/cats/sick-cat.png",
+    "paws_patience/assets/cats/sick-cat.png.import",
+    "paws_patience/main.gd",
+    "paws_patience/main.gd.uid",
+    "data/keco/paws-patience-visual-assets-snapshot/manifest.json",
+    "data/keco/paws-patience-visual-assets-snapshot/tables/visual-assets.json",
+    "planning/slice-007-visual-assets.plan.json",
+    "progress/paws-patience-20260825-1618.jsonl",
+    "result/paws-patience-20260825-1618.json",
+    "docs/development-index.md",
+    "docs/keco-godot-slices/slice-007-visual-assets/spec.md",
+    "docs/keco-godot-slices/slice-007-visual-assets/plan.md",
+    "docs/keco-godot-slices/slice-007-visual-assets/plan.validation.json",
+    "docs/keco-godot-slices/slice-007-visual-assets/run-context.json",
+    "docs/keco-godot-slices/slice-007-visual-assets/status.json",
+    "docs/keco-godot-slices/slice-007-visual-assets/eval-report.json",
+    "docs/keco-godot-slices/paws-patience-20260825-roadmap/roadmap.md"
+  ],
+  "manualRequirements": [
+    "eval-005-visual-experience",
+    "eval-304-weather-presentation",
+    "eval-404-shelter-presentation",
+    "eval-503-probability-presentation",
+    "eval-605-ending-presentation",
+    "eval-702-visual-presentation",
+    "art-style-human-review",
+    "player-fun-human-review",
+    "token-efficiency-human-review"
+  ],
+  "assetEvidence": {
+    "tableName": "Visual Assets",
+    "tableId": "e431f55e-93f6-443c-9d79-ceff078e2f1e",
+    "strategy": "reuse_exact",
+    "pixelLabOperation": "not_required",
+    "pixelLabCost": 0,
+    "readyAssets": ["paws-neighborhood-background", "paws-sick-cat-south"]
+  },
+  "review": {
+    "requirementsCompliance": "passed",
+    "regressionRisk": "passed",
+    "claudeStatus": "unavailable_in_current_toolset",
+    "findings": [],
+    "residualRisks": ["视觉展示仍需用户人工评价", "当前只接入实际展示的病弱猫，另外两只猫待对应玩法界面存在后再接入"]
+  },
+  "visualInspection": {"dpi": 144, "windowPixels": [1302, 776], "croppingObserved": false, "humanScoreAssigned": false},
+  "humanReview": {
+    "artStyle": {"score": null, "comment": null, "nextIteration": null},
+    "playerFun": {"score": null, "comment": null, "nextIteration": null},
+    "tokenEfficiency": {"score": null, "comment": null, "nextIteration": null}
+  }
+}

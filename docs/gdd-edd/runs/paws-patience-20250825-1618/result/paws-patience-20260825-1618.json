@@ -1,0 +1,85 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "projectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "projectName": "test8-24",
+  "source": {
+    "documentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+    "name": "game-gdd",
+    "revision": 2,
+    "contentHash": "sha256:91f082aa2a51d315d2500aaf5d8cbe872ec01c939c797ea80314d96dbf93398d"
+  },
+  "sliceId": "slice-001-cozy-day",
+  "currentSliceId": "slice-007-visual-assets",
+  "latestCompletedSlice007": {
+    "sliceId": "slice-007-visual-assets",
+    "status": "partial",
+    "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+    "mainGdHash": "sha256:66bea5266e4c00358c3a3f076eb93f89169170a7da11f41944432453f07447f8",
+    "evaluations": [
+      {"evalId":"eval-701-visual-assets-loaded","status":"passed"},
+      {"evalId":"eval-702-visual-presentation","status":"manual_required"}
+    ],
+    "objectiveRegressionSummary": {"passed":19,"failed":0,"errors":0},
+    "visualRepair": {"dpi":144,"windowPixels":[1302,776],"croppingObserved":false,"chinesePrototypeTextLocalized":true},
+    "assetRegistry": {
+      "tableName": "Visual Assets",
+      "tableId": "e431f55e-93f6-443c-9d79-ceff078e2f1e",
+      "readyAssets": ["paws-neighborhood-background","paws-sick-cat-south"],
+      "pixelLabOperation": "not_required",
+      "pixelLabCost": 0
+    },
+    "claudeVerdict": null,
+    "claudeStatus": "unavailable_in_current_toolset",
+    "humanScores": {"artStyle":null,"playerFun":null,"tokenEfficiencyReview":null}
+  },
+  "latestCompletedSlice006": {"sliceId":"slice-006-persistence-ending","status":"partial","snapshotHash":"sha256:84719c202474c244fb030ebf6829090be62a3524eadb44ea20d69ed3e4a74581","evaluations":[{"evalId":"eval-601-save-roundtrip","status":"passed"},{"evalId":"eval-602-forward-only-day","status":"passed"},{"evalId":"eval-603-bond-home-ending","status":"passed"},{"evalId":"eval-604-lifetime-farewell","status":"passed"},{"evalId":"eval-605-ending-presentation","status":"manual_required"}],"claudeVerdict":"pass","humanScores":{"artStyle":null,"playerFun":null,"tokenEfficiencyReview":null}},
+  "latestCompletedSlice005": {"sliceId":"slice-005-encounter-probability","status":"partial","snapshotHash":"sha256:7848f19ac07650f521fec3d98e1a1226e2b44ce8608c61da96700c9579cfd385","evaluations":[{"evalId":"eval-501-probability-bounds","status":"passed"},{"evalId":"eval-502-bond-shelter-modifier","status":"passed"},{"evalId":"eval-503-probability-presentation","status":"manual_required"}],"humanScores":{"artStyle":null,"playerFun":null,"tokenEfficiencyReview":null}},
+  "latestSnapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "latestCompletedSlice004": {"sliceId":"slice-004-shelter","status":"partial","snapshotHash":"sha256:4e594e34d687b78f92cc4e922fa44e120df42a9b8cb546136984404f593130f6","evaluations":[{"evalId":"eval-401-shelter-options","status":"passed"},{"evalId":"eval-402-shelter-build","status":"passed"},{"evalId":"eval-403-shelter-feedback","status":"passed"},{"evalId":"eval-404-shelter-presentation","status":"manual_required"}],"humanScores":{"artStyle":null,"playerFun":null,"tokenEfficiencyReview":null}},
+  "latestCompletedSlice003": {"sliceId":"slice-003-weather-season","status":"partial","snapshotHash":"sha256:f60ae3be750f76c6053ff77815e8d75c636a8ea273b75c646f963877461109ae","evaluations":[{"evalId":"eval-301-weather-startup","status":"passed"},{"evalId":"eval-302-severe-weather-ap","status":"passed"},{"evalId":"eval-303-day-weather-advance","status":"passed"},{"evalId":"eval-304-weather-presentation","status":"manual_required"}],"humanScores":{"artStyle":null,"playerFun":null,"tokenEfficiencyReview":null}},
+  "latestCompletedSlice": {
+    "sliceId": "slice-002-cat-dialogue",
+    "status": "partial",
+    "snapshotHash": "sha256:b04e551c4ec2925bbfcd6decf3c5549b0935c309ce630c4dda1a18f81c8e1332",
+    "evaluations": [
+      {"evalId":"eval-201-dialogue-branches","status":"passed"},
+      {"evalId":"eval-202-emotion-feedback","status":"passed"},
+      {"evalId":"eval-203-dialogue-presentation","status":"manual_required"}
+    ],
+    "humanScores": {"artStyle": null, "playerFun": null, "tokenEfficiencyReview": null}
+  },
+  "snapshotHash": "sha256:c6584870374aa9f6717a3c628ee3860ee8b8c923d24aff470c4db0aad76e9766",
+  "scores": {
+    "artStyle": {"aiScore": null, "humanScore": null, "status": "manual_required"},
+    "playerFun": {"aiScore": null, "humanScore": null, "status": "manual_required"},
+    "tokenEfficiency": {"aiScore": null, "humanScore": null, "status": "pending_baseline"}
+  },
+  "tokenUsage": {
+    "claude": {"calls": 10, "inputTokens": 108780, "outputTokens": 24191, "totalReportedTokens": 132971, "cacheReadInputTokens": 686780, "cacheCreationInputTokens": 100337, "confirmedCostLowerBoundUSD": 2.0332385, "status": "partial_cost_missing_hello_dashboard", "components": {"recordedEarlierUSD":1.53334825,"connectivityHelloUSD":null,"finalReviewUSD":0.49989025}},
+    "codex": {"model": "gpt-5.6-sol", "calls": 17, "inputTokens": 2936716, "outputTokens": 7317, "cacheReadTokens": 2888448, "costUSD": 0.571522, "timeRange": "2026-08-26T00:01:07+08:00/2026-08-26T00:05:09+08:00", "status": "visible_console_window"},
+    "combinedConfirmedLowerBound": {"costUSD": 2.6047605, "note": "separate windows; excludes hello dashboard cost and unknown timeout billing"},
+    "baselineTokens": null,
+    "savingsTokens": null,
+    "savingsRatio": null
+  },
+  "evaluations": [
+    {"evalId":"eval-001-startup","status":"passed","evidence":["runtime-001-final:KECO_EVAL"]},
+    {"evalId":"eval-002-work-and-feed","status":"passed","evidence":["runtime-001-final:KECO_EVAL"]},
+    {"evalId":"eval-003-cat-interaction","status":"passed","evidence":["runtime-001-final:KECO_EVAL"]},
+    {"evalId":"eval-004-day-rollover","status":"passed","evidence":["runtime-001-final:KECO_EVAL"]},
+    {"evalId":"eval-005-visual-experience","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [
+    {"batchId":"runtime-001-final","evaluationIds":["eval-001-startup","eval-002-work-and-feed","eval-003-cat-interaction","eval-004-day-rollover","eval-005-visual-experience"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"single aggregate startup and deterministic transition batch"}
+  ],
+  "status": "partial",
+  "manualRequirements": [
+    {"dimension":"artStyle","score":null,"comment":null},
+    {"dimension":"playerFun","score":null,"comment":null},
+    {"dimension":"tokenEfficiency","score":null,"comment":null}
+  ],
+  "changedFiles": ["paws_patience/project.godot","paws_patience/main.tscn","paws_patience/main.gd","paws_patience/main.gd.uid","paws_patience/assets/backgrounds/neighborhood.png","paws_patience/assets/backgrounds/neighborhood.png.import","paws_patience/assets/cats/sick-cat.png","paws_patience/assets/cats/sick-cat.png.import","data/keco/paws-patience-visual-assets-snapshot/manifest.json","data/keco/paws-patience-visual-assets-snapshot/tables/visual-assets.json"],
+  "humanReview": {"artStyle":null,"playerFun":null,"tokenEfficiency":null},
+  "claudeReview": {"verdict":"pass","status":"passed","attempts":8,"summary":"存档、不可逆时间、寿命、两种结局、评估隔离和回归证据通过独立复审；无 P0/P1/P2。","findings":[{"severity":"P3","issue":"status.json 重复键","resolution":"已修复"}],"risks":["人工展示与体验评价待完成","Token 节省率等待人工基线"],"manualBoundariesPreserved":true,"usage":{"inputTokens":33649,"outputTokens":13813,"cacheReadInputTokens":234630,"cacheCreationInputTokens":29322,"costUSD":0.49989025},"pollIntervalMinutes":10,"humanScore":null,"rawProgressRef":"progress/paws-patience-20260825-1618.jsonl"}
+}

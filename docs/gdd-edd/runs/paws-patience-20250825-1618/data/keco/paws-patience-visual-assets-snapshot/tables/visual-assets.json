@@ -1,0 +1,212 @@
+{
+  "fields": [
+    {
+      "dataType": "string",
+      "description": "跨版本稳定资源键",
+      "id": "67e5998a-ba02-41df-9eb0-1b77f7aedc7f",
+      "key": "asset-key",
+      "label": "Asset Key",
+      "required": true
+    },
+    {
+      "dataType": "enum",
+      "description": "资源用途类型",
+      "enumOptions": [
+        "background",
+        "character"
+      ],
+      "id": "32d430ca-1710-437f-8443-01f4be3b6cc4",
+      "key": "asset-kind",
+      "label": "Asset Kind",
+      "required": true
+    },
+    {
+      "dataType": "enum",
+      "enumOptions": [
+        "reuse_exact",
+        "exact",
+        "fallback",
+        "unavailable",
+        "not_required"
+      ],
+      "id": "35a09a39-5464-41d5-a4ec-da4f133ee966",
+      "key": "compatibility",
+      "label": "Compatibility",
+      "required": true
+    },
+    {
+      "dataType": "int",
+      "id": "657f4ae0-5fe3-4056-ad7e-42448a166312",
+      "key": "height",
+      "label": "Height",
+      "required": true
+    },
+    {
+      "dataType": "image",
+      "id": "b7d7e302-0f45-404b-9f2f-d94248085241",
+      "key": "image",
+      "label": "Image",
+      "required": false
+    },
+    {
+      "dataType": "string",
+      "id": "3578ac99-9a8d-445b-a13a-d7d7ad9a0fa0",
+      "key": "official-endpoint",
+      "label": "Official Endpoint",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "e3cf658c-1923-40e1-b8a2-10e5f065f844",
+      "key": "provider-capability",
+      "label": "Provider Capability",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "3fb2f69f-5c48-486a-8f5a-901f0e50ff17",
+      "key": "purpose",
+      "label": "Purpose",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "59ca9591-d56b-4ab0-9ba4-676a5995be34",
+      "key": "run-id",
+      "label": "Run ID",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "231c65b2-01c4-4040-9dec-cec5d0f1cdd9",
+      "key": "slice-id",
+      "label": "Slice ID",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "5bec1111-5437-4779-8c9d-c930b54a2e7b",
+      "key": "source-path",
+      "label": "Source Path",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "1ddaae50-ef08-45d6-a769-507252ab0f71",
+      "key": "source-project",
+      "label": "Source Project",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "8309b9cb-88a2-4088-aa0a-f8767efd470d",
+      "key": "source-sha256",
+      "label": "Source SHA256",
+      "required": true
+    },
+    {
+      "dataType": "enum",
+      "enumOptions": [
+        "planned",
+        "ready",
+        "failed",
+        "blocked"
+      ],
+      "id": "8ac48808-66a6-45bc-82d6-c55ee3da8a05",
+      "key": "status",
+      "label": "Status",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "2c7180c7-53fe-479a-8905-f3c90182b440",
+      "key": "target-path",
+      "label": "Target Path",
+      "required": true
+    },
+    {
+      "dataType": "string",
+      "id": "4698f88d-e469-40f8-97fe-f7966190bffd",
+      "key": "transport-tool",
+      "label": "Transport Tool",
+      "required": true
+    },
+    {
+      "dataType": "int",
+      "id": "27301d30-6622-488e-b3d1-9e7bd7fdabd0",
+      "key": "width",
+      "label": "Width",
+      "required": true
+    }
+  ],
+  "rows": [
+    {
+      "id": "54800338-edcb-472c-98c9-39c2db42acf9",
+      "key": "paws-neighborhood-background",
+      "values": {
+        "asset-key": "paws-neighborhood-background",
+        "asset-kind": "background",
+        "compatibility": "reuse_exact",
+        "height": 224,
+        "image": {
+          "fileName": "neighborhood.png",
+          "fileSize": 80417,
+          "fileType": "image/png",
+          "path": "33b7f9c6-7310-4100-b51d-fff916e38ab2/26dec3f7-19a0-4596-b7c5-0eceb1cd98cb/6f4de1c1-825e-4074-82cb-ad11e3d6daa7-neighborhood.png",
+          "uploadedAt": "2026-08-25T18:43:38.447Z",
+          "url": "https://lulrcirmwwvvnupmwqcq.supabase.co/storage/v1/object/public/library-media-files/33b7f9c6-7310-4100-b51d-fff916e38ab2/26dec3f7-19a0-4596-b7c5-0eceb1cd98cb/6f4de1c1-825e-4074-82cb-ad11e3d6daa7-neighborhood.png"
+        },
+        "official-endpoint": "not_required",
+        "provider-capability": "local-existing-asset",
+        "purpose": "地图视图像素背景",
+        "run-id": "paws-patience-20260826-visual-assets",
+        "slice-id": "slice-007-visual-assets",
+        "source-path": "assets/generated/day1/map-background.png",
+        "source-project": "newPaws",
+        "source-sha256": "sha256:a1bf531672631d8c09434b152f66d2cd905c7a41c69abc1e1f5b1d9cfb0668cd",
+        "status": "ready",
+        "target-path": "res://assets/backgrounds/neighborhood.png",
+        "transport-tool": "keco image upload",
+        "width": 400
+      }
+    },
+    {
+      "id": "a1d6d221-3017-4a52-8b64-e20a6d7077d8",
+      "key": "paws-sick-cat-south",
+      "values": {
+        "asset-key": "paws-sick-cat-south",
+        "asset-kind": "character",
+        "compatibility": "reuse_exact",
+        "height": 136,
+        "image": {
+          "fileName": "sick-cat.png",
+          "fileSize": 1767,
+          "fileType": "image/png",
+          "path": "33b7f9c6-7310-4100-b51d-fff916e38ab2/26dec3f7-19a0-4596-b7c5-0eceb1cd98cb/fbd62974-412d-4891-be15-9763871b0925-sick-cat.png",
+          "uploadedAt": "2026-08-25T18:43:39.241Z",
+          "url": "https://lulrcirmwwvvnupmwqcq.supabase.co/storage/v1/object/public/library-media-files/33b7f9c6-7310-4100-b51d-fff916e38ab2/26dec3f7-19a0-4596-b7c5-0eceb1cd98cb/fbd62974-412d-4891-be15-9763871b0925-sick-cat.png"
+        },
+        "official-endpoint": "not_required",
+        "provider-capability": "local-existing-asset",
+        "purpose": "病弱猫互动卡片正面图",
+        "run-id": "paws-patience-20260826-visual-assets",
+        "slice-id": "slice-007-visual-assets",
+        "source-path": "assets/generated/day1/sick-cat/south.png",
+        "source-project": "newPaws",
+        "source-sha256": "sha256:3a3f4c25ad8eb0b94615b3da3ba9113d3747fe04eea8af39073095497f167bd5",
+        "status": "ready",
+        "target-path": "res://assets/cats/sick-cat.png",
+        "transport-tool": "keco image upload",
+        "width": 136
+      }
+    }
+  ],
+  "schemaVersion": 1,
+  "table": {
+    "description": "Paws & Patience 可验证视觉资源登记。Asset Key 是稳定匹配键；图片字节完成 Keco 验证后才能标记 ready。",
+    "id": "e431f55e-93f6-443c-9d79-ceff078e2f1e",
+    "key": "visual-assets",
+    "name": "Visual Assets",
+    "updatedAt": "2026-08-25T18:44:27.223651+00:00"
+  }
+}

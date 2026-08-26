@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-005-encounter-probability",
+  "createdDate": "2026-08-25",
+  "updatedDate": "2026-08-25",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "repairIteration": 0,
+  "tasks": [{"id":"task-501","status":"completed"},{"id":"task-502","status":"completed"},{"id":"task-503","status":"completed"}],
+  "snapshotHash": "sha256:7848f19ac07650f521fec3d98e1a1226e2b44ce8608c61da96700c9579cfd385",
+  "manualRequired": ["eval-503-probability-presentation", "token-efficiency-baseline"],
+  "humanScore": {"artStyle": null, "playerFun": null, "tokenEfficiencyReview": null},
+  "runtimeBatches": [{"batchId":"runtime-006-slice-005","evaluationIds":["eval-501-probability-bounds","eval-502-bond-shelter-modifier","eval-503-probability-presentation"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"status":"partial","manualRequired":["eval-503-probability-presentation"]}],
+  "evalReportDocumentId": "51a35ccc-4474-4e29-affb-e4bf17f3461e"
+}
