@@ -1,0 +1,101 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260827-cat-type",
+  "projectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "projectName": "test8-24",
+  "kecoFolder": {
+    "name": "V2",
+    "id": "0059bc39-8d53-4252-b239-395935947901"
+  },
+  "source": {
+    "documentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+    "name": "game-gdd",
+    "revision": 2,
+    "contentHash": "sha256:91f082aa2a51d315d2500aaf5d8cbe872ec01c939c797ea80314d96dbf93398d"
+  },
+  "sliceId": "slice-008-new-cat-type",
+  "status": "partial",
+  "implementation": {
+    "catType": "guardian_stray",
+    "displayName": "守护猫猫",
+    "trigger": "third qualifying Street visit per day",
+    "bondDeltas": {"pet": 4, "feed": 5, "shelter": 16},
+    "legacyDefault": "sickly",
+    "mainGdHash": "sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266"
+  },
+  "evaluations": [
+    {"evalId": "eval-801-cat-profile", "status": "passed"},
+    {"evalId": "eval-802-guardian-interaction", "status": "passed"},
+    {"evalId": "eval-803-guardian-probability", "status": "passed"},
+    {"evalId": "eval-804-guardian-save", "status": "passed"},
+    {"evalId": "eval-805-v1-regression", "status": "passed"},
+    {"evalId": "eval-008-visual-presentation", "status": "manual_required"}
+  ],
+  "runtime": {
+    "batchId": "runtime-011-slice-008-guardian-final",
+    "sequence": ["run_project", "get_debug_output", "stop_project"],
+    "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+    "errors": []
+  },
+  "claudeReview": {
+    "version": "2.1.152",
+    "initialVerdict": "revise",
+    "finalVerdict": "accepted_after_repair",
+    "criticalFindingsResolved": 2,
+    "importantFindingsResolved": 4,
+    "machineEvaluation": {
+      "provider": "Claude Code CLI",
+      "evaluationType": "slice_quick_evaluation",
+      "reportId": "test8-24-v2-slice-008-slice-v1-report",
+      "status": "partial",
+      "coverage": 0.875,
+      "evaluatedItems": 7,
+      "totalItems": 8,
+      "dimensionScores": {
+        "artStyle": null,
+        "playerFun": 35
+      },
+      "totalScore": null,
+      "itemScores": {
+        "styleConsistency": 15,
+        "assetQualityAndFit": 8,
+        "uiReadabilityAndLayout": null,
+        "visualFeedbackAndEmotion": 3,
+        "coreLoopAppeal": 14,
+        "meaningfulChoices": 11,
+        "feedbackPacingAndGoals": 7,
+        "motivationToContinue": 3
+      },
+      "severityCounts": {"P0": 0, "P1": 1, "P2": 0, "P3": 0},
+      "humanReview": {"artStyle": null, "playerFun": null, "total": null},
+      "reportPath": "docs/keco-game-evaluations/test8-24-v2-slice-008/report.json",
+      "rawReviewPath": "docs/keco-game-evaluations/test8-24-v2-slice-008/claude-review.raw.json"
+    }
+  },
+  "assetProvenance": {
+    "strategy": "reuse_exact",
+    "assetKey": "paws-sick-cat-south",
+    "pixelLabCost": 0
+  },
+  "kecoDocuments": {
+    "roadmap": "e696b95d-b121-474a-9f62-7d7c6c74433b",
+    "status": "0e98a4a8-105b-468e-8dbc-5d1867b54974",
+    "evalReport": "601cbe7d-011f-4603-bf25-0002fe8844c5"
+  },
+  "manualRequirements": [
+    "dedicated Guardian portrait",
+    "visual presentation",
+    "art style review",
+    "player fun review",
+    "HUD and menu captures"
+  ],
+  "paths": {
+    "progress": "progress/v2/paws-patience-20260827-cat-type.jsonl",
+    "versionControlPlan": "planning/v2/slice-v2-version-control.plan.json",
+    "plan": "planning/v2/slice-008-new-cat-type.plan.json",
+    "resourceProvenance": "data/keco/v2/resource-provenance.json",
+    "documents": "docs/keco-godot-slices/v2/slice-008-new-cat-type",
+    "gameEvaluation": "docs/keco-game-evaluations/test8-24-v2-slice-008",
+    "releaseManifest": "release/v2/test8-24-v2/manifest.json"
+  }
+}

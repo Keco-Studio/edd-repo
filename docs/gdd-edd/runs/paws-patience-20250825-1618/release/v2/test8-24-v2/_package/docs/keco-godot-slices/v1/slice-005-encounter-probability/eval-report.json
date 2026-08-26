@@ -1,0 +1,11 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-005-encounter-probability",
+  "status": "partial",
+  "snapshotHash": "sha256:7848f19ac07650f521fec3d98e1a1226e2b44ce8608c61da96700c9579cfd385",
+  "evaluations": [{"evalId":"eval-501-probability-bounds","status":"passed","evidence":["runtime-006-slice-005:KECO_EVAL"]},{"evalId":"eval-502-bond-shelter-modifier","status":"passed","evidence":["runtime-006-slice-005:KECO_EVAL"]},{"evalId":"eval-503-probability-presentation","status":"manual_required","evidence":["human-review-slot"]}],
+  "runtimeBatches": [{"batchId":"runtime-006-slice-005","evaluationIds":["eval-501-probability-bounds","eval-502-bond-shelter-modifier"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"single aggregate probability preview batch; presentation remains manual"}],
+  "changedFiles": ["paws_patience/main.gd"],
+  "manualRequirements": [{"dimension":"artStyle","score":null,"comment":null},{"dimension":"playerFun","score":null,"comment":null},{"dimension":"tokenEfficiency","score":null,"comment":null}]
+}

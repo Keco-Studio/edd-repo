@@ -1,0 +1,24 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-002-cat-dialogue",
+  "createdDate": "2026-08-25",
+  "updatedDate": "2026-08-25",
+  "status": "completed",
+  "latest": true,
+  "supersedes": [],
+  "completed": true,
+  "currentTaskId": null,
+  "repairIteration": 0,
+  "tasks": [
+    {"id":"task-201","status":"completed"},
+    {"id":"task-202","status":"completed"},
+    {"id":"task-203","status":"completed"},
+    {"id":"task-204","status":"completed"}
+  ],
+  "snapshotHash": "sha256:b04e551c4ec2925bbfcd6decf3c5549b0935c309ce630c4dda1a18f81c8e1332",
+  "manualRequired": ["eval-203-dialogue-presentation", "token-efficiency-baseline"],
+  "humanScore": {"artStyle": null, "playerFun": null, "tokenEfficiencyReview": null},
+  "runtimeBatches": [{"batchId":"runtime-003-slice-002","evaluationIds":["eval-201-dialogue-branches","eval-202-emotion-feedback","eval-203-dialogue-presentation"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"status":"partial","manualRequired":["eval-203-dialogue-presentation"]}],
+  "evalReportDocumentId": "d1ebd28d-9283-4164-a8a2-27af10d0bbcc"
+}

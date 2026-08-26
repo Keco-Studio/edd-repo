@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-003-weather-season",
+  "status": "partial",
+  "snapshotHash": "sha256:f60ae3be750f76c6053ff77815e8d75c636a8ea273b75c646f963877461109ae",
+  "evaluations": [
+    {"evalId":"eval-301-weather-startup","status":"passed","evidence":["runtime-004-slice-003:KECO_EVAL"]},
+    {"evalId":"eval-302-severe-weather-ap","status":"passed","evidence":["runtime-004-slice-003:KECO_EVAL"]},
+    {"evalId":"eval-303-day-weather-advance","status":"passed","evidence":["runtime-004-slice-003:KECO_EVAL"]},
+    {"evalId":"eval-304-weather-presentation","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [{"batchId":"runtime-004-slice-003","evaluationIds":["eval-301-weather-startup","eval-302-severe-weather-ap","eval-303-day-weather-advance"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"single aggregate weather mechanics batch; presentation remains manual"}],
+  "changedFiles": ["paws_patience/main.gd"],
+  "manualRequirements": [{"dimension":"artStyle","score":null,"comment":null},{"dimension":"playerFun","score":null,"comment":null},{"dimension":"tokenEfficiency","score":null,"comment":null}]
+}

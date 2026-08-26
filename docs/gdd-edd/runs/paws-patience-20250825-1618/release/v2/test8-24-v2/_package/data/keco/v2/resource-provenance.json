@@ -1,0 +1,14 @@
+{
+  "version": 1,
+  "projectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "kecoFolderId": "0059bc39-8d53-4252-b239-395935947901",
+  "sliceId": "slice-008-new-cat-type",
+  "strategy": "reuse_exact",
+  "sourceSnapshot": "data/keco/v1/paws-patience-visual-assets-snapshot",
+  "sourceAggregateSha256": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "reusedAssetKey": "paws-sick-cat-south",
+  "targetRole": "temporary Guardian Stray portrait",
+  "pixelLabOperation": "not_required",
+  "pixelLabCost": 0,
+  "dedicatedAssetStatus": "manual_required"
+}

@@ -1,0 +1,39 @@
+{
+  "version": 2,
+  "runId": "test8-24-v2-20260826",
+  "mode": "implicit-v2",
+  "kecoProjectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "kecoFolderId": "0059bc39-8d53-4252-b239-395935947901",
+  "kecoFolderName": "V2",
+  "roadmapId": "test8-24-v2-roadmap",
+  "roadmapDocumentId": "e696b95d-b121-474a-9f62-7d7c6c74433b",
+  "sourceDocumentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+  "sourceRevision": 2,
+  "sourceContentHash": "sha256:91f082aa2a51d315d2500aaf5d8cbe872ec01c939c797ea80314d96dbf93398d",
+  "sliceId": "slice-v2-version-control",
+  "iteration": 0,
+  "godotProjectPath": "C:\\Users\\lenovo\\Desktop\\test48-25\\paws_patience",
+  "godotVersion": "4.7.stable.official.5b4e0cb0f",
+  "mainScene": "main.tscn",
+  "godotFiles": {
+    "project.godot": "sha256:dbb93eb9112aecbedb16da5d9858699741364791e77621229013481defdb5d1a",
+    "main.tscn": "sha256:c7222f1e05acaa94107f1d53bebfdfb45c049826c221c03e59bd916bde6a34c1",
+    "main.gd": "sha256:66bea5266e4c00358c3a3f076eb93f89169170a7da11f41944432453f07447f8",
+    "assets/backgrounds/neighborhood.png": "sha256:a1bf531672631d8c09434b152f66d2cd905c7a41c69abc1e1f5b1d9cfb0668cd",
+    "assets/cats/sick-cat.png": "sha256:3a3f4c25ad8eb0b94615b3da3ba9113d3747fe04eea8af39073095497f167bd5"
+  },
+  "v1Evidence": {
+    "progress/v1/paws-patience-20260825-1618.md": "sha256:c96584602ef10682dc2ad46ccc2081da56d35880c41c96d18563d107a3329783",
+    "progress/v1/paws-patience-20260825-1618.jsonl": "sha256:ed005be59b18db77ad32c0d214210dc22b19fe77882ae566e05b8a6f19593eae"
+  },
+  "allowedFiles": ["progress/v1/**", "progress/v2/**", "planning/v1/**", "planning/v2/**", "result/v1/**", "result/v2/**", "docs/keco-godot-slices/v1/**", "docs/keco-godot-slices/v2/**", "release/v2/test8-24-v2/**"],
+  "status": "completed",
+  "blockedAt": "none",
+  "completed": ["V2 folder", "V2 document ledger", "V1 evidence split", "baseline runtime", "release package"],
+  "writesPerformed": ["Keco V2 folder", "Keco V2 roadmap", "Keco V2 slice documents", "local V1/V2 records", "release package"],
+  "userAction": "none",
+  "resumeFrom": "none",
+  "revalidate": [],
+  "checkpoint": {"runId": "test8-24-v2-20260826", "planRevision": "1", "sourceRevisions": {"game-gdd": "2"}},
+  "interaction": {"version": 1, "status": "completed", "blockedAt": "none", "completed": ["V2 folder", "V2 document ledger", "V1 evidence split", "baseline runtime", "release package"], "writesPerformed": ["Keco V2 folder", "Keco V2 roadmap", "Keco V2 slice documents", "local V1/V2 records", "release package"], "userAction": "none", "resumeFrom": "none", "checkpoint": {"runId": "test8-24-v2-20260826", "planRevision": "1", "sourceRevisions": {"game-gdd": "2"}}, "revalidate": []}
+}

@@ -1,0 +1,19 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-002-cat-dialogue",
+  "status": "partial",
+  "snapshotHash": "sha256:b04e551c4ec2925bbfcd6decf3c5549b0935c309ce630c4dda1a18f81c8e1332",
+  "evaluations": [
+    {"evalId":"eval-201-dialogue-branches","status":"passed","evidence":["runtime-003-slice-002:KECO_EVAL"]},
+    {"evalId":"eval-202-emotion-feedback","status":"passed","evidence":["runtime-003-slice-002:KECO_EVAL"]},
+    {"evalId":"eval-203-dialogue-presentation","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [{"batchId":"runtime-003-slice-002","evaluationIds":["eval-201-dialogue-branches","eval-202-emotion-feedback"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"single aggregate dialogue branch batch; visual review remains manual"}],
+  "changedFiles": ["paws_patience/main.gd"],
+  "manualRequirements": [
+    {"dimension":"artStyle","score":null,"comment":null},
+    {"dimension":"playerFun","score":null,"comment":null},
+    {"dimension":"tokenEfficiency","score":null,"comment":null}
+  ]
+}

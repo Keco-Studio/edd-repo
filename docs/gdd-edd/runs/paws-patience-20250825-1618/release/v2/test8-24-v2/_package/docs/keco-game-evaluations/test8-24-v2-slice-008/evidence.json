@@ -1,0 +1,131 @@
+{
+  "version": 1,
+  "profileId": "test8-24-v2-slice-008-slice-v1",
+  "buildHash": "sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266",
+  "gddRevision": "2",
+  "sourceReferences": {
+    "gddRevision": "2",
+    "gddContentHash": "sha256:91f082aa2a51d315d2500aaf5d8cbe872ec01c939c797ea80314d96dbf93398d",
+    "roadmapRevision": "8",
+    "sourceSnapshot": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+    "godotBuildHash": "sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266",
+    "sliceEvalReports": [
+      "docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json"
+    ]
+  },
+  "claudeReview": {
+    "provider": "Claude Code CLI",
+    "providerVersion": "2.1.152",
+    "rawReview": "docs/keco-game-evaluations/test8-24-v2-slice-008/claude-review.raw.json",
+    "items": [
+      {
+        "dimension": "artStyle",
+        "itemId": "styleConsistency",
+        "status": "evaluated",
+        "score": 15,
+        "reason": "guardian_stray 采用 reuse_exact 策略复用 V1 病弱猫的精确资产，并走相同渲染管线（NEAREST 过滤、136x136、同一 TextureRect 设置），未引入与既有视觉方向冲突的规则，因此已检视状态的整体风格保持一致。",
+        "evidence": ["data/keco/v2/resource-provenance.json strategy=reuse_exact", "paws_patience/main.gd:5 SICK_CAT_TEXTURE preload", "paws_patience/main.gd:250 cat_portrait.texture = SICK_CAT_TEXTURE"],
+        "limitations": ["eval-008-visual-presentation 为 manual_required，无运行时截图，渲染后各状态的一致性未经采集确认，本项仅基于源码与资源溯源判断。"],
+        "nextIteration": "完成 eval-008-visual-presentation 人工视觉复核，采集守护猫与病弱猫各状态截图以正式确认风格一致性。"
+      },
+      {
+        "dimension": "artStyle",
+        "itemId": "assetQualityAndFit",
+        "status": "evaluated",
+        "score": 8,
+        "reason": "复用资产本身是已完成的高质量 V1 像素立绘，但守护猫猫（guardian_stray）没有专属立绘，直接沿用病弱猫立绘，与“守护”定位在语义与情感契合上不匹配。PixelLab 成本为 0、专属资产状态为 manual_required，这是视觉契合风险（P1），并非视觉完成。",
+        "evidence": ["data/keco/v2/resource-provenance.json reusedAssetKey=paws-sick-cat-south targetRole=temporary Guardian Stray portrait", "data/keco/v2/resource-provenance.json dedicatedAssetStatus=manual_required pixelLabCost=0", "paws_patience/main.gd:250 cat_portrait.texture = SICK_CAT_TEXTURE", "paws_patience/assets/cats/sick-cat.png"],
+        "limitations": ["无运行时截图（eval-008 manual_required），契合度不足主要依据源码与溯源推断；美术契合的主观程度仍需人工复核。"],
+        "nextIteration": "为 guardian_stray 制作专属立绘替换临时复用资产，并在 eval-008 人工复核中确认契合度。"
+      },
+      {
+        "dimension": "artStyle",
+        "itemId": "uiReadabilityAndLayout",
+        "status": "not_evaluated",
+        "score": null,
+        "reason": "Slice 008 未改动卡片布局与信息层级结构，仅更新了名称与相遇概率预览的文本内容；且无 HUD/菜单运行时截图（eval-008 manual_required）。该项未被本切片实质影响，证据不足。",
+        "evidence": [],
+        "limitations": ["缺少 HUD 与菜单渲染截图，无法评估渲染后的可读性与层级；本切片未触及布局结构。"],
+        "nextIteration": "若后续切片调整卡片布局或信息密度，需采集 HUD/菜单截图后再评估。"
+      },
+      {
+        "dimension": "artStyle",
+        "itemId": "visualFeedbackAndEmotion",
+        "status": "evaluated",
+        "score": 3,
+        "reason": "守护猫拥有差异化的对话、情绪标签（含颜色变化）与反应文本，动作反馈在文本与情绪层面可区分（源码可验证）；但两种猫共用同一张静态立绘，视觉立绘无法区分新猫的情感身份，削弱了视觉情感反馈的差异度。",
+        "evidence": ["paws_patience/main.gd:449 guardian pet dialogue/mood branch", "paws_patience/main.gd:368 mood_label _mood_color()", "paws_patience/main.gd:250 shared cat_portrait texture", "docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json eval-008-visual-presentation=manual_required"],
+        "limitations": ["eval-008-visual-presentation 为 manual_required，渲染后的视觉情感表现（立绘/动画）未采集截图确认，本项仅覆盖可由源码验证的文本与情绪反馈。"],
+        "nextIteration": "采集守护猫各动作状态截图，并在引入专属立绘后评估视觉情感反馈是否充分区分新猫。"
+      },
+      {
+        "dimension": "playerFun",
+        "itemId": "coreLoopAppeal",
+        "status": "evaluated",
+        "score": 14,
+        "reason": "新增 guardian_stray 为核心循环（相遇→摸摸/喂食/庇护→积累羁绊）增加了条件性分支：当日第三次街道相遇触发守护猫，具备独立羁绊增量（+4/+5/+16）与专属对话。运行时 eval-801/802/803 均通过，循环机制已实现且可运行。无玩家记录，无法判断该分支是否真正吸引玩家重复互动。",
+        "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json eval-802-guardian-interaction=passed", "docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json eval-803-guardian-probability=passed", "paws_patience/main.gd:424 third-street guardian gate", "paws_patience/main.gd:26 CAT_BOND_DELTAS guardian 4/5/16"],
+        "limitations": ["无玩家会话记录，循环吸引力（是否让玩家愿意重复互动）无法由证据证明，本项仅确认机制已实现并通过运行时检查。"],
+        "nextIteration": "引入玩家试玩会话记录，评估新分支对重复互动意愿的实际影响。"
+      },
+      {
+        "dimension": "playerFun",
+        "itemId": "meaningfulChoices",
+        "status": "evaluated",
+        "score": 11,
+        "reason": "玩家反复选择“街道”并在当日第三次相遇会解锁一个实质不同的分支：守护猫的羁绊增量（摸摸4/喂食5/庇护16）与病弱猫（3/5/20）不同，且对话与相遇概率（街道预览约 0.25）不同，使地点与频次选择产生可感知的不同结果。运行时 eval-802/803 通过。",
+        "evidence": ["paws_patience/main.gd:424 street>=3 gate isolates guardian", "paws_patience/main.gd:26 CAT_BOND_DELTAS sickly 3/5/20 vs guardian 4/5/16", "paws_patience/main.gd:486 _encounter_probability guardian street factor", "docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json eval-803-guardian-probability=passed"],
+        "limitations": ["无玩家记录，选择是否被玩家视为“有意义”无法由玩家数据佐证；差异幅度（庇护 16 与 20）的体验意义需人工可玩性评价。"],
+        "nextIteration": "结合玩家试玩评估该分支的增量差异是否构成有意义的策略取舍。"
+      },
+      {
+        "dimension": "playerFun",
+        "itemId": "feedbackPacingAndGoals",
+        "status": "evaluated",
+        "score": 7,
+        "reason": "第三次街道相遇的门控与每日跨天重置（location_visits_today 与 guardian_gate_triggered_today 归零）构成清晰的节奏与目标结构，羁绊增量通过界面标签反馈；运行时 eval-802 验证门控、eval-804 验证跨天与存档迁移，节奏与目标机制合法可读。",
+        "evidence": ["paws_patience/main.gd:424 gate condition location_visits_today>=3", "paws_patience/main.gd:561 daily rollover resets counters", "paws_patience/main.gd:362 bond_label feedback", "docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json eval-802-guardian-interaction=passed"],
+        "limitations": ["目标与奖励的视觉呈现（eval-008 及 eval-503-probability-presentation 均 manual_required）未采集截图；且缺少玩家记录，节奏体验的实际清晰度无法由玩家数据确认。"],
+        "nextIteration": "采集目标/奖励呈现截图，并结合玩家试玩确认门控节奏是否清晰易懂。"
+      },
+      {
+        "dimension": "playerFun",
+        "itemId": "motivationToContinue",
+        "status": "evaluated",
+        "score": 3,
+        "reason": "新增可发现的守护猫类型为玩家提供了一个具体的额外目标（通过重复街道相遇解锁并与之建立羁绊），增加了继续游玩的具体理由；但无玩家会话记录，无法确认该动机的实际持续力，且未见明显的递进式升级激励。",
+        "evidence": ["paws_patience/main.gd:424 guardian unlock via repeated street visits", "docs/keco-godot-slices/v2/slice-008-new-cat-type/spec.md guardian as isolated fourth cat type", "docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json eval-801-cat-profile=passed"],
+        "limitations": ["缺少玩家会话/留存记录（player-session evidence），无法证明玩家因此持续游玩，本项仅确认新增内容提供了一个具体目标。"],
+        "nextIteration": "采集玩家留存与会话数据，评估新增猫类型对持续游玩动机的实际作用。"
+      }
+    ]
+  },
+  "technicalEvidence": {
+    "runtimeSequence": ["run_project", "get_debug_output", "stop_project"],
+    "runtimeErrors": [],
+    "freshRuntimeDate": "2026-08-27",
+    "runtimeEvidence": "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json",
+    "claudeRawReview": "docs/keco-game-evaluations/test8-24-v2-slice-008/claude-review.raw.json"
+  },
+  "mandatoryEvaluations": [
+    {"evalId": "eval-801-cat-profile", "status": "passed", "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json#eval-801-cat-profile", "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json#eval-801-cat-profile"]},
+    {"evalId": "eval-802-guardian-interaction", "status": "passed", "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json#eval-802-guardian-interaction", "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json#eval-802-guardian-interaction"]},
+    {"evalId": "eval-803-guardian-probability", "status": "passed", "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json#eval-803-guardian-probability", "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json#eval-803-guardian-probability"]},
+    {"evalId": "eval-804-guardian-save", "status": "passed", "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json#eval-804-guardian-save", "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json#eval-804-guardian-save"]},
+    {"evalId": "eval-805-v1-regression", "status": "passed", "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json#eval-805-v1-regression", "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json#eval-805-v1-regression"]},
+    {"evalId": "eval-008-visual-presentation", "status": "manual_required", "evidence": ["docs/keco-godot-slices/v2/slice-008-new-cat-type/eval-report.json#eval-008-visual-presentation", "docs/keco-game-evaluations/test8-24-v2-slice-008/runtime-evidence.json#eval-008-visual-presentation"]}
+  ],
+  "findings": [
+    {
+      "issueId": "V2-EVAL-001",
+      "severity": "P1",
+      "primaryMetricId": "artStyle.assetQualityAndFit",
+      "linkedMetricIds": ["artStyle.styleConsistency", "artStyle.visualFeedbackAndEmotion"],
+      "summary": "guardian_stray 暂时复用病弱猫立绘，缺少与守护猫身份匹配的专属视觉。",
+      "evidence": ["docs/keco-game-evaluations/test8-24-v2-slice-008/claude-review.raw.json#assetQualityAndFit", "data/keco/v2/resource-provenance.json dedicatedAssetStatus=manual_required"],
+      "owner": "V2 art integration",
+      "targetVersion": "V2 next visual slice",
+      "fixedAcceptanceRule": "守护猫专属 portrait 已接入且 eval-008-visual-presentation 由人工确认通过。"
+    }
+  ]
+}

@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-003-weather-season",
+  "createdDate": "2026-08-25",
+  "updatedDate": "2026-08-25",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "repairIteration": 0,
+  "tasks": [{"id":"task-301","status":"completed"},{"id":"task-302","status":"completed"},{"id":"task-303","status":"completed"}],
+  "snapshotHash": "sha256:f60ae3be750f76c6053ff77815e8d75c636a8ea273b75c646f963877461109ae",
+  "manualRequired": ["eval-304-weather-presentation", "token-efficiency-baseline"],
+  "humanScore": {"artStyle": null, "playerFun": null, "tokenEfficiencyReview": null},
+  "runtimeBatches": [{"batchId":"runtime-004-slice-003","evaluationIds":["eval-301-weather-startup","eval-302-severe-weather-ap","eval-303-day-weather-advance","eval-304-weather-presentation"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"status":"partial","manualRequired":["eval-304-weather-presentation"]}],
+  "evalReportDocumentId": "df323c06-81e3-45a4-a711-841bfeddbbe0"
+}

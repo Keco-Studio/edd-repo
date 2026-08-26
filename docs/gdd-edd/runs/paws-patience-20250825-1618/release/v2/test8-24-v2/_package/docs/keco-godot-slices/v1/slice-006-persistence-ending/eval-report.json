@@ -1,0 +1,42 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-006-persistence-ending",
+  "status": "partial",
+  "snapshotHash": "sha256:84719c202474c244fb030ebf6829090be62a3524eadb44ea20d69ed3e4a74581",
+  "evaluations": [
+    {"evalId":"eval-601-save-roundtrip","status":"passed","evidence":["runtime-008-slice-006-final:KECO_EVAL"]},
+    {"evalId":"eval-602-forward-only-day","status":"passed","evidence":["runtime-008-slice-006-final:KECO_EVAL"]},
+    {"evalId":"eval-603-bond-home-ending","status":"passed","evidence":["runtime-008-slice-006-final:KECO_EVAL"]},
+    {"evalId":"eval-604-lifetime-farewell","status":"passed","evidence":["runtime-008-slice-006-final:KECO_EVAL"]},
+    {"evalId":"eval-605-ending-presentation","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [{"batchId":"runtime-008-slice-006-final","evaluationIds":["eval-601-save-roundtrip","eval-602-forward-only-day","eval-603-bond-home-ending","eval-604-lifetime-farewell","eval-605-ending-presentation"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"single aggregate Slice 006 and regression batch"}],
+  "changedFiles": ["paws_patience/main.gd","docs/development-index.md"],
+  "manualRequirements": [
+    {"dimension":"artStyle","score":null,"comment":null,"nextIteration":null},
+    {"dimension":"playerFun","score":null,"comment":null,"nextIteration":null},
+    {"dimension":"tokenEfficiency","score":null,"comment":null,"nextIteration":null},
+    {"dimension":"eval-605-ending-presentation","score":null,"comment":null,"nextIteration":null}
+  ],
+  "claudeReview": {
+    "status":"passed",
+    "attempts":8,
+    "verdict":"pass",
+    "summary":"Claude 独立确认存档、不可逆时间、寿命、回家与告别结局、评估隔离和 Slice 001-005 回归证据可信；没有 P0/P1/P2。",
+    "findings":[{"severity":"P3","issue":"status.json 重复 evalReportDocument 键","resolution":"已删除重复键并重新校验"}],
+    "risks":["eval-605 结局展示仍需人工评价","美术风格和玩家趣味性不能由 AI 代评","Token 节省率等待人工基线"],
+    "manualBoundariesPreserved":true,
+    "usage":{"inputTokens":33649,"outputTokens":13813,"cacheReadInputTokens":234630,"cacheCreationInputTokens":29322,"costUSD":0.49989025,"durationMs":325467},
+    "pollIntervalMinutes":10
+  },
+  "tokenUsage": {
+    "codexVisibleWindow": {"requestCount":17,"inputTokens":2936716,"outputTokens":7317,"cacheReadTokens":2888448,"costUSD":0.571522,"timeRange":"2026-08-26T00:01:07+08:00/2026-08-26T00:05:09+08:00"},
+    "claudeRecordedEarlier": {"claudeCalls":8,"inputTokens":70920,"outputTokens":10368,"totalReportedTokens":81288,"cacheReadInputTokens":424839,"cacheCreationInputTokens":67602,"costUSD":1.53334825},
+    "claudeConnectivityHello": {"claudeCalls":1,"inputTokens":4211,"outputTokens":10,"cacheReadInputTokens":27311,"cacheCreationInputTokens":3413,"costUSD":null,"costSource":"中转站控制台待读取"},
+    "claudeFinalReview": {"claudeCalls":1,"inputTokens":33649,"outputTokens":13813,"cacheReadInputTokens":234630,"cacheCreationInputTokens":29322,"costUSD":0.49989025,"costSource":"Claude CLI relay response"},
+    "claudeAggregate": {"claudeCalls":10,"inputTokens":108780,"outputTokens":24191,"totalReportedTokens":132971,"cacheReadInputTokens":686780,"cacheCreationInputTokens":100337,"confirmedCostLowerBoundUSD":2.0332385,"note":"不含 hello 的控制台成本"},
+    "confirmedCrossWindowCostLowerBoundUSD":2.6047605,
+    "baselineTokens":null,"savingsTokens":null,"savingsRatio":null
+  }
+}

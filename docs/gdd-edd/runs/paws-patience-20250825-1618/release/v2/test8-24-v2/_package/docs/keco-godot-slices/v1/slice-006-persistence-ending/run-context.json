@@ -1,0 +1,49 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "mode": "implicit-v2",
+  "kecoProjectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "kecoProjectName": "test8-24",
+  "kecoFolderId": "5dbc8b49-0e2b-4f70-bb7d-970b49d25dd7",
+  "godotProjectPath": "C:/Users/lenovo/Desktop/test48-25/paws_patience",
+  "godotVersion": "4.7.stable.official.5b4e0cb0f",
+  "mainScene": "res://main.tscn",
+  "sliceId": "slice-006-persistence-ending",
+  "allowedFiles": [
+    "paws_patience/main.gd",
+    "progress/v1/paws-patience-20260825-1618.jsonl",
+    "result/v1/paws-patience-20260825-1618.json",
+    "docs/development-index.md",
+    "docs/keco-godot-slices/v1/slice-006-persistence-ending/spec.md",
+    "docs/keco-godot-slices/v1/slice-006-persistence-ending/plan.md",
+    "docs/keco-godot-slices/v1/slice-006-persistence-ending/plan.validation.json",
+    "docs/keco-godot-slices/v1/slice-006-persistence-ending/run-context.json",
+    "docs/keco-godot-slices/v1/slice-006-persistence-ending/status.json",
+    "docs/keco-godot-slices/v1/slice-006-persistence-ending/eval-report.json",
+    "docs/keco-godot-slices/v1/paws-patience-20260825-roadmap/roadmap.md"
+  ],
+  "iteration": 0,
+  "writeToken": "paws-patience-20260825-1618/slice-006-persistence-ending/iteration-0",
+  "source": {
+    "documentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+    "documentName": "game-gdd",
+    "revision": 2,
+    "contentHash": "sha256:91f082aa2a51d315d2500aaf5d8cbe872ec01c939c797ea80314d96dbf93398d"
+  },
+  "documents": {
+    "roadmap": {"id": "56a2e34c-a197-4148-96d3-3659a68d2a51", "name": "paws-patience-20260825-roadmap", "revision": 7},
+    "spec": {"id": "0b47897b-b9d5-42c7-a4a3-40ced08b1a77", "name": "slice-006-persistence-ending-spec", "revision": 1},
+    "plan": {"id": "6264a3b6-4728-4791-807f-472164e7a759", "name": "slice-006-persistence-ending-plan", "revision": 1},
+    "status": {"id": "a7f5c377-51c1-412a-b8ca-1d1354e7ea39", "name": "slice-006-persistence-ending-status", "revision": 3},
+    "evalReport": {"id": "c7344e8d-81bd-46a3-8ecd-e7f65bad270e", "name": "slice-006-persistence-ending-eval-report", "revision": 1}
+  },
+  "baseline": {
+    "gitAvailable": false,
+    "note": "工作区不是 Git 仓库，因此没有 branch 和 commit。",
+    "fileHashes": {
+      "paws_patience/main.gd": "sha256:e85162b587d164e40ae6932de02042acae7519048e0d4191e8e1ba9d4ee7231e",
+      "paws_patience/main.tscn": "sha256:c7222f1e05acaa94107f1d53bebfdfb45c049826c221c03e59bd916bde6a34c1",
+      "paws_patience/project.godot": "sha256:635fc327b5967ad0014b20cf7e5f9ea51f485a374982725e0cbac831b2d99b15"
+    }
+  }
+}

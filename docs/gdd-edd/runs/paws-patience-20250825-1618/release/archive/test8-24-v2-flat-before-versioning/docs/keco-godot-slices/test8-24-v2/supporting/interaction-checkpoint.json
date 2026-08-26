@@ -1,0 +1,11 @@
+{
+  "version": 1,
+  "status": "completed",
+  "blockedAt": "none",
+  "completed": ["V2 folder", "V2 document ledger", "V1 evidence split", "baseline runtime", "release package"],
+  "writesPerformed": ["Keco V2 folder", "Keco V2 roadmap", "Keco V2 slice documents", "local V1/V2 records", "release package"],
+  "userAction": "none",
+  "resumeFrom": "none",
+  "checkpoint": {"runId": "test8-24-v2-20260826", "planRevision": "1", "sourceRevisions": {"game-gdd": "2"}},
+  "revalidate": []
+}

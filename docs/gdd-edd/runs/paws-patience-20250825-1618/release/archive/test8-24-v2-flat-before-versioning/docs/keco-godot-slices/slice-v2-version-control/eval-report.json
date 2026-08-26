@@ -1,0 +1,17 @@
+{
+  "version": 2,
+  "runId": "test8-24-v2-20260826",
+  "sliceId": "slice-v2-version-control",
+  "status": "partial",
+  "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "evaluations": [
+    {"evalId":"eval-v2-layout","status":"passed","evidence":["local directory checks"]},
+    {"evalId":"eval-v2-traceability","status":"passed","evidence":["Keco IDs and V1 hashes"]},
+    {"evalId":"eval-v2-package","status":"passed","evidence":["ZIP listing"]},
+    {"evalId":"eval-v2-runtime","status":"manual_required","evidence":["runtime-v2-baseline-20260826: objective KECO_EVAL passed; six manual_required"]}
+  ],
+  "runtimeBatches": [],
+  "manualRequirements": ["eval-005-visual-experience","eval-304-weather-presentation","eval-404-shelter-presentation","eval-503-probability-presentation","eval-605-ending-presentation","eval-702-visual-presentation","art-style-human-review","player-fun-human-review","token-efficiency-human-review"],
+  "changedFiles": ["progress/v1/**","progress/v2/**","docs/keco-godot-slices/v2/test8-24-v2/**","docs/keco-godot-slices/v2/slice-v2-version-control/**","release/v2/test8-24-v2/**"],
+  "review": {"requirementsCompliance":"passed","regressionRisk":"passed","residualRisks":["Human visual and experience reviews remain open","Workspace is not a Git repository; Keco document revisions and hashes provide the current version ledger"]}
+}

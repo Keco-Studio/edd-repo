@@ -1,0 +1,17 @@
+{
+  "ok": true,
+  "taskCount": 3,
+  "qualityReviews": 3,
+  "reviewStatus": "passed_after_allowed_files_revision",
+  "kecoPlanRevision": 4,
+  "reviewedDate": "2026-08-26",
+  "scope": "同款游戏现有地图背景和病弱猫图片的登记、物化与 Godot 集成",
+  "conditions": [
+    "不调用 PixelLab，不产生生成费用",
+    "不修改 Slice 001-006 的玩法规则",
+    "所有既有客观 KECO_EVAL 必须回归通过",
+    "美术风格、玩家趣味性、Token 效率保持人工空位",
+    "快照采用校验器要求的 manifest.json 与 tables/visual-assets.json 结构",
+    "Godot 4.7 自动生成的两份 PNG 导入元数据和 main.gd.uid 纳入允许清单"
+  ]
+}

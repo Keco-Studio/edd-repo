@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "task-201",
+      "files": ["paws_patience/main.gd"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-201-dialogue-branches", "eval-202-emotion-feedback"],
+      "red": {"command": "rg \"dialogue_line|cat_mood|eval-201-dialogue-branches\" paws_patience/main.gd"},
+      "green": {"command": "rg \"cat_dialogue_branch|cat_mood|eval-201-dialogue-branches\" paws_patience/main.gd"},
+      "review": {"spec": true, "quality": false}
+    },
+    {
+      "id": "task-202",
+      "files": ["paws_patience/main.gd"],
+      "dependsOn": ["task-201"],
+      "servesEvaluations": ["eval-201-dialogue-branches", "eval-202-emotion-feedback"],
+      "red": {"command": "rg \"dialogueBranch|mood\" paws_patience/main.gd"},
+      "green": {"command": "run_project -> get_debug_output -> stop_project and parse eval-201/eval-202"},
+      "review": {"spec": true, "quality": true}
+    },
+    {
+      "id": "task-203",
+      "files": ["paws_patience/main.gd"],
+      "dependsOn": ["task-202"],
+      "servesEvaluations": ["eval-203-dialogue-presentation"],
+      "red": {"command": "rg \"dialogue_label|mood_label\" paws_patience/main.gd"},
+      "green": {"command": "get_project_info(projectPath=paws_patience) reports one script and one scene"},
+      "review": {"spec": true, "quality": true}
+    },
+    {
+      "id": "task-204",
+      "files": ["progress/v1/paws-patience-20260825-1618.jsonl", "result/v1/paws-patience-20260825-1618.json", "docs/keco-godot-slices/v1/slice-002-cat-dialogue/status.json", "docs/keco-godot-slices/v1/slice-002-cat-dialogue/eval-report.json"],
+      "dependsOn": ["task-203"],
+      "servesEvaluations": ["eval-201-dialogue-branches", "eval-202-emotion-feedback", "eval-203-dialogue-presentation"],
+      "red": {"command": "Test-Path docs/keco-godot-slices/v1/slice-002-cat-dialogue/eval-report.json"},
+      "green": {"command": "python -m json.tool docs/keco-godot-slices/v1/slice-002-cat-dialogue/eval-report.json"},
+      "review": {"spec": true, "quality": true}
+    }
+  ]
+}

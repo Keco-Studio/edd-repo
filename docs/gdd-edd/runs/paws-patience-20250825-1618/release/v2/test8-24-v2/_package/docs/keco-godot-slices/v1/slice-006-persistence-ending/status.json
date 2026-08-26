@@ -1,0 +1,63 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-006-persistence-ending",
+  "createdDate": "2026-08-25",
+  "updatedDate": "2026-08-26",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "currentTaskName": null,
+  "repairIteration": 0,
+  "writeLease": "issued",
+  "writeLeaseScope": "paws-patience-20260825-1618/slice-006-persistence-ending/iteration-0",
+  "planReview": {
+    "status": "passed_with_execution_conditions",
+    "validator": "passed",
+    "claudeAttempts": 7,
+    "claudeResult": "connection_refused_no_verdict",
+    "conditions": [
+      "Slice 001-005 的客观 KECO_EVAL 必须一起回归",
+      "存档、生命周期和评估隔离的关键代码块使用中文注释"
+    ]
+  },
+  "tasks": [
+    {"id": "task-601", "name": "单槽自动存档与安全读取", "status": "completed"},
+    {"id": "task-602", "name": "不可逆跨日、寿命和两阶段结局", "status": "completed"},
+    {"id": "task-603", "name": "结构化运行评估与存档隔离", "status": "completed"},
+    {"id": "task-604", "name": "文档、Claude 评价和人工迭代空位", "status": "completed"}
+  ],
+  "snapshotHash": "sha256:84719c202474c244fb030ebf6829090be62a3524eadb44ea20d69ed3e4a74581",
+  "evalReportDocument": {"id": "c7344e8d-81bd-46a3-8ecd-e7f65bad270e", "name": "slice-006-persistence-ending-eval-report", "revision": 2, "status": "partial"},
+  "claudePollingPolicy": {"minimumIntervalMinutes":10,"lastAttempt":"2026-08-26T01:33:58+08:00","lastResult":"pass","lastUsage":{"inputTokens":33649,"outputTokens":13813,"cacheReadInputTokens":234630,"cacheCreationInputTokens":29322,"costUSD":0.49989025}},
+  "claudeReview": {
+    "status": "passed",
+    "attempts": 8,
+    "verdict": "pass",
+    "manualBoundariesPreserved": true,
+    "summary": "存档、不可逆时间、寿命、两种结局、评估隔离与回归证据均通过独立只读复审",
+    "findings": [{"severity":"P3","issue":"status.json 曾重复声明 evalReportDocument","resolution":"已删除重复键并重新校验 JSON"}],
+    "risks": ["结局展示、美术风格和玩家趣味性仍需人工体验评价", "Token 节省率等待人工基线"]
+  },
+  "runtimeBatch": {
+    "batchId": "runtime-008-slice-006-final",
+    "sequence": ["run_project", "get_debug_output", "stop_project"],
+    "objectiveResults": {"eval-601-save-roundtrip": "passed", "eval-602-forward-only-day": "passed", "eval-603-bond-home-ending": "passed", "eval-604-lifetime-farewell": "passed"},
+    "regressions": "Slice 001-005 objective evaluations passed",
+    "manualResult": {"eval-605-ending-presentation": "manual_required"},
+    "errors": []
+  },
+  "documents": {
+    "spec": {"id": "0b47897b-b9d5-42c7-a4a3-40ced08b1a77", "name": "slice-006-persistence-ending-spec"},
+    "plan": {"id": "6264a3b6-4728-4791-807f-472164e7a759", "name": "slice-006-persistence-ending-plan"},
+    "status": {"id": "a7f5c377-51c1-412a-b8ca-1d1354e7ea39", "name": "slice-006-persistence-ending-status"}
+  },
+  "manualRequired": ["eval-605-ending-presentation", "art-style-human-review", "player-fun-human-review", "token-efficiency-human-review"],
+  "humanReview": {
+    "artStyle": {"score": null, "comment": null, "nextIteration": null},
+    "playerFun": {"score": null, "comment": null, "nextIteration": null},
+    "tokenEfficiency": {"score": null, "comment": null, "nextIteration": null}
+  }
+}

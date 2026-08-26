@@ -1,0 +1,19 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-004-shelter",
+  "createdDate": "2026-08-25",
+  "updatedDate": "2026-08-25",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "repairIteration": 0,
+  "tasks": [{"id":"task-401","status":"completed"},{"id":"task-402","status":"completed"},{"id":"task-403","status":"completed"}],
+  "snapshotHash": "sha256:4e594e34d687b78f92cc4e922fa44e120df42a9b8cb546136984404f593130f6",
+  "manualRequired": ["eval-404-shelter-presentation", "token-efficiency-baseline"],
+  "humanScore": {"artStyle": null, "playerFun": null, "tokenEfficiencyReview": null},
+  "runtimeBatches": [{"batchId":"runtime-005-slice-004","evaluationIds":["eval-401-shelter-options","eval-402-shelter-build","eval-403-shelter-feedback","eval-404-shelter-presentation"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"status":"partial","manualRequired":["eval-404-shelter-presentation"]}],
+  "evalReportDocumentId": "05ec3306-77d5-4930-9246-092ca67e8ea3"
+}

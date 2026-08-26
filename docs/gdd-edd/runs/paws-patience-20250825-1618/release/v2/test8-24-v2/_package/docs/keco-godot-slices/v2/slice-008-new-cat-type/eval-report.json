@@ -1,0 +1,20 @@
+{
+  "version": 2,
+  "runId": "test8-24-v2-20260827-cat-type",
+  "sliceId": "slice-008-new-cat-type",
+  "status": "partial",
+  "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "evaluations": [
+    {"evalId":"eval-801-cat-profile","status":"passed","evidence":["source assertion","runtime-011 KECO_EVAL"]},
+    {"evalId":"eval-802-guardian-interaction","status":"passed","evidence":["runtime-011 KECO_EVAL"]},
+    {"evalId":"eval-803-guardian-probability","status":"passed","evidence":["runtime-011 KECO_EVAL"]},
+    {"evalId":"eval-804-guardian-save","status":"passed","evidence":["runtime-011 KECO_EVAL"]},
+    {"evalId":"eval-805-v1-regression","status":"passed","evidence":["runtime-011 KECO_EVAL"]},
+    {"evalId":"eval-008-visual-presentation","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [{"batchId":"runtime-011-slice-008-guardian-final","evaluationIds":["eval-801-cat-profile","eval-802-guardian-interaction","eval-803-guardian-probability","eval-804-guardian-save","eval-805-v1-regression"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"source assertion is static; runtime evaluations share one bounded Godot process"}],
+  "changedFiles": ["paws_patience/main.gd","progress/v2/**","docs/keco-godot-slices/v2/slice-008-new-cat-type/**"],
+  "manualRequirements": ["eval-008-visual-presentation","art-style-human-review","player-fun-human-review","token-efficiency-human-review"],
+  "assetEvidence": {"strategy":"reuse_exact","tableId":"e431f55e-93f6-443c-9d79-ceff078e2f1e","assetKey":"paws-sick-cat-south","pixelLabCost":0},
+  "review": {"claudeStatus":"revise_then_accepted","requirementsCompliance":"passed","regressionRisk":"passed","repairIteration":1,"findings":[],"residualRisks":["Guardian uses a temporary reused portrait until a dedicated asset is approved","Workspace has no Git repository; Keco revisions and hashes are authoritative"]}
+}

@@ -1,0 +1,141 @@
+{
+  "version": 1,
+  "profileId": "test8-24-v2-slice-008-slice-v1",
+  "gameId": "test8-24-v2-slice-008",
+  "stage": "slice",
+  "genre": "cozy cat-care simulation",
+  "gddRevision": "2",
+  "buildHash": "sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266",
+  "lockedAt": "2026-08-27T03:16:47+08:00",
+  "thresholds": {
+    "alpha": 60,
+    "beta": 70,
+    "rc": 80,
+    "release": 85
+  },
+  "dimensions": {
+    "artStyle": {
+      "max": 50,
+      "items": [
+        {
+          "id": "styleConsistency",
+          "dimension": "artStyle",
+          "name": "Style consistency",
+          "max": 20,
+          "anchors": {
+            "zero": "Visual rules conflict across inspected states.",
+            "full": "The inspected states consistently follow a clear visual direction."
+          },
+          "requiredEvidence": [
+            "gameplay captures",
+            "GDD art direction"
+          ]
+        },
+        {
+          "id": "assetQualityAndFit",
+          "dimension": "artStyle",
+          "name": "Asset quality and fit",
+          "max": 15,
+          "anchors": {
+            "zero": "Assets are visibly unfinished or conflict with the intended experience.",
+            "full": "Assets are polished and fit the intended experience and visual direction."
+          },
+          "requiredEvidence": [
+            "asset samples",
+            "runtime captures"
+          ]
+        },
+        {
+          "id": "uiReadabilityAndLayout",
+          "dimension": "artStyle",
+          "name": "UI readability and layout",
+          "max": 10,
+          "anchors": {
+            "zero": "Critical information is unreadable or structurally unclear.",
+            "full": "Critical information remains readable with a coherent hierarchy and layout."
+          },
+          "requiredEvidence": [
+            "HUD captures",
+            "menu captures"
+          ]
+        },
+        {
+          "id": "visualFeedbackAndEmotion",
+          "dimension": "artStyle",
+          "name": "Visual feedback and emotion",
+          "max": 5,
+          "anchors": {
+            "zero": "Visual feedback does not communicate actions, state, or intended emotion.",
+            "full": "Visual feedback clearly reinforces actions, state, and intended emotion."
+          },
+          "requiredEvidence": [
+            "gameplay captures",
+            "Slice EvalReport"
+          ]
+        }
+      ]
+    },
+    "playerFun": {
+      "max": 50,
+      "items": [
+        {
+          "id": "coreLoopAppeal",
+          "dimension": "playerFun",
+          "name": "Core loop appeal",
+          "max": 20,
+          "anchors": {
+            "zero": "Implemented loop evidence provides no credible reason to repeat interaction.",
+            "full": "Implemented loop evidence supports a strong reason to repeat interaction."
+          },
+          "requiredEvidence": [
+            "playable build evidence",
+            "Slice EvalReport",
+            "GDD core loop"
+          ]
+        },
+        {
+          "id": "meaningfulChoices",
+          "dimension": "playerFun",
+          "name": "Meaningful choices",
+          "max": 15,
+          "anchors": {
+            "zero": "Available choices do not materially change approach or outcome.",
+            "full": "Available choices produce clear and materially different approaches or outcomes."
+          },
+          "requiredEvidence": [
+            "choice outcomes",
+            "gameplay implementation"
+          ]
+        },
+        {
+          "id": "feedbackPacingAndGoals",
+          "dimension": "playerFun",
+          "name": "Feedback, pacing, and goals",
+          "max": 10,
+          "anchors": {
+            "zero": "Goals, pacing, and response feedback do not sustain understandable interaction.",
+            "full": "Goals, pacing, and response feedback form a legible and engaging progression."
+          },
+          "requiredEvidence": [
+            "play sequence evidence",
+            "goal and reward captures"
+          ]
+        },
+        {
+          "id": "motivationToContinue",
+          "dimension": "playerFun",
+          "name": "Motivation to continue",
+          "max": 5,
+          "anchors": {
+            "zero": "Available evidence presents no concrete reason to continue.",
+            "full": "Available evidence presents concrete and escalating reasons to continue."
+          },
+          "requiredEvidence": [
+            "progression evidence",
+            "player-session evidence when available"
+          ]
+        }
+      ]
+    }
+  }
+}

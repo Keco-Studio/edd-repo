@@ -1,0 +1,16 @@
+{
+  "version": 1,
+  "runId": "test8-24-v2-20260826",
+  "sliceId": "slice-v2-version-control",
+  "createdDate": "2026-08-26",
+  "updatedDate": "2026-08-26",
+  "status": "completed",
+  "latest": true,
+  "supersedes": [],
+  "completed": true,
+  "currentTaskId": null,
+  "tasks": [{"id":"task-01","status":"completed"},{"id":"task-02","status":"completed"},{"id":"task-03","status":"completed"}],
+  "kecoDocumentIds": {"roadmap":"e696b95d-b121-474a-9f62-7d7c6c74433b","spec":"df29fa4d-d47a-42fb-8ef2-9568c160ae33","plan":"20b696a7-f31c-4524-bdac-67275ea87e51","status":"735b1e8b-23b3-40a8-89b7-c1cfc3b5aa56","evalReport":"5040dc83-7f74-49e1-87be-a7e6103898dc"},
+  "runtime": {"batchId":"runtime-v2-baseline-20260826","objectiveEvaluations":"passed","manualRequired":6,"errors":[]},
+  "manualRequirements": ["eval-v2-runtime", "art-style-human-review", "player-fun-human-review", "token-efficiency-human-review"]
+}

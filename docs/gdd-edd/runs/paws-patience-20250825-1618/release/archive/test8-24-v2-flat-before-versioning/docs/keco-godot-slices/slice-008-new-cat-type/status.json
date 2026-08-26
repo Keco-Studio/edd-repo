@@ -1,0 +1,21 @@
+{
+  "version": 1,
+  "runId": "test8-24-v2-20260827-cat-type",
+  "sliceId": "slice-008-new-cat-type",
+  "createdDate": "2026-08-27",
+  "updatedDate": "2026-08-27",
+  "status": "completed",
+  "latest": true,
+  "completed": true,
+  "supersedes": [],
+  "currentTaskId": null,
+  "repairIteration": 1,
+  "tasks": [{"id":"task-801","status":"completed"},{"id":"task-802","status":"completed"},{"id":"task-803","status":"completed"}],
+  "planReview": {"status":"passed","validator":"passed","taskCount":3,"qualityReviews":3},
+  "executionPreflight": {"keco":"ready","godot":"ready","pixelLab":"not_required","assetStrategy":"reuse_exact"},
+  "runtimeBatch": {"batchId":"runtime-011-slice-008-guardian-final","sequence":["run_project","get_debug_output","stop_project"],"objectivePassed":5,"v1RegressionPassed":true,"errors":[]},
+  "mainGdHash": "sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266",
+  "releasePackage": {"path":"release/v2/test8-24-v2/test8-24-v2.zip","manifest":"release/v2/test8-24-v2/manifest.json","sourceHash":"sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266"},
+  "kecoDocumentIds": {"roadmap":"e696b95d-b121-474a-9f62-7d7c6c74433b","spec":"dbdc4f3d-1817-4bb1-b24d-e6fcb37ba904","plan":"f0eaa3da-005a-4f2e-855d-9c87c1c9dd4d","status":"0e98a4a8-105b-468e-8dbc-5d1867b54974","evalSpec":"3ef674a7-aca6-4a31-98f3-723a751f3e01","designReview":"7d50306f-7be8-4f76-bb81-0a1738103bbe","dataPlan":"e4b79d18-b28a-4cb3-9f14-fdc5f9fed0c6","assetPlan":"b326aa6b-e661-4b9b-b359-aade9a306536"},
+  "manualRequirements": ["visual presentation", "art-style-human-review", "player-fun-human-review", "token-efficiency-human-review"]
+}

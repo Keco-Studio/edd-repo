@@ -1,0 +1,49 @@
+{
+  "version": 1,
+  "sliceId": "slice-v2-version-control",
+  "allowedFiles": [
+    "progress/v1/**",
+    "progress/v2/**",
+    "planning/v1/**",
+    "planning/v2/**",
+    "result/v1/**",
+    "result/v2/**",
+    "data/keco/v1/**",
+    "data/keco/v2/**",
+    "docs/keco-godot-slices/v1/**",
+    "docs/keco-godot-slices/v2/**",
+    "review-dashboard/v1/**",
+    "review-dashboard/v2/**",
+    "release/v1/**",
+    "release/v2/**"
+  ],
+  "tasks": [
+    {
+      "id": "task-01",
+      "files": ["progress/v1/**", "progress/v2/**", "planning/v1/**", "planning/v2/**", "result/v1/**", "result/v2/**", "docs/keco-godot-slices/v1/**", "docs/keco-godot-slices/v2/**"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-v2-layout"],
+      "red": {"command": "Test-Path progress/v2; Test-Path planning/v2; Test-Path result/v2; Test-Path docs/keco-godot-slices/v2", "expected": "one or more version directories are absent"},
+      "green": {"command": "Get-ChildItem progress,planning,result,docs/keco-godot-slices -Directory", "expected": "each versioned artifact root contains the required v1/v2 folders"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-02",
+      "files": ["progress/v2/**", "result/v2/**", "data/keco/v2/**", "docs/keco-godot-slices/v2/**"],
+      "dependsOn": ["task-01"],
+      "servesEvaluations": ["eval-v2-traceability"],
+      "red": {"command": "Test-Path result/v2/paws-patience-20260827-cat-type.json; Test-Path data/keco/v2/resource-provenance.json", "expected": "V2 result or resource provenance is absent"},
+      "green": {"command": "Get-Content result/v2/paws-patience-20260827-cat-type.json -Raw | ConvertFrom-Json", "expected": "V2 records parse and contain stable Keco IDs, revisions, hashes, and manual review slots"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-03",
+      "files": ["release/v1/**", "release/v2/**"],
+      "dependsOn": ["task-02"],
+      "servesEvaluations": ["eval-v2-package"],
+      "red": {"command": "Test-Path release/v2/test8-24-v2/test8-24-v2.zip", "expected": "version-separated package is absent"},
+      "green": {"command": "tar -tf release/v2/test8-24-v2/test8-24-v2.zip", "expected": "ZIP opens and contains version-separated progress, planning, result, data, docs, and source entries"},
+      "review": {"spec": "required", "quality": "required"}
+    }
+  ]
+}

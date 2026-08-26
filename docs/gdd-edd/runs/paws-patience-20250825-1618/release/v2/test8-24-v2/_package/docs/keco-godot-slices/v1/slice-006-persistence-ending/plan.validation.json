@@ -1,0 +1,41 @@
+{
+  "version": 1,
+  "tasks": [
+    {
+      "id": "task-601",
+      "files": ["paws_patience/main.gd"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-601-save-roundtrip"],
+      "red": {"command": "rg \"SAVE_PATH|_save_game|_load_game\" paws_patience/main.gd"},
+      "green": {"command": "rg \"SAVE_PATH|_save_game|_load_game\" paws_patience/main.gd and parse eval-601 KECO_EVAL"},
+      "review": {"spec": true, "quality": false}
+    },
+    {
+      "id": "task-602",
+      "files": ["paws_patience/main.gd"],
+      "dependsOn": ["task-601"],
+      "servesEvaluations": ["eval-602-forward-only-day", "eval-603-bond-home-ending", "eval-604-lifetime-farewell", "eval-605-ending-presentation"],
+      "red": {"command": "rg \"MAX_CAT_LIFE_DAYS|timeline_revision|ending_state|_update_ending_state\" paws_patience/main.gd"},
+      "green": {"command": "rg \"MAX_CAT_LIFE_DAYS|timeline_revision|ending_state|_update_ending_state\" paws_patience/main.gd and parse eval-602/eval-603/eval-604 KECO_EVAL"},
+      "review": {"spec": true, "quality": true}
+    },
+    {
+      "id": "task-603",
+      "files": ["paws_patience/main.gd"],
+      "dependsOn": ["task-602"],
+      "servesEvaluations": ["eval-601-save-roundtrip", "eval-602-forward-only-day", "eval-603-bond-home-ending", "eval-604-lifetime-farewell", "eval-605-ending-presentation"],
+      "red": {"command": "rg \"eval-601-save-roundtrip|eval-604-lifetime-farewell\" paws_patience/main.gd"},
+      "green": {"command": "run_project -> get_debug_output -> stop_project and parse Slice 006 KECO_EVAL records"},
+      "review": {"spec": true, "quality": true}
+    },
+    {
+      "id": "task-604",
+      "files": ["progress/v1/paws-patience-20260825-1618.jsonl", "result/v1/paws-patience-20260825-1618.json", "docs/development-index.md", "docs/keco-godot-slices/v1/slice-006-persistence-ending/eval-report.json", "docs/keco-godot-slices/v1/paws-patience-20260825-roadmap/roadmap.md"],
+      "dependsOn": ["task-603"],
+      "servesEvaluations": ["eval-601-save-roundtrip", "eval-602-forward-only-day", "eval-603-bond-home-ending", "eval-604-lifetime-farewell", "eval-605-ending-presentation"],
+      "red": {"command": "Test-Path docs/keco-godot-slices/v1/slice-006-persistence-ending/eval-report.json"},
+      "green": {"command": "validate run context, plan, slice documents, evaluation report, and JSONL records"},
+      "review": {"spec": true, "quality": true}
+    }
+  ]
+}

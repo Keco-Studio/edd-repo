@@ -1,0 +1,62 @@
+{
+  "aggregateSha256": "1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "capturedAt": "2026-08-26T02:49:00+08:00",
+  "project": {
+    "id": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+    "name": "test8-24"
+  },
+  "schemaVersion": 1,
+  "sourceInputSha256": "21397c5205cd81d83be20852b40c28a40116f4834bb7105402fbeb2f39a326c1",
+  "sources": {
+    "documents": [
+      {
+        "epoch": 8,
+        "id": "56a2e34c-a197-4148-96d3-3659a68d2a51",
+        "name": "paws-patience-20260825-roadmap",
+        "revision": 9
+      },
+      {
+        "epoch": 0,
+        "id": "8cff675e-529a-471f-8d9c-46bbc534a78f",
+        "name": "slice-007-visual-assets-spec",
+        "revision": 1
+      },
+      {
+        "epoch": 0,
+        "id": "b7c65647-36ed-4c73-9634-439755b0ea37",
+        "name": "game-gdd",
+        "revision": 2
+      },
+      {
+        "epoch": 1,
+        "id": "bd93dddd-1c98-4113-b878-7ae14ce6cd92",
+        "name": "slice-007-visual-assets-status",
+        "revision": 2
+      },
+      {
+        "epoch": 2,
+        "id": "d2d7e158-b0ed-47ef-b0e2-509708567f2f",
+        "name": "slice-007-visual-assets-plan",
+        "revision": 3
+      }
+    ],
+    "tables": [
+      {
+        "id": "e431f55e-93f6-443c-9d79-ceff078e2f1e",
+        "name": "Visual Assets",
+        "updatedAt": "2026-08-25T18:44:27.223651+00:00"
+      }
+    ]
+  },
+  "tables": [
+    {
+      "fieldCount": 17,
+      "key": "visual-assets",
+      "path": "tables/visual-assets.json",
+      "rowCount": 2,
+      "sha256": "2d7541a4fc3a6221fb068f79a61c4cb717bf37f54d5c4f59baf6ef19b447921b",
+      "sourceTableId": "e431f55e-93f6-443c-9d79-ceff078e2f1e",
+      "sourceUpdatedAt": "2026-08-25T18:44:27.223651+00:00"
+    }
+  ]
+}

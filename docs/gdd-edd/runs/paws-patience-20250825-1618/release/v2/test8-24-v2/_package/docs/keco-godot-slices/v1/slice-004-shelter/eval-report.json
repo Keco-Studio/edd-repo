@@ -1,0 +1,16 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260825-1618",
+  "sliceId": "slice-004-shelter",
+  "status": "partial",
+  "snapshotHash": "sha256:4e594e34d687b78f92cc4e922fa44e120df42a9b8cb546136984404f593130f6",
+  "evaluations": [
+    {"evalId":"eval-401-shelter-options","status":"passed","evidence":["runtime-005-slice-004:KECO_EVAL"]},
+    {"evalId":"eval-402-shelter-build","status":"passed","evidence":["runtime-005-slice-004:KECO_EVAL"]},
+    {"evalId":"eval-403-shelter-feedback","status":"passed","evidence":["runtime-005-slice-004:KECO_EVAL"]},
+    {"evalId":"eval-404-shelter-presentation","status":"manual_required","evidence":["human-review-slot"]}
+  ],
+  "runtimeBatches": [{"batchId":"runtime-005-slice-004","evaluationIds":["eval-401-shelter-options","eval-402-shelter-build","eval-403-shelter-feedback"],"runtimeSequence":["run_project","get_debug_output","stop_project"],"splitReason":"single aggregate shelter mechanics batch; presentation remains manual"}],
+  "changedFiles": ["paws_patience/main.gd"],
+  "manualRequirements": [{"dimension":"artStyle","score":null,"comment":null},{"dimension":"playerFun","score":null,"comment":null},{"dimension":"tokenEfficiency","score":null,"comment":null}]
+}

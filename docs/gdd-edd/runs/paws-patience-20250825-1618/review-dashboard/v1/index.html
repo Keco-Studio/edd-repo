@@ -1,0 +1,222 @@
+<!doctype html>
+<html lang="zh-CN">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Paws & Patience · 开发验收台</title>
+  <link rel="icon" type="image/png" href="assets/game-preview.png">
+  <link rel="stylesheet" href="styles.css">
+</head>
+<body>
+  <div class="app-shell">
+    <aside class="sidebar" aria-label="验收台导航">
+      <div class="brand-block">
+        <span class="brand-mark" aria-hidden="true">P&P</span>
+        <div>
+          <strong>Paws & Patience</strong>
+          <span>开发验收台</span>
+        </div>
+      </div>
+
+      <nav class="nav-list">
+        <button class="nav-item is-active" type="button" data-view="overview"><span aria-hidden="true">⌂</span>总览</button>
+        <button class="nav-item" type="button" data-view="slices"><span aria-hidden="true">☷</span>开发成果</button>
+        <button class="nav-item" type="button" data-view="evidence"><span aria-hidden="true">✓</span>验证证据</button>
+        <button class="nav-item" type="button" data-view="review"><span aria-hidden="true">✎</span>EDD 人工评分</button>
+        <button class="nav-item" type="button" data-view="files"><span aria-hidden="true">⌘</span>文件入口</button>
+      </nav>
+
+      <div class="sidebar-meta">
+        <span>项目</span>
+        <strong>test8-24</strong>
+        <span>GDD revision 2</span>
+      </div>
+    </aside>
+
+    <main class="main-content">
+      <header class="topbar">
+        <div>
+          <p class="eyebrow">当前成果</p>
+          <h1 id="page-title">核心玩法原型总览</h1>
+        </div>
+        <div class="topbar-actions">
+          <span class="status-badge status-success"><span class="status-dot"></span>路线图已完成</span>
+          <a class="button button-secondary" href="../paws_patience/" target="_blank" rel="noreferrer">游戏目录 ↗</a>
+        </div>
+      </header>
+
+      <section class="view is-active" id="overview" aria-labelledby="page-title">
+        <div class="metric-strip" aria-label="完成指标">
+          <div class="metric"><span>开发切片</span><strong>7 / 7</strong><small>全部完成</small></div>
+          <div class="metric"><span>客观评估</span><strong>19</strong><small>全部通过</small></div>
+          <div class="metric"><span>Claude 复审</span><strong>PASS</strong><small>无 P0 / P1 / P2</small></div>
+          <div class="metric"><span>EDD 评分</span><strong id="review-progress">0 / 3</strong><small id="review-progress-note">等待填写</small></div>
+        </div>
+
+        <div class="overview-grid">
+          <figure class="game-preview">
+            <img src="assets/game-preview.png" alt="Paws & Patience 当前 Godot 游戏运行画面">
+            <figcaption>
+              <div>
+                <strong>当前可运行版本</strong>
+                <span>Godot 4.7 · 1280 × 720</span>
+              </div>
+              <span class="status-badge status-live"><span class="status-dot"></span>游戏窗口已打开</span>
+            </figcaption>
+          </figure>
+
+          <section class="summary-panel" aria-label="原型边界">
+            <div class="section-heading compact">
+              <p class="eyebrow">交付状态</p>
+              <h2>核心玩法技术原型</h2>
+            </div>
+            <p class="summary-copy">已具备完整日循环、猫咪互动、天气季节、庇护所、相遇概率、不可逆存档、寿命与双结局。当前适合直接体验和人工评价，不代表完整 GDD 内容已经制作完毕。</p>
+            <dl class="fact-list">
+              <div><dt>Godot 主体</dt><dd>paws_patience/main.gd</dd></div>
+              <div><dt>最新快照</dt><dd title="sha256:84719c202474c244fb030ebf6829090be62a3524eadb44ea20d69ed3e4a74581">84719c…74581</dd></div>
+              <div><dt>评估状态</dt><dd>partial · 人工项待评</dd></div>
+              <div><dt>代码哈希</dt><dd title="sha256:e67b04d9bea5579840f43099d1d8100da9bdebc1b148abc96393e90abbfaed25">e67b04…ed25</dd></div>
+            </dl>
+          </section>
+        </div>
+
+        <section class="content-band">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">开发路径</p>
+              <h2>七个 Slice 均已交付</h2>
+            </div>
+            <button class="text-button" type="button" data-go-view="slices">查看详细成果 →</button>
+          </div>
+          <ol class="slice-track">
+            <li><span>01</span><strong>基础日循环</strong><small>行动点、工作、互动</small></li>
+            <li><span>02</span><strong>猫咪对话</strong><small>分支文本与情绪反馈</small></li>
+            <li><span>03</span><strong>天气季节</strong><small>预告与行动点影响</small></li>
+            <li><span>04</span><strong>庇护所</strong><small>四种搭建选项</small></li>
+            <li><span>05</span><strong>相遇概率</strong><small>地点与状态修正</small></li>
+            <li><span>06</span><strong>存档与结局</strong><small>不可逆时间与双结局</small></li>
+          </ol>
+        </section>
+      </section>
+
+      <section class="view" id="slices" aria-label="开发成果">
+        <div class="section-heading page-section-heading">
+          <div><p class="eyebrow">Completed</p><h2>已完成的游戏内容</h2></div>
+          <span class="status-badge status-success">6 项完成</span>
+        </div>
+        <div class="result-list">
+          <article class="result-row"><span class="result-index">01</span><div><h3>基础日循环</h3><p>地图选择、4 点行动点、公司获得小鱼干、摸摸与喂食、羁绊反馈、行动耗尽后的次日过渡。</p></div><span class="row-status">完成</span></article>
+          <article class="result-row"><span class="result-index">02</span><div><h3>猫咪对话与反馈</h3><p>病弱猫的摸摸/喂食分支、不同台词、情绪状态和即时反应，互动不再只是数值变化。</p></div><span class="row-status">完成</span></article>
+          <article class="result-row"><span class="result-index">03</span><div><h3>天气与季节</h3><p>当前天气、次日预告、四季状态，以及暴雨和雪天将每日行动点降为 3 点。</p></div><span class="row-status">完成</span></article>
+          <article class="result-row"><span class="result-index">04</span><div><h3>庇护所系统</h3><p>纸箱、厚外套、旧毛衣、废弃轮胎四种选择，搭建会消耗行动点并增加羁绊。</p></div><span class="row-status">完成</span></article>
+          <article class="result-row"><span class="result-index">05</span><div><h3>相遇概率预览</h3><p>猫类型、季节、天气、地点、羁绊和庇护所共同修正相遇概率，并在地图中可见。</p></div><span class="row-status">完成</span></article>
+           <article class="result-row"><span class="result-index">06</span><div><h3>不可逆存档、寿命与结局</h3><p>版本化单槽自动存档、损坏保护、独立评估存档、12 天原型寿命、150 羁绊回家结局与告别结局。</p></div><span class="row-status">完成</span></article>
+           <article class="result-row"><span class="result-index">07</span><div><h3>同款视觉资源接入</h3><p>复用 newPaws 的地图背景和病弱猫图片，完成像素采样、DPI 响应式布局和中文界面修复。</p></div><span class="row-status">完成</span></article>
+        </div>
+        <div class="scope-note">
+          <strong>尚未制作的完整 GDD 内容</strong>
+          <p>三只猫的完整个人剧情、疏远衰减、牵挂奇迹、往生回响、长期数值平衡和正式美术资源。</p>
+        </div>
+      </section>
+
+      <section class="view" id="evidence" aria-label="验证证据">
+        <div class="section-heading page-section-heading">
+          <div><p class="eyebrow">Evidence</p><h2>自动验证与独立复审</h2></div>
+          <span class="status-badge status-success">errors: []</span>
+        </div>
+
+        <div class="evidence-grid">
+          <section class="evidence-block">
+            <div class="block-title"><h3>Godot 运行证据</h3><strong>18 passed</strong></div>
+            <div class="evidence-groups">
+              <div><span>基础循环</span><strong>4 / 4</strong></div>
+              <div><span>对话反馈</span><strong>2 / 2</strong></div>
+              <div><span>天气季节</span><strong>3 / 3</strong></div>
+              <div><span>庇护所</span><strong>3 / 3</strong></div>
+              <div><span>相遇概率</span><strong>2 / 2</strong></div>
+              <div><span>存档结局</span><strong>4 / 4</strong></div>
+            </div>
+            <p class="evidence-foot">最终批次：runtime-009-final-recheck · Godot 4.7.stable</p>
+          </section>
+
+          <section class="evidence-block">
+            <div class="block-title"><h3>Claude 独立复审</h3><strong>PASS</strong></div>
+            <p>确认不可逆存档、评估隔离、寿命、双结局及 Slice 001-005 回归证据可信。</p>
+            <ul class="check-list">
+              <li>无 P0 / P1 / P2 问题</li>
+              <li>P3 重复 JSON 键已经修复</li>
+              <li>人工评价边界保持正确</li>
+            </ul>
+          </section>
+        </div>
+
+        <section class="content-band cost-section">
+          <div class="section-heading compact"><div><p class="eyebrow">Relay usage</p><h2>Token 与成本记录</h2></div></div>
+          <div class="table-wrap">
+            <table>
+              <thead><tr><th>来源</th><th>调用</th><th>Input</th><th>Output</th><th>Cache read</th><th>已确认成本</th></tr></thead>
+              <tbody>
+                <tr><td>Claude 汇总</td><td>10</td><td>108,780</td><td>24,191</td><td>686,780</td><td>≥ $2.0332385</td></tr>
+                <tr><td>Codex 可见窗口</td><td>17</td><td>2,936,716</td><td>7,317</td><td>2,888,448</td><td>$0.571522</td></tr>
+                <tr class="total-row"><td>跨窗口下界</td><td>—</td><td>—</td><td>—</td><td>—</td><td>≥ $2.6047605</td></tr>
+              </tbody>
+            </table>
+          </div>
+          <p class="table-note">不包含 connectivity hello 的控制台成本，也不推测超时调用是否计费。Token 节省率等待人工基线。</p>
+        </section>
+      </section>
+
+      <section class="view" id="review" aria-label="EDD 人工评分">
+        <div class="section-heading page-section-heading">
+          <div><p class="eyebrow">EDD · Human score</p><h2>三项 EDD 人工评分</h2></div>
+          <button class="button button-primary" id="export-review" type="button">导出评价 JSON ↓</button>
+        </div>
+        <div class="edd-guide">
+          <div><strong>当前评分方案</strong><span>3 项 × 0–10 分 = EDD 项目总分 30 分</span></div>
+          <div><strong id="edd-total">当前总分：未完成</strong><span>分数只代表人工体验判断，不由自动测试或 Claude 代填。</span></div>
+          <p>填写下面三项的“评分、评价、下次迭代”。输入会自动保存在当前浏览器；填写完后点击右上角导出，把生成的 <code>paws-patience-human-review.json</code> 留在工作区或发回给我，我再同步到评估报告。</p>
+        </div>
+        <form id="review-form" class="review-form">
+          <section class="review-row" data-dimension="artStyle">
+            <div class="review-label"><span>01</span><div><h3>美术风格</h3><p>看整体一致性、题材匹配度、信息可读性和情绪表达。</p></div></div>
+            <label>评分（0–10）<input type="number" name="artStyle.score" min="0" max="10" step="0.5" placeholder="待填写"></label>
+            <label>评价<textarea name="artStyle.comment" rows="3" placeholder="记录实际感受"></textarea></label>
+            <label>下次迭代<textarea name="artStyle.nextIteration" rows="3" placeholder="需要改进的具体内容"></textarea></label>
+          </section>
+          <section class="review-row" data-dimension="playerFun">
+            <div class="review-label"><span>02</span><div><h3>玩家趣味性</h3><p>看玩家是否觉得好玩、愿意继续，以及哪一刻最投入或最无聊。</p></div></div>
+            <label>评分（0–10）<input type="number" name="playerFun.score" min="0" max="10" step="0.5" placeholder="待填写"></label>
+            <label>评价<textarea name="playerFun.comment" rows="3" placeholder="记录真实游玩感受"></textarea></label>
+            <label>下次迭代<textarea name="playerFun.nextIteration" rows="3" placeholder="需要改进的具体内容"></textarea></label>
+          </section>
+          <section class="review-row" data-dimension="tokenEfficiency">
+            <div class="review-label"><span>03</span><div><h3>Token 效率</h3><p>以中转站实际消耗为准，对比人工或旧工作流基线后计算节省量。</p></div></div>
+            <label>评分（0–10）<input type="number" name="tokenEfficiency.score" min="0" max="10" step="0.5" placeholder="待填写"></label>
+            <label>评价<textarea name="tokenEfficiency.comment" rows="3" placeholder="记录成本与产出判断"></textarea></label>
+            <label>下次迭代<textarea name="tokenEfficiency.nextIteration" rows="3" placeholder="需要改进的具体内容"></textarea></label>
+          </section>
+        </form>
+      </section>
+
+      <section class="view" id="files" aria-label="文件入口">
+        <div class="section-heading page-section-heading">
+          <div><p class="eyebrow">Workspace</p><h2>成果文件在哪里</h2></div>
+          <button class="button button-secondary" type="button" data-copy="C:\Users\lenovo\Desktop\test48-25">复制工作区路径 ⧉</button>
+        </div>
+        <div class="file-list">
+          <div class="file-row"><div><strong>可运行 Godot 项目</strong><code>paws_patience/</code><p>打开 project.godot，主场景为 main.tscn。</p></div><a href="../paws_patience/" target="_blank">打开 ↗</a></div>
+          <div class="file-row"><div><strong>游戏主体代码</strong><code>paws_patience/main.gd</code><p>UI、玩法系统、存档、结局和 KECO_EVAL。</p></div><a href="../paws_patience/main.gd" target="_blank">查看 ↗</a></div>
+          <div class="file-row"><div><strong>开发索引</strong><code>docs/development-index.md</code><p>可读名称、Keco ID 与本地文件对应关系。</p></div><a href="../../docs/development-index.md" target="_blank">查看 ↗</a></div>
+          <div class="file-row"><div><strong>完成路线图</strong><code>docs/keco-godot-slices/v1/paws-patience-20260825-roadmap/roadmap.md</code><p>七个 Slice 的完成状态和最终恢复点。</p></div><a href="../../docs/keco-godot-slices/v1/paws-patience-20260825-roadmap/roadmap.md" target="_blank">查看 ↗</a></div>
+          <div class="file-row"><div><strong>最新 Slice 007 EvalReport</strong><code>docs/keco-godot-slices/v1/slice-007-visual-assets/eval-report.json</code><p>最新运行证据、视觉检查结果和三项 EDD 人工评分空位。</p></div><a href="../../docs/keco-godot-slices/v1/slice-007-visual-assets/eval-report.json" target="_blank">查看 ↗</a></div>
+          <div class="file-row"><div><strong>完整过程记录</strong><code>progress/v1/paws-patience-20260825-1618.jsonl</code><p>按北京时间记录工具、参数、目的和结果。</p></div><a href="../../progress/v1/paws-patience-20260825-1618.jsonl" target="_blank">查看 ↗</a></div>
+          <div class="file-row"><div><strong>汇总结果</strong><code>result/v1/paws-patience-20260825-1618.json</code><p>当前快照、成本下界和三项人工评分空位。</p></div><a href="../../result/v1/paws-patience-20260825-1618.json" target="_blank">查看 ↗</a></div>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <div class="toast" id="toast" role="status" aria-live="polite"></div>
+  <script src="app.js"></script>
+</body>
+</html>

@@ -1,0 +1,58 @@
+{
+  "version": 1,
+  "collectedAt": "2026-08-27",
+  "sequence": ["run_project", "get_debug_output", "stop_project"],
+  "engine": "Godot Engine v4.7.stable.official.5b4e0cb0f",
+  "renderer": "OpenGL API 3.3.0 NVIDIA 566.24 - Compatibility",
+  "device": "NVIDIA GeForce RTX 4060 Laptop GPU",
+  "buildHash": "sha256:195f7fadbecc5c359c2072559da309625ea800f54a242dc19f6c7a187e815266",
+  "snapshotHash": "sha256:1ac445303894be6cc489aa360ef1cca1060e44b718f5ebb02601ff3256f4abfa",
+  "records": [
+    {
+      "evalId": "eval-801-cat-profile",
+      "status": "passed",
+      "expected": {"defaultKey": "sickly", "guardianKey": "guardian_stray", "sicklyPetDelta": 3},
+      "actual": {"defaultKey": "sickly", "guardianName": "守护猫猫", "sicklyPetDelta": 3}
+    },
+    {
+      "evalId": "eval-802-guardian-interaction",
+      "status": "passed",
+      "expected": {"catType": "guardian_stray", "streetVisits": 3, "triggered": true},
+      "actual": {"catType": "guardian_stray", "location": "街道", "streetVisits": 3, "triggered": true}
+    },
+    {
+      "evalId": "eval-803-guardian-probability",
+      "status": "passed",
+      "expected": {"max": 0.95, "min": 0.01, "streetPreview": 0.25},
+      "actual": {
+        "interactions": {
+          "dialogue": "你：我给你搭了一个安全的地方。\n猫：……那我可以继续守着这里了。",
+          "feedDelta": 5,
+          "petDelta": 4,
+          "shelterDelta": 16
+        },
+        "probability": 0.25,
+        "startBond": 0
+      }
+    },
+    {
+      "evalId": "eval-804-guardian-save",
+      "status": "passed",
+      "expected": {"guardianRoundtrip": true, "legacyDefaultsToSickly": true},
+      "actual": {"catType": "sickly", "legacyDefault": true, "loaded": true, "locationVisitsToday": 2, "saved": true}
+    },
+    {
+      "evalId": "eval-805-v1-regression",
+      "status": "passed",
+      "expected": {"sicklyDeltas": {"feed": 5, "pet": 3, "shelter": 20}, "v1CatWeights": 3},
+      "actual": {"sicklyDeltas": {"feed": 5, "pet": 3, "shelter": 20}, "v1CatWeights": 3}
+    },
+    {
+      "evalId": "eval-008-visual-presentation",
+      "status": "manual_required",
+      "expected": {"human_review": true},
+      "actual": {"human_review": null}
+    }
+  ],
+  "errors": []
+}
