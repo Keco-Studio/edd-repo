@@ -30,7 +30,6 @@ test('one player response creates a combined result and updates in place', async
 - 最终核心玩法：暂无玩家评分
 - 最终玩家体验：暂无玩家评分
 - 最终总分：暂无玩家评分
-- 结论：暂无玩家评分
 `),
   ]);
   const app = await createRatingServer({ resultRoot, progressRoot, problemRoot, dataFile: join(root, 'store.json'), publicRoot: new URL('../public/', import.meta.url), host: '127.0.0.1', port: 0, rateLimit: 100 });
@@ -46,16 +45,15 @@ test('one player response creates a combined result and updates in place', async
   assert.match(resultMarkdown, /最终核心玩法：52\.8\/100/);
   assert.match(resultMarkdown, /最终玩家体验：68\.0\/100/);
   assert.match(resultMarkdown, /最终总分：60\.4\/100/);
-  assert.match(resultMarkdown, /结论：不通过/);
   assert.match(resultMarkdown, /正式总分：60\.4 分/);
+  assert.doesNotMatch(resultMarkdown, /结论|通过|不通过/);
   assert.doesNotMatch(resultMarkdown, /not in markdown/);
 
   const progressMarkdown = await readFile(join(progressRoot, created.documents.progress), 'utf8');
   assert.match(progressMarkdown, /EDD_PLAYER_PROGRESS_START/);
-  assert.match(progressMarkdown, /## 玩家评分同步/);
-  assert.match(progressMarkdown, /### 输入/);
+  assert.match(progressMarkdown, /## 玩家评分状态/);
   assert.match(progressMarkdown, /有效样本：1/);
-  assert.match(progressMarkdown, /### 输出/);
   assert.match(progressMarkdown, /最终总分：60\.4\/100/);
-  assert.match(progressMarkdown, /结论：不通过/);
+  assert.doesNotMatch(progressMarkdown, /### 输入|### 输出|写回验证/);
+  assert.doesNotMatch(progressMarkdown, /结论|通过|不通过/);
 });

@@ -2,29 +2,26 @@
   "$schema": "https://json-schema.org/draft/2020-12/schema",
   "type": "object",
   "additionalProperties": false,
-  "required": ["source", "model", "aiCoreScore", "aiExperienceScore", "metrics", "issues"],
+  "required": ["source", "dimensions", "issues"],
   "properties": {
     "source": {
       "type": "object",
       "additionalProperties": false,
       "required": ["projectId", "documentId", "revision", "title"],
       "properties": {
-        "projectId": { "type": "string" },
-        "documentId": { "type": "string" },
+        "projectId": { "type": "string", "minLength": 1 },
+        "documentId": { "type": "string", "minLength": 1 },
         "revision": { "type": "integer", "minimum": 1 },
         "title": { "type": "string", "minLength": 1, "maxLength": 100 }
       }
     },
-    "model": { "type": "string", "minLength": 1, "maxLength": 100 },
-    "aiCoreScore": { "type": "number", "minimum": 0, "maximum": 50 },
-    "aiExperienceScore": { "type": "number", "minimum": 0, "maximum": 50 },
-    "metrics": {
+    "dimensions": {
       "type": "object",
       "additionalProperties": false,
       "required": ["core", "experience"],
       "properties": {
-        "core": { "$ref": "#/$defs/metrics" },
-        "experience": { "$ref": "#/$defs/metrics" }
+        "core": { "$ref": "#/$defs/dimension" },
+        "experience": { "$ref": "#/$defs/dimension" }
       }
     },
     "issues": {
@@ -34,27 +31,40 @@
     }
   },
   "$defs": {
-    "metrics": {
-      "type": "array",
-      "maxItems": 50,
-      "items": {
-        "type": "object",
-        "additionalProperties": false,
-        "required": ["name", "value", "evidence"],
-        "properties": {
-          "name": { "type": "string", "minLength": 1, "maxLength": 100 },
-          "value": { "type": "string", "minLength": 1, "maxLength": 100 },
-          "evidence": { "type": "string", "minLength": 1, "maxLength": 300 }
+    "dimension": {
+      "type": "object",
+      "additionalProperties": false,
+      "required": ["score", "observations", "rationale", "evidenceGaps"],
+      "properties": {
+        "score": { "type": "number", "minimum": 0, "maximum": 50 },
+        "observations": {
+          "type": "array",
+          "minItems": 1,
+          "maxItems": 20,
+          "items": {
+            "type": "object",
+            "additionalProperties": false,
+            "required": ["statement", "evidence"],
+            "properties": {
+              "statement": { "type": "string", "minLength": 1, "maxLength": 500 },
+              "evidence": { "type": "string", "minLength": 1, "maxLength": 300 }
+            }
+          }
+        },
+        "rationale": { "type": "string", "minLength": 1, "maxLength": 1000 },
+        "evidenceGaps": {
+          "type": "array",
+          "maxItems": 20,
+          "items": { "type": "string", "minLength": 1, "maxLength": 500 }
         }
       }
     },
     "issue": {
       "type": "object",
       "additionalProperties": false,
-      "required": ["dimension", "deduction", "evidence", "description", "suggestion"],
+      "required": ["dimension", "evidence", "description", "suggestion"],
       "properties": {
         "dimension": { "type": "string", "enum": ["core", "experience"] },
-        "deduction": { "type": "number", "exclusiveMinimum": 0, "maximum": 50 },
         "evidence": { "type": "string", "minLength": 1, "maxLength": 300 },
         "description": { "type": "string", "minLength": 1, "maxLength": 500 },
         "suggestion": { "type": "string", "minLength": 1, "maxLength": 500 }

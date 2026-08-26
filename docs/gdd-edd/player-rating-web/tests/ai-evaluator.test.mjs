@@ -1,8 +1,7 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { writeFile } from 'node:fs/promises';
 import {
-  PAWS_SOURCE,
   DEFAULT_EVALUATION_CWD,
   buildEvaluationPrompt,
   buildProviderInvocation,
@@ -10,83 +9,95 @@ import {
   validateAiEvaluation,
 } from '../src/ai-evaluator.mjs';
 
+const evalCase = Object.freeze({
+  id: 'paws-patience-r97', type: 'gold', title: 'Paws & Patience',
+  gddPath: 'docs/gdd-edd/gdd/paws-patience-gdd-r97.md',
+  projectId: 'project-id', documentId: 'document-id', revision: 97,
+  promptPath: 'docs/gdd-edd/prompts/gdd-evaluation-v1.md',
+  rubricPath: 'docs/gdd-edd/rubrics/two-dimension-v1.md',
+  resultTemplatePath: 'docs/gdd-edd/result/评价模板-v6.md', outputStem: 'paws-patience-gdd-r97',
+});
+
+const dimension = (score, label) => ({
+  score,
+  observations: [{ statement: `${label}客观观察`, evidence: '三、核心循环第 1-4 条' }],
+  rationale: `${label}评分理由`,
+  evidenceGaps: ['缺少运行证据'],
+});
+
 const valid = {
-  source: {
-    projectId: PAWS_SOURCE.projectId,
-    documentId: PAWS_SOURCE.documentId,
-    revision: 97,
-    title: 'Paws & Patience',
-  },
-  model: 'test-model',
-  aiCoreScore: 45,
-  aiExperienceScore: 47,
-  metrics: {
-    core: [{ name: '核心循环要素', value: '4/4', evidence: '三、核心循环' }],
-    experience: [{ name: '已定义核心界面数', value: '0', evidence: '全文' }],
-  },
-  issues: [
-    { dimension: 'core', deduction: 5, evidence: '三、核心循环', description: '反馈规则不完整', suggestion: '补充反馈规则' },
-    { dimension: 'experience', deduction: 3, evidence: '全文', description: '界面规格缺失', suggestion: '补充界面规格' },
-  ],
+  source: { projectId: 'project-id', documentId: 'document-id', revision: 97, title: 'Paws & Patience' },
+  dimensions: { core: dimension(34, '核心玩法'), experience: dimension(31, '玩家体验') },
+  issues: [{ dimension: 'core', evidence: '三、核心循环', description: '规则冲突', suggestion: '统一规则' }],
 };
 
-test('checks only the fixed Paws source and usable score fields', () => {
-  const result = validateAiEvaluation(valid);
-  assert.equal(result.source.revision, 97);
-  assert.equal(result.metrics.core[0].name, '核心循环要素');
-  assert.equal(validateAiEvaluation({ ...valid, aiCoreScore: 44 }).aiCoreScore, 44);
-  assert.throws(() => validateAiEvaluation({ ...valid, aiCoreScore: 51 }), /0-50/);
-  assert.throws(() => validateAiEvaluation({ ...valid, source: { ...valid.source, documentId: 'wrong' } }), /GDD 文档/);
-  assert.throws(() => validateAiEvaluation({ ...valid, source: { ...valid.source, revision: 96 } }), /GDD 修订/);
-  assert.throws(() => validateAiEvaluation({ ...valid, source: { ...valid.source, title: '无法评价' } }), /GDD 标题/);
+test('validates two evidence-backed dimensions and derives all AI scores', () => {
+  const result = validateAiEvaluation(valid, evalCase);
+  assert.equal(result.aiCoreScore, 34);
+  assert.equal(result.aiExperienceScore, 31);
+  assert.equal(result.aiTotalScore, 65);
+  assert.equal(result.dimensions.core.observations[0].statement, '核心玩法客观观察');
+  assert.throws(() => validateAiEvaluation({ ...valid, dimensions: { ...valid.dimensions, core: { ...valid.dimensions.core, score: 51 } } }, evalCase), /0-50/);
+  assert.throws(() => validateAiEvaluation({ ...valid, dimensions: { ...valid.dimensions, core: { ...valid.dimensions.core, observations: [] } } }, evalCase), /客观观察/);
+  assert.throws(() => validateAiEvaluation({ ...valid, source: { ...valid.source, revision: 98 } }, evalCase), /GDD 修订/);
 });
 
-test('builds bounded file-writing invocations for Codex and Claude', () => {
-  assert.match(DEFAULT_EVALUATION_CWD, /edd-repo$/);
+test('renders the short versioned prompt without document-writing instructions', () => {
   const prompt = buildEvaluationPrompt({
-    evaluationId: 'paws-patience-gdd-r97-run2',
-    documents: { progress: '/repo/progress.md', problem: '/repo/problem.md', result: '/repo/result.md' },
+    evalCase,
+    promptTemplate: '评价 {{title}}\nGDD={{gddPath}}\nRUBRIC={{rubricPath}}\n只返回 JSON。',
   });
+  assert.match(prompt, /Paws & Patience/);
   assert.match(prompt, /paws-patience-gdd-r97\.md/);
-  assert.match(prompt, /评价模板-v5\.md/);
-  assert.match(prompt, /progress\/README\.md/);
-  assert.match(prompt, /problem\/README\.md/);
-  assert.match(prompt, /result\/README\.md/);
-  assert.match(prompt, /输入材料/);
-  assert.match(prompt, /最终执行结果/);
-  assert.match(prompt, /创建且只创建.*progress\.md/s);
-
-  const codex = buildProviderInvocation('codex', { cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: {}, prompt });
-  assert.equal(codex.command, 'codex');
-  assert.ok(codex.args.includes('workspace-write'));
-  assert.ok(codex.args.includes('/repo/schema.json'));
-  assert.ok(codex.args.includes('model_reasoning_effort="medium"'));
-  assert.ok(codex.args.includes('/tmp/result.json'));
-
-  const claude = buildProviderInvocation('claude', { cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: { $schema: 'https://json-schema.org/draft/2020-12/schema', type: 'object' }, prompt });
-  assert.equal(claude.command, 'claude');
-  assert.ok(claude.args.includes('acceptEdits'));
-  assert.ok(claude.args.includes('sonnet'));
-  assert.ok(claude.args.includes('medium'));
-  assert.ok(claude.args.includes('Read,Write'));
-  assert.ok(claude.args.includes('--safe-mode'));
-  assert.ok(claude.args.includes(JSON.stringify({ type: 'object' })));
-  assert.ok(!claude.args.some((argument) => argument.includes('$schema')));
-  assert.throws(() => buildProviderInvocation('other', { cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: {}, prompt }), /provider/);
+  assert.match(prompt, /two-dimension-v1\.md/);
+  assert.doesNotMatch(prompt, /Progression|Problem|Result|创建.*文档/);
+  assert.throws(() => buildEvaluationPrompt({ evalCase, promptTemplate: '{{unknown}}' }), /未知 Prompt 占位符/);
 });
 
-test('repository contains the complete pinned Paws GDD revision', async () => {
-  const markdown = await readFile(new URL(`../../../../${PAWS_SOURCE.localPath}`, import.meta.url), 'utf8');
-  assert.match(markdown, /keco_revision: 97/);
-  assert.match(markdown, /## 三、核心循环/);
-  assert.match(markdown, /## 七、概率体系/);
-  assert.ok(markdown.length > 10_000);
+test('uses machine-readable observable event modes for Codex and Claude', () => {
+  assert.match(DEFAULT_EVALUATION_CWD, /edd-repo$/);
+  const codex = buildProviderInvocation('codex', { cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: {}, prompt: 'x', model: 'gpt-test' });
+  assert.ok(codex.args.includes('--json'));
+  assert.ok(codex.args.includes('gpt-test'));
+  const claude = buildProviderInvocation('claude', { cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: { type: 'object' }, prompt: 'x', model: 'sonnet' });
+  assert.ok(claude.args.includes('stream-json'));
+  assert.ok(claude.args.includes('--verbose'));
 });
 
-test('accepts direct Codex JSON and Claude structured_output wrappers', async () => {
-  const direct = await runAiEvaluation({ provider: 'codex', prompt: 'test', runner: async () => ({ stdout: JSON.stringify(valid) }) });
-  assert.equal(direct.aiCoreScore, 45);
+test('captures Codex JSONL events and final structured output without reasoning text', async () => {
+  const runner = async (_command, args) => {
+    const outputPath = args[args.indexOf('--output-last-message') + 1];
+    await writeFile(outputPath, JSON.stringify(valid));
+    return { stdout: [
+      JSON.stringify({ type: 'thread.started', thread_id: 'thread-1' }),
+      JSON.stringify({ type: 'item.completed', item: { type: 'reasoning', text: 'hidden chain of thought' } }),
+      JSON.stringify({ type: 'item.completed', item: { type: 'command_execution', command: 'sed -n 1,20p docs/gdd.md' } }),
+      JSON.stringify({ type: 'turn.completed', usage: { input_tokens: 10, output_tokens: 20 } }),
+    ].join('\n'), stderr: '' };
+  };
+  const result = await runAiEvaluation({ provider: 'codex', model: 'gpt-test', evalCase, prompt: 'fixed prompt', runner });
+  assert.equal(result.evaluation.aiTotalScore, 65);
+  assert.equal(result.execution.provider, 'codex');
+  assert.equal(result.execution.requestedModel, 'gpt-test');
+  assert.equal(result.execution.status, 'completed');
+  assert.match(JSON.stringify(result.execution.events), /sed -n/);
+  assert.doesNotMatch(JSON.stringify(result.execution), /hidden chain of thought/);
+  assert.deepEqual(result.execution.rawOutput, valid);
+});
 
-  const wrapped = await runAiEvaluation({ provider: 'claude', prompt: 'test', runner: async () => ({ stdout: JSON.stringify({ structured_output: valid }) }) });
-  assert.equal(wrapped.aiExperienceScore, 47);
+test('captures Claude stream-json and observed model', async () => {
+  const stdout = [
+    JSON.stringify({ type: 'system', subtype: 'init', model: 'claude-sonnet-test' }),
+    JSON.stringify({ type: 'system', subtype: 'thinking_tokens', token_count: 100 }),
+    JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', name: 'Read', input: { file_path: 'docs/gdd.md' } }] } }),
+    JSON.stringify({ type: 'assistant', message: { content: [{ type: 'tool_use', name: 'StructuredOutput', input: valid }] } }),
+    JSON.stringify({ type: 'result', subtype: 'success', structured_output: valid }),
+  ].join('\n');
+  const result = await runAiEvaluation({ provider: 'claude', evalCase, prompt: 'fixed prompt', runner: async () => ({ stdout, stderr: '' }) });
+  assert.equal(result.evaluation.aiCoreScore, 34);
+  assert.equal(result.execution.requestedModel, 'sonnet');
+  assert.equal(result.execution.observedModel, 'claude-sonnet-test');
+  assert.match(JSON.stringify(result.execution.events), /Read/);
+  assert.doesNotMatch(JSON.stringify(result.execution.events), /thinking_tokens/);
+  assert.doesNotMatch(JSON.stringify(result.execution.events), /StructuredOutput/);
 });

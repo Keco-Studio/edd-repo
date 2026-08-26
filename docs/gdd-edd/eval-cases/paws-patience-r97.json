@@ -1,0 +1,13 @@
+{
+  "id": "paws-patience-r97",
+  "type": "gold",
+  "title": "Paws & Patience",
+  "gddPath": "docs/gdd-edd/gdd/paws-patience-gdd-r97.md",
+  "projectId": "5165dbe5-8570-46df-bb40-3224f8bef93e",
+  "documentId": "8d45eaa5-bb69-4d74-9d44-c9a93492b13f",
+  "revision": 97,
+  "promptPath": "docs/gdd-edd/prompts/gdd-evaluation-v1.md",
+  "rubricPath": "docs/gdd-edd/rubrics/two-dimension-v1.md",
+  "resultTemplatePath": "docs/gdd-edd/result/评价模板-v6.md",
+  "outputStem": "paws-patience-gdd-r97"
+}

@@ -30,25 +30,6 @@ export function validateRating(input = {}) {
   };
 }
 
-export function validateSessionInput(input = {}) {
-  const gameTitle = String(input.gameTitle || '').trim();
-  if (!gameTitle || gameTitle.length > 80) fail('游戏名称必须为 1-80 字');
-  const resultDocument = String(input.resultDocument || '');
-  if (basename(resultDocument) !== resultDocument || !resultDocument.endsWith('.md')) fail('结果文档无效');
-  const score = (value, label) => {
-    const number = Number(value);
-    if (!Number.isFinite(number) || number < 0 || number > 50) fail(`${label}必须为 0-50`);
-    return number;
-  };
-  return {
-    gameTitle,
-    resultDocument,
-    aiCoreScore: score(input.aiCoreScore, 'AI 核心玩法得分'),
-    aiExperienceScore: score(input.aiExperienceScore, 'AI 玩家体验得分'),
-    expiryDays: integer(input.expiryDays ?? 7, 1, 30, '有效期'),
-  };
-}
-
 export async function resolveResultDocument(name, root) {
   if (typeof name !== 'string' || basename(name) !== name || !name.endsWith('.md')) fail('结果文档无效');
   const rootPath = root instanceof URL ? fileURLToPath(root) : resolve(root);

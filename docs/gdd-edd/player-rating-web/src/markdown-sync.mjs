@@ -12,7 +12,6 @@ const reasonsLine = (items = []) => items.length ? items.slice(0, 5).map(({ reas
 const score = (value) => value == null ? '暂无玩家评分' : `${value.toFixed(1)} 分`;
 const decimal = (value) => Number.isFinite(value) ? value.toFixed(1) : '暂无';
 const resultScore = (value) => value == null ? '暂无玩家评分' : `${value.toFixed(1)}/100`;
-const conclusion = (combined) => combined.provisional ? '暂无玩家评分' : combined.final >= 80 ? '通过' : '不通过';
 
 export function renderRatingSection(session, aggregate, combined, syncedAt = new Date().toISOString()) {
   return `## 玩家评分与合并结果
@@ -46,34 +45,14 @@ export function renderRatingSection(session, aggregate, combined, syncedAt = new
 }
 
 export function renderProgressRatingSection(session, aggregate, combined, syncedAt = new Date().toISOString()) {
-  return `## 玩家评分同步
+  return `## 玩家评分状态
 
 - 同步时间：${syncedAt}
-- 同步状态：已写入 Result 顶部摘要和玩家评分区块
-
-### 输入
-
-- 玩家评分会话：${session.id}
 - 有效样本：${aggregate.count}
-- 玩家核心玩法均分：${aggregate.coreAverage == null ? '暂无' : `${aggregate.coreAverage.toFixed(1)}/5`}
-- 玩家玩家体验均分：${aggregate.experienceAverage == null ? '暂无' : `${aggregate.experienceAverage.toFixed(1)}/5`}
-- AI 核心玩法：${session.aiCoreScore.toFixed(1)}/50
-- AI 玩家体验：${session.aiExperienceScore.toFixed(1)}/50
-- 合并参数：AI 60%，玩家 40%，两个维度各 50%
-
-### 输出
-
 - 最终核心玩法：${resultScore(combined.core)}
 - 最终玩家体验：${resultScore(combined.experience)}
 - 最终总分：${resultScore(combined.final)}
-- 结论：${conclusion(combined)}
 - Result：../result/${session.resultDocument}
-
-### 写回验证
-
-- Result 顶部摘要：已更新
-- Result 玩家评分标记区块：已更新
-- 玩家自由文本：未写入 Markdown
 `;
 }
 
@@ -83,7 +62,6 @@ export function updateResultSummary(markdown, aggregate, combined) {
     最终核心玩法: resultScore(combined.core),
     最终玩家体验: resultScore(combined.experience),
     最终总分: resultScore(combined.final),
-    结论: conclusion(combined),
   };
   let updated = markdown;
   for (const [label, value] of Object.entries(values)) {
