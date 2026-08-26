@@ -17,9 +17,9 @@ function requiredText(value, label, max = 1000) {
   return result;
 }
 
-function validateDimension(raw = {}, label) {
+function validateDimension(raw = {}, label, maximum) {
   const score = Number(raw.score);
-  if (!Number.isFinite(score) || score < 0 || score > 50) fail(`${label}得分必须为 0-50`);
+  if (!Number.isFinite(score) || score < 0 || score > maximum) fail(`${label}得分必须为 0-${maximum}`);
   if (!Array.isArray(raw.observations) || raw.observations.length < 1 || raw.observations.length > 20) fail(`${label}必须包含 1-20 条客观观察`);
   const observations = raw.observations.map((item, index) => ({
     statement: requiredText(item?.statement, `${label}客观观察 ${index + 1}`, 500),
@@ -41,11 +41,12 @@ export function validateAiEvaluation(raw = {}, evalCase) {
   if (source.documentId !== evalCase.documentId) fail('AI 返回的 GDD 文档不匹配');
   if (!Number.isInteger(source.revision) || source.revision !== evalCase.revision) fail('AI 返回的 GDD 修订号无效');
   if (source.title !== evalCase.title) fail('AI 返回的 GDD 标题不匹配');
-  const core = validateDimension(raw.dimensions?.core, '核心玩法');
-  const experience = validateDimension(raw.dimensions?.experience, '玩家体验');
+  const experienceValue = validateDimension(raw.dimensions?.experienceValue, '体验价值', 30);
+  const gameplaySystems = validateDimension(raw.dimensions?.gameplaySystems, '玩法与系统', 40);
+  const contentPresentation = validateDimension(raw.dimensions?.contentPresentation, '内容与呈现', 30);
   if (!Array.isArray(raw.issues) || raw.issues.length > 100) fail('问题列表无效');
   const issues = raw.issues.map((issue, index) => {
-    if (!['core', 'experience'].includes(issue?.dimension)) fail(`问题 ${index + 1} 维度无效`);
+    if (!['experienceValue', 'gameplaySystems', 'contentPresentation'].includes(issue?.dimension)) fail(`问题 ${index + 1} 维度无效`);
     return {
       dimension: issue.dimension,
       evidence: requiredText(issue.evidence, `问题 ${index + 1} 证据`, 300),
@@ -55,11 +56,12 @@ export function validateAiEvaluation(raw = {}, evalCase) {
   });
   return {
     source: { projectId: source.projectId, documentId: source.documentId, revision: source.revision, title: requiredText(source.title, 'GDD 标题', 100) },
-    dimensions: { core, experience },
+    dimensions: { experienceValue, gameplaySystems, contentPresentation },
     issues,
-    aiCoreScore: core.score,
-    aiExperienceScore: experience.score,
-    aiTotalScore: round(core.score + experience.score),
+    aiExperienceValueScore: experienceValue.score,
+    aiGameplaySystemsScore: gameplaySystems.score,
+    aiContentPresentationScore: contentPresentation.score,
+    aiTotalScore: round(experienceValue.score + gameplaySystems.score + contentPresentation.score),
   };
 }
 

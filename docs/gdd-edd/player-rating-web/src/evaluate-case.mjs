@@ -1,11 +1,12 @@
 import { join } from 'node:path';
-import { readdir } from 'node:fs/promises';
+import { readFile, readdir } from 'node:fs/promises';
 import { fileURLToPath, pathToFileURL } from 'node:url';
 import { runAiEvaluation } from './ai-evaluator.mjs';
 import { buildEvaluationPrompt } from './ai-evaluator.mjs';
 import { loadEvaluationAssets, renderEvaluationDocuments, writeEvaluationDocuments } from './document-renderer.mjs';
 import { listEvalCaseIds, loadEvalCase } from './eval-case.mjs';
 import { createRatingServer } from './server.mjs';
+import { preserveProgressSyncBlocks, verifyEvaluationDocument, writeAiEvidence, writeFailureProgression, writeTextAtomic } from './progress-audit.mjs';
 
 const DEFAULT_RESULT_ROOT = fileURLToPath(new URL('../../result/', import.meta.url));
 const DEFAULT_PROGRESS_ROOT = fileURLToPath(new URL('../../progress/', import.meta.url));
@@ -49,36 +50,99 @@ export async function evaluateCase(options = {}) {
     result: join(resultRoot, documentNames.result),
   };
   const prompt = buildEvaluationPrompt({ evalCase, promptTemplate: assets.promptTemplate });
-  const run = await evaluator({ evalCase, provider, model: options.model, cwd: options.cwd, evaluationId, prompt });
-  const evaluation = run.evaluation;
-  const execution = run.execution;
-  const rendered = (options.renderer || renderEvaluationDocuments)({ evalCase, evaluation, execution, evaluationId, documents: documentNames, assets });
-  await (options.documentWriter || writeEvaluationDocuments)(documents, rendered);
-  const app = await (options.serverFactory || createRatingServer)(serverOptions);
-  const created = await app.createSessionForDocuments({
-    evaluationId,
-    gameTitle: evaluation.source.title,
-    aiCoreScore: evaluation.aiCoreScore,
-    aiExperienceScore: evaluation.aiExperienceScore,
-    expiryDays: options.expiryDays || 7,
-  });
-  await app.listen();
-  return {
-    app,
-    case: evalCase,
-    evaluation,
-    execution,
-    evaluationId,
-    session: created.session,
-    documents: created.documents,
-    playerUrl: `${app.baseUrl}/?session=${encodeURIComponent(created.session.publicToken)}`,
+  const requestedModel = options.model || (provider === 'claude' ? 'sonnet' : '本地默认配置');
+  const startedAt = new Date().toISOString();
+  const audit = {
+    goal: '根据固定 GDD 和标尺生成可人工复核的评价文档',
+    evidence: null,
+    events: [{ component: 'Node', action: '加载 Eval Case 与固定输入', status: 'completed', detail: `${evalCase.id}；固定资产已读取并计算哈希` }],
+    nextAction: '查看 Result 并分发人工评分链接',
   };
+  let app;
+  let created;
+  let execution;
+  let failedStep = 'AI 评价';
+  const renderer = options.renderer || renderEvaluationDocuments;
+  try {
+    const run = await evaluator({ evalCase, provider, model: options.model, cwd: options.cwd, evaluationId, prompt });
+    const evaluation = run.evaluation;
+    execution = run.execution;
+    audit.events.push({ component: 'AI', action: 'AI 评价', status: 'completed', detail: `${execution.provider} 返回结构化结果` });
+    for (const event of execution.events || []) {
+      audit.events.push({ component: 'Provider', action: event.name || event.type, status: 'observed', detail: event.detail || event.type });
+    }
+    audit.events.push({ component: 'Node', action: 'Schema 校验', status: 'completed', detail: '来源、三个维度、证据与问题结构通过校验' });
+
+    failedStep = 'AI 证据写入';
+    audit.evidence = await (options.evidenceWriter || writeAiEvidence)(progressRoot, evaluationId, execution.rawOutput);
+    audit.events.push({ component: 'Node', action: '写入 AI 证据', status: 'completed', detail: `${audit.evidence.path}；回读与 JSON 解析通过` });
+
+    failedStep = '评价文档写入';
+    let rendered = renderer({ evalCase, evaluation, execution, evaluationId, documents: documentNames, assets, audit });
+    await (options.documentWriter || writeEvaluationDocuments)(documents, rendered);
+    audit.events.push({ component: 'Node', action: '写入三份评价文档', status: 'completed', detail: 'Progression、Problem、Result 已原子写入' });
+
+    failedStep = '评价文档回读';
+    await Promise.all([
+      verifyEvaluationDocument(documents.problem, evaluationId),
+      verifyEvaluationDocument(documents.result, evaluationId),
+    ]);
+    audit.events.push({ component: 'Node', action: '文档回读', status: 'completed', detail: 'Problem 与 Result 的评价标识已验证' });
+    rendered = renderer({ evalCase, evaluation, execution, evaluationId, documents: documentNames, assets, audit });
+    await writeTextAtomic(documents.progress, rendered.progress);
+
+    failedStep = '人工评分会话创建';
+    app = await (options.serverFactory || createRatingServer)(serverOptions);
+    created = await app.createSessionForDocuments({
+      evaluationId,
+      gameTitle: evaluation.source.title,
+      aiExperienceValueScore: evaluation.aiExperienceValueScore,
+      aiGameplaySystemsScore: evaluation.aiGameplaySystemsScore,
+      aiContentPresentationScore: evaluation.aiContentPresentationScore,
+      expiryDays: options.expiryDays || 7,
+    });
+    await app.listen();
+    audit.events.push({ component: 'Node', action: '创建人工评分会话', status: 'completed', detail: `会话 ${created.session.id} 已创建，评分服务已启动` });
+
+    failedStep = 'Progression 最终化';
+    const existingProgress = await readFile(documents.progress, 'utf8');
+    rendered = renderer({ evalCase, evaluation, execution, evaluationId, documents: documentNames, assets, audit });
+    await writeTextAtomic(documents.progress, preserveProgressSyncBlocks(rendered.progress, existingProgress));
+    return {
+      app,
+      case: evalCase,
+      evaluation,
+      execution,
+      evaluationId,
+      session: created.session,
+      documents: created.documents,
+      playerUrl: `${app.baseUrl}/?session=${encodeURIComponent(created.session.publicToken)}`,
+    };
+  } catch (error) {
+    audit.events.push({ component: failedStep.startsWith('AI') ? 'AI' : 'Node', action: failedStep, status: 'failed', detail: error.message });
+    if (created?.session?.id && app?.store?.deleteSession) await app.store.deleteSession(created.session.id).catch(() => {});
+    if (app?.baseUrl) await app.close().catch(() => {});
+    const retry = `npm run eval -- --case ${evalCase.id} --provider ${provider}${options.model ? ` --model ${options.model}` : ''}`;
+    try {
+      await (options.failureWriter || writeFailureProgression)(documents.progress, {
+        evalCase, evaluationId, provider, requestedModel, observedModel: execution?.observedModel,
+        startedAt: execution?.startedAt || startedAt, finishedAt: new Date().toISOString(), exitCode: execution?.exitCode,
+        prompt, assets, events: audit.events, error, failedStep, retryCommand: retry,
+        completedOutputs: audit.evidence ? [audit.evidence.path] : [],
+        incompleteOutputs: ['Problem、Result 或人工评分会话需要检查'],
+      });
+    } catch (auditError) {
+      throw new Error(`${error.message}；失败 Progression 写入失败：${auditError.message}`);
+    }
+    throw error;
+  }
 }
 
 export function formatEvaluationScore(result) {
   const { evaluation } = result;
-  return `核心玩法：${decimal(evaluation.aiCoreScore)}/50
-玩家体验：${decimal(evaluation.aiExperienceScore)}/50
+  return `体验价值：${decimal(evaluation.aiExperienceValueScore)}/30
+玩法与系统：${decimal(evaluation.aiGameplaySystemsScore)}/40
+内容与呈现：${decimal(evaluation.aiContentPresentationScore)}/30
 总分：${decimal(evaluation.aiTotalScore)}/100
 人工评分：${result.playerUrl}`;
 }

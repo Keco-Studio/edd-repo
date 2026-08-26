@@ -3,10 +3,14 @@ import assert from 'node:assert/strict';
 import { validateRating, resolveResultDocument } from '../src/validation.mjs';
 
 test('rating accepts fixed values and rejects invalid fields', () => {
-  assert.equal(validateRating({ coreScore: 1, experienceScore: 5, coreReasons: ['unclear_goal'], experienceReasons: ['ui_clarity'], comment: 'ok' }).coreScore, 1);
-  assert.throws(() => validateRating({ coreScore: 0, experienceScore: 5, coreReasons: [], experienceReasons: [] }), /1.*5/);
-  assert.throws(() => validateRating({ coreScore: 3, experienceScore: 3, coreReasons: ['invented'], experienceReasons: [] }), /原因/);
-  assert.throws(() => validateRating({ coreScore: 3, experienceScore: 3, coreReasons: [], experienceReasons: [], comment: 'x'.repeat(301) }), /300/);
+  const valid = {
+    experienceValueScore: 1, gameplaySystemsScore: 5, contentPresentationScore: 3,
+    experienceValueReasons: ['unclear_goal'], gameplaySystemsReasons: ['weak_loop'], contentPresentationReasons: ['ui_clarity'], comment: 'ok',
+  };
+  assert.equal(validateRating(valid).experienceValueScore, 1);
+  assert.throws(() => validateRating({ ...valid, experienceValueScore: 0 }), /1.*5/);
+  assert.throws(() => validateRating({ ...valid, gameplaySystemsReasons: ['invented'] }), /原因/);
+  assert.throws(() => validateRating({ ...valid, comment: 'x'.repeat(301) }), /300/);
 });
 
 test('document resolver only accepts listed markdown basenames', async () => {

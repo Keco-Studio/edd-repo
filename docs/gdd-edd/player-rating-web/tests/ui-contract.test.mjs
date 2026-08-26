@@ -4,16 +4,17 @@ import { access, readFile } from 'node:fs/promises';
 
 const root = new URL('../public/', import.meta.url);
 
-test('player page exposes two labelled five-point groups and feedback controls', async () => {
+test('player page exposes three labelled five-point groups and feedback controls', async () => {
   const html = await readFile(new URL('index.html', root), 'utf8');
   assert.match(html, /viewport/);
-  assert.equal((html.match(/role="radiogroup"/g) || []).length, 2);
-  assert.equal((html.match(/type="radio"/g) || []).length, 10);
+  assert.equal((html.match(/role="radiogroup"/g) || []).length, 3);
+  assert.equal((html.match(/type="radio"/g) || []).length, 15);
   assert.match(html, /type="checkbox"/);
   assert.match(html, /maxlength="300"/);
   assert.match(html, /id="submit-rating"[^>]*disabled/);
-  assert.match(html, /核心玩法/);
-  assert.match(html, /UI 视觉风格与可玩性/);
+  assert.match(html, /体验价值/);
+  assert.match(html, /玩法与系统/);
+  assert.match(html, /内容与呈现/);
 });
 
 test('public assets contain no browser-based AI or admin workflow', async () => {

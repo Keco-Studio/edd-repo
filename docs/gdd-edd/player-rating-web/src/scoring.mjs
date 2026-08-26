@@ -22,31 +22,43 @@ export function aggregateRatings(ratings = []) {
   const average = (field) => count ? round(ratings.reduce((sum, rating) => sum + rating[field], 0) / count) : null;
   return {
     count,
-    coreAverage: average('coreScore'),
-    experienceAverage: average('experienceScore'),
-    coreDistribution: distribution(ratings.map((rating) => rating.coreScore)),
-    experienceDistribution: distribution(ratings.map((rating) => rating.experienceScore)),
-    coreReasons: reasonCounts(ratings, 'coreReasons'),
-    experienceReasons: reasonCounts(ratings, 'experienceReasons'),
+    experienceValueAverage: average('experienceValueScore'),
+    gameplaySystemsAverage: average('gameplaySystemsScore'),
+    contentPresentationAverage: average('contentPresentationScore'),
+    experienceValueDistribution: distribution(ratings.map((rating) => rating.experienceValueScore)),
+    gameplaySystemsDistribution: distribution(ratings.map((rating) => rating.gameplaySystemsScore)),
+    contentPresentationDistribution: distribution(ratings.map((rating) => rating.contentPresentationScore)),
+    experienceValueReasons: reasonCounts(ratings, 'experienceValueReasons'),
+    gameplaySystemsReasons: reasonCounts(ratings, 'gameplaySystemsReasons'),
+    contentPresentationReasons: reasonCounts(ratings, 'contentPresentationReasons'),
   };
 }
 
-export function combineScores({ aiCoreScore, aiExperienceScore, aggregate }) {
-  const aiCorePercent = round(clamp(aiCoreScore, 0, 50) * 2);
-  const aiExperiencePercent = round(clamp(aiExperienceScore, 0, 50) * 2);
-  const playerCorePercent = aggregate.coreAverage == null ? null : round(aggregate.coreAverage * 20);
-  const playerExperiencePercent = aggregate.experienceAverage == null ? null : round(aggregate.experienceAverage * 20);
+export function combineScores({ aiExperienceValueScore, aiGameplaySystemsScore, aiContentPresentationScore, aggregate }) {
+  const aiExperienceValuePercent = round(clamp(aiExperienceValueScore, 0, 30) / 30 * 100);
+  const aiGameplaySystemsPercent = round(clamp(aiGameplaySystemsScore, 0, 40) / 40 * 100);
+  const aiContentPresentationPercent = round(clamp(aiContentPresentationScore, 0, 30) / 30 * 100);
+  const playerExperienceValuePercent = aggregate.experienceValueAverage == null ? null : round(aggregate.experienceValueAverage * 20);
+  const playerGameplaySystemsPercent = aggregate.gameplaySystemsAverage == null ? null : round(aggregate.gameplaySystemsAverage * 20);
+  const playerContentPresentationPercent = aggregate.contentPresentationAverage == null ? null : round(aggregate.contentPresentationAverage * 20);
   const provisional = aggregate.count === 0;
-  const core = playerCorePercent == null ? null : round(aiCorePercent * 0.6 + playerCorePercent * 0.4);
-  const experience = playerExperiencePercent == null ? null : round(aiExperiencePercent * 0.6 + playerExperiencePercent * 0.4);
+  const combine = (ai, player) => player == null ? null : round(ai * 0.7 + player * 0.3);
+  const experienceValue = combine(aiExperienceValuePercent, playerExperienceValuePercent);
+  const gameplaySystems = combine(aiGameplaySystemsPercent, playerGameplaySystemsPercent);
+  const contentPresentation = combine(aiContentPresentationPercent, playerContentPresentationPercent);
   return {
     provisional,
-    aiCorePercent,
-    aiExperiencePercent,
-    playerCorePercent,
-    playerExperiencePercent,
-    core: provisional ? null : core,
-    experience: provisional ? null : experience,
-    final: provisional || core == null || experience == null ? null : round((core + experience) / 2),
+    aiExperienceValuePercent,
+    aiGameplaySystemsPercent,
+    aiContentPresentationPercent,
+    playerExperienceValuePercent,
+    playerGameplaySystemsPercent,
+    playerContentPresentationPercent,
+    experienceValue: provisional ? null : experienceValue,
+    gameplaySystems: provisional ? null : gameplaySystems,
+    contentPresentation: provisional ? null : contentPresentation,
+    final: provisional || experienceValue == null || gameplaySystems == null || contentPresentation == null
+      ? null
+      : round(experienceValue * 0.3 + gameplaySystems * 0.4 + contentPresentation * 0.3),
   };
 }

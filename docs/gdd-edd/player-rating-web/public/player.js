@@ -15,9 +15,10 @@ function anonymousId() {
 function setMessage(text, kind = '') { message.textContent = text; message.className = `message ${kind}`; }
 function selected(name) { return form.querySelector(`input[name="${name}"]:checked`)?.value; }
 function updateForm() {
-  submit.disabled = !selected('coreScore') || !selected('experienceScore');
-  document.querySelector('#core-reasons').hidden = Number(selected('coreScore')) > 3 || !selected('coreScore');
-  document.querySelector('#experience-reasons').hidden = Number(selected('experienceScore')) > 3 || !selected('experienceScore');
+  submit.disabled = !selected('experienceValueScore') || !selected('gameplaySystemsScore') || !selected('contentPresentationScore');
+  document.querySelector('#experience-value-reasons').hidden = Number(selected('experienceValueScore')) > 3 || !selected('experienceValueScore');
+  document.querySelector('#gameplay-systems-reasons').hidden = Number(selected('gameplaySystemsScore')) > 3 || !selected('gameplaySystemsScore');
+  document.querySelector('#content-presentation-reasons').hidden = Number(selected('contentPresentationScore')) > 3 || !selected('contentPresentationScore');
 }
 
 async function load() {
@@ -40,7 +41,16 @@ form.addEventListener('submit', async (event) => {
   submit.disabled = true;
   submit.textContent = '提交中...';
   const checked = (name) => [...form.querySelectorAll(`input[name="${name}"]:checked`)].map((input) => input.value);
-  const body = { anonymousId: anonymousId(), coreScore: Number(selected('coreScore')), experienceScore: Number(selected('experienceScore')), coreReasons: checked('coreReasons'), experienceReasons: checked('experienceReasons'), comment: comment.value };
+  const body = {
+    anonymousId: anonymousId(),
+    experienceValueScore: Number(selected('experienceValueScore')),
+    gameplaySystemsScore: Number(selected('gameplaySystemsScore')),
+    contentPresentationScore: Number(selected('contentPresentationScore')),
+    experienceValueReasons: checked('experienceValueReasons'),
+    gameplaySystemsReasons: checked('gameplaySystemsReasons'),
+    contentPresentationReasons: checked('contentPresentationReasons'),
+    comment: comment.value,
+  };
   try {
     const response = await fetch(`/api/public/sessions/${encodeURIComponent(token)}/ratings`, { method: 'POST', headers: { 'content-type': 'application/json' }, body: JSON.stringify(body) });
     const data = await response.json();

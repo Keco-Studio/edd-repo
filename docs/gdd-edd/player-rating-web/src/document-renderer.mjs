@@ -2,6 +2,7 @@ import { createHash, randomBytes } from 'node:crypto';
 import { mkdir, readFile, rename, writeFile } from 'node:fs/promises';
 import { dirname, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
+import { redactAuditText } from './progress-audit.mjs';
 
 const DEFAULT_REPOSITORY_ROOT = fileURLToPath(new URL('../../../../', import.meta.url));
 const DEFAULT_SCHEMA_PATH = fileURLToPath(new URL('./ai-evaluation.schema.json', import.meta.url));
@@ -41,7 +42,7 @@ function applyTemplate(template, values) {
   return rendered.trimEnd() + '\n';
 }
 
-function renderProgression({ evalCase, evaluation, execution, evaluationId, documents, assets }) {
+function renderProgression({ evalCase, execution, evaluationId, documents, assets, audit = {} }) {
   const hashRows = [
     ['GDD', evalCase.gddPath, assets.hashes.gdd],
     ['Prompt', evalCase.promptPath, assets.hashes.prompt],
@@ -49,13 +50,15 @@ function renderProgression({ evalCase, evaluation, execution, evaluationId, docu
     ['Schema', 'player-rating-web/src/ai-evaluation.schema.json', assets.hashes.schema],
     ['Result Template', evalCase.resultTemplatePath, assets.hashes.resultTemplate],
   ].map(([name, path, hash]) => `| ${name} | ${md(path)} | ${hash || '未记录'} |`).join('\n');
-  const eventRows = execution.events.length
-    ? execution.events.map((event, index) => `| ${index + 1} | ${md(event.type)} | ${md(event.name)} | ${md(event.detail || '')} |`).join('\n')
-    : '| - | - | - | 无可观测工具事件 |';
+  const eventRows = audit.events?.length
+    ? audit.events.map((event, index) => `| ${index + 1} | ${md(event.component)} | ${md(event.action)} | ${md(event.status)} | ${md(redactAuditText(event.detail || ''))} |`).join('\n')
+    : '| - | Node | 尚无执行事实 | pending | 等待执行 |';
+  const evidence = audit.evidence || {};
   return `# GDD EDD 执行记录
 
 - 评价标识：${evaluationId}
 - Eval Case：${evalCase.id}
+- 目标：${audit.goal || '根据固定 GDD 和标尺生成可人工复核的评价文档'}
 - Provider：${execution.provider}
 - 请求模型：${execution.requestedModel}
 - 可观测模型：${execution.observedModel || 'CLI 事件未提供'}
@@ -72,12 +75,12 @@ function renderProgression({ evalCase, evaluation, execution, evaluationId, docu
 | --- | --- | --- |
 ${hashRows}
 
-## 可观测执行事件
+## 执行事实
 
-仅记录 Provider 输出的状态与工具事件。
+按 Node 与 Provider 的可观测顺序记录。
 
-| # | 类型 | 名称 | 详情 |
-| --- | --- | --- | --- |
+| # | 组件 | 动作 | 状态 | 结果摘要 |
+| --- | --- | --- | --- | --- |
 ${eventRows}
 
 ## 应用 Prompt
@@ -86,36 +89,26 @@ ${eventRows}
 <summary>查看完整 Prompt</summary>
 
 \`\`\`text
-${execution.prompt}
+${redactAuditText(execution.prompt)}
 \`\`\`
 
 </details>
 
-## AI 结构化输出
+## 审计证据与产物
 
-<details>
-<summary>查看完整 JSON</summary>
-
-\`\`\`json
-${JSON.stringify(execution.rawOutput, null, 2)}
-\`\`\`
-
-</details>
-
-## 生成文档
-
+- AI 结构化输出：${evidence.path || '尚未写入'}
+- AI 输出 SHA-256：${evidence.sha256 || '尚未生成'}
 - Progression：${documents.progress}
 - Problem：../problem/${documents.problem}
 - Result：../result/${documents.result}
-- AI 核心玩法：${evaluation.aiCoreScore}/50
-- AI 玩家体验：${evaluation.aiExperienceScore}/50
-- AI 总分：${evaluation.aiTotalScore}/100
+- 下一人工动作：${audit.nextAction || '查看 Result 并分发人工评分链接'}
 `;
 }
 
 function renderProblem({ evaluation, evaluationId, documents }) {
+  const labels = { experienceValue: '体验价值', gameplaySystems: '玩法与系统', contentPresentation: '内容与呈现' };
   const rows = evaluation.issues.length
-    ? evaluation.issues.map((issue, index) => `| ${index + 1} | ${issue.dimension === 'core' ? '核心玩法' : '玩家体验'} | ${md(issue.evidence)} | ${md(issue.description)} | ${md(issue.suggestion)} |`).join('\n')
+    ? evaluation.issues.map((issue, index) => `| ${index + 1} | ${labels[issue.dimension]} | ${md(issue.evidence)} | ${md(issue.description)} | ${md(issue.suggestion)} |`).join('\n')
     : '| - | - | - | 无 | - |';
   return `# GDD EDD 问题记录
 
@@ -134,8 +127,9 @@ export function renderEvaluationDocuments(input) {
   const { evalCase, evaluation, execution, evaluationId, documents, assets } = input;
   const result = applyTemplate(assets.resultTemplate, {
     evaluationId,
-    aiCoreScore: evaluation.aiCoreScore,
-    aiExperienceScore: evaluation.aiExperienceScore,
+    aiExperienceValueScore: evaluation.aiExperienceValueScore,
+    aiGameplaySystemsScore: evaluation.aiGameplaySystemsScore,
+    aiContentPresentationScore: evaluation.aiContentPresentationScore,
     aiTotalScore: evaluation.aiTotalScore,
     title: evalCase.title,
     revision: evalCase.revision,
@@ -145,12 +139,15 @@ export function renderEvaluationDocuments(input) {
     rubricPath: evalCase.rubricPath,
     progressDocument: documents.progress,
     problemDocument: documents.problem,
-    coreObservations: observations(evaluation.dimensions.core.observations),
-    coreRationale: evaluation.dimensions.core.rationale,
-    coreEvidenceGaps: gaps(evaluation.dimensions.core.evidenceGaps),
-    experienceObservations: observations(evaluation.dimensions.experience.observations),
-    experienceRationale: evaluation.dimensions.experience.rationale,
-    experienceEvidenceGaps: gaps(evaluation.dimensions.experience.evidenceGaps),
+    experienceValueObservations: observations(evaluation.dimensions.experienceValue.observations),
+    experienceValueRationale: evaluation.dimensions.experienceValue.rationale,
+    experienceValueEvidenceGaps: gaps(evaluation.dimensions.experienceValue.evidenceGaps),
+    gameplaySystemsObservations: observations(evaluation.dimensions.gameplaySystems.observations),
+    gameplaySystemsRationale: evaluation.dimensions.gameplaySystems.rationale,
+    gameplaySystemsEvidenceGaps: gaps(evaluation.dimensions.gameplaySystems.evidenceGaps),
+    contentPresentationObservations: observations(evaluation.dimensions.contentPresentation.observations),
+    contentPresentationRationale: evaluation.dimensions.contentPresentation.rationale,
+    contentPresentationEvidenceGaps: gaps(evaluation.dimensions.contentPresentation.evidenceGaps),
     issueCount: evaluation.issues.length,
   });
   return {

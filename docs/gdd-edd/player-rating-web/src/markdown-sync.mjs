@@ -2,16 +2,15 @@ import { randomBytes } from 'node:crypto';
 import { readFile, rename, writeFile } from 'node:fs/promises';
 
 const REASON_LABELS = {
-  unclear_goal: '目标不清晰', repetitive: '玩法重复', weak_feedback: '反馈不足', poor_pacing: '节奏不佳', low_agency: '选择影响弱',
-  ui_clarity: 'UI 信息不清', visual_style: '视觉风格不协调', controls: '操作不顺畅', difficulty: '难度不合理', low_engagement: '吸引力不足',
-  loop: '循环问题', ui: 'UI 问题', feedback: '反馈不足',
+  unclear_goal: '体验目标不清', weak_motivation: '玩家动机不足', vague_fantasy: '核心幻想模糊', low_differentiation: '差异化不足', unclear_emotion: '预期情绪不清',
+  weak_loop: '核心循环薄弱', low_agency: '选择影响弱', weak_feedback: '反馈不足', poor_difficulty: '难度不合理', unbalanced_progression: '成长或平衡有问题',
+  unclear_structure: '内容结构不清', weak_narrative: '叙事支撑不足', ui_clarity: 'UI 信息不清', visual_inconsistency: '视觉风格不一致', audio_gap: '音频设计不足',
 };
 
 const distributionLine = (values) => [1, 2, 3, 4, 5].map((score) => `${score}分 ${values?.[score] || 0} 人`).join(' / ');
 const reasonsLine = (items = []) => items.length ? items.slice(0, 5).map(({ reason, count }) => `${REASON_LABELS[reason] || reason} ${count} 次`).join('；') : '无';
 const score = (value) => value == null ? '暂无玩家评分' : `${value.toFixed(1)} 分`;
 const decimal = (value) => Number.isFinite(value) ? value.toFixed(1) : '暂无';
-const resultScore = (value) => value == null ? '暂无玩家评分' : `${value.toFixed(1)}/100`;
 
 export function renderRatingSection(session, aggregate, combined, syncedAt = new Date().toISOString()) {
   return `## 玩家评分与合并结果
@@ -21,37 +20,43 @@ export function renderRatingSection(session, aggregate, combined, syncedAt = new
 - 数据状态：${combined.provisional ? '暂无玩家评分，不生成合并总分' : '已生成合并结果'}
 - 同步时间：${syncedAt}
 
-### 核心玩法（50%）
+### 体验价值（30%）
 
-- 玩家均分：${aggregate.coreAverage == null ? '暂无' : `${aggregate.coreAverage.toFixed(1)} / 5`}
-- 分布：${distributionLine(aggregate.coreDistribution)}
-- 高频原因：${reasonsLine(aggregate.coreReasons)}
-- AI 得分：${session.aiCoreScore.toFixed(1)} / 50（换算 ${decimal(combined.aiCorePercent)} / 100）
-- 合并维度分：${score(combined.core)}
+- 玩家均分：${aggregate.experienceValueAverage == null ? '暂无' : `${aggregate.experienceValueAverage.toFixed(1)} / 5`}
+- 分布：${distributionLine(aggregate.experienceValueDistribution)}
+- 高频原因：${reasonsLine(aggregate.experienceValueReasons)}
+- AI 得分：${session.aiExperienceValueScore.toFixed(1)} / 30（换算 ${decimal(combined.aiExperienceValuePercent)} / 100）
+- 合并维度分：${score(combined.experienceValue)}
 
-### 玩家体验（50%，含 UI 视觉风格与可玩性）
+### 玩法与系统（40%）
 
-- 玩家均分：${aggregate.experienceAverage == null ? '暂无' : `${aggregate.experienceAverage.toFixed(1)} / 5`}
-- 分布：${distributionLine(aggregate.experienceDistribution)}
-- 高频原因：${reasonsLine(aggregate.experienceReasons)}
-- AI 得分：${session.aiExperienceScore.toFixed(1)} / 50（换算 ${decimal(combined.aiExperiencePercent)} / 100）
-- 合并维度分：${score(combined.experience)}
+- 玩家均分：${aggregate.gameplaySystemsAverage == null ? '暂无' : `${aggregate.gameplaySystemsAverage.toFixed(1)} / 5`}
+- 分布：${distributionLine(aggregate.gameplaySystemsDistribution)}
+- 高频原因：${reasonsLine(aggregate.gameplaySystemsReasons)}
+- AI 得分：${session.aiGameplaySystemsScore.toFixed(1)} / 40（换算 ${decimal(combined.aiGameplaySystemsPercent)} / 100）
+- 合并维度分：${score(combined.gameplaySystems)}
+
+### 内容与呈现（30%）
+
+- 玩家均分：${aggregate.contentPresentationAverage == null ? '暂无' : `${aggregate.contentPresentationAverage.toFixed(1)} / 5`}
+- 分布：${distributionLine(aggregate.contentPresentationDistribution)}
+- 高频原因：${reasonsLine(aggregate.contentPresentationReasons)}
+- AI 得分：${session.aiContentPresentationScore.toFixed(1)} / 30（换算 ${decimal(combined.aiContentPresentationPercent)} / 100）
+- 合并维度分：${score(combined.contentPresentation)}
 
 ### 合并总分
 
-- 公式：每个维度 = AI 百分制 × 60% + 玩家百分制 × 40%；总分 = 核心玩法 × 50% + 玩家体验 × 50%
+- 公式：每个维度 = AI 百分制 × 70% + 玩家百分制 × 30%；总分 = 体验价值 × 30% + 玩法与系统 × 40% + 内容与呈现 × 30%
 - 正式总分：${score(combined.final)}
 `;
 }
 
 export function renderProgressRatingSection(session, aggregate, combined, syncedAt = new Date().toISOString()) {
-  return `## 玩家评分状态
+  return `## 玩家评分同步
 
 - 同步时间：${syncedAt}
 - 有效样本：${aggregate.count}
-- 最终核心玩法：${resultScore(combined.core)}
-- 最终玩家体验：${resultScore(combined.experience)}
-- 最终总分：${resultScore(combined.final)}
+- 状态：Result 已更新
 - Result：../result/${session.resultDocument}
 `;
 }
@@ -59,9 +64,10 @@ export function renderProgressRatingSection(session, aggregate, combined, synced
 export function updateResultSummary(markdown, aggregate, combined) {
   const values = {
     玩家有效样本: String(aggregate.count),
-    最终核心玩法: resultScore(combined.core),
-    最终玩家体验: resultScore(combined.experience),
-    最终总分: resultScore(combined.final),
+    最终体验价值: combined.experienceValue == null ? '暂无玩家评分' : `${combined.experienceValue.toFixed(1)}/100`,
+    最终玩法与系统: combined.gameplaySystems == null ? '暂无玩家评分' : `${combined.gameplaySystems.toFixed(1)}/100`,
+    最终内容与呈现: combined.contentPresentation == null ? '暂无玩家评分' : `${combined.contentPresentation.toFixed(1)}/100`,
+    最终总分: combined.final == null ? '暂无玩家评分' : `${combined.final.toFixed(1)}/100`,
   };
   let updated = markdown;
   for (const [label, value] of Object.entries(values)) {

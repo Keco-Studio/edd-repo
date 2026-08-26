@@ -17,38 +17,56 @@
 
     <form id="rating-form" hidden>
       <section class="rating-section">
-        <div class="section-heading"><span>01</span><div><h2>核心玩法</h2><p>目标、互动反馈和玩法循环是否清楚有趣？</p></div></div>
-        <div class="score-grid" role="radiogroup" aria-label="核心玩法评分">
-          <label><input type="radio" name="coreScore" value="1"><span><b>1</b>很差</span></label>
-          <label><input type="radio" name="coreScore" value="2"><span><b>2</b>较差</span></label>
-          <label><input type="radio" name="coreScore" value="3"><span><b>3</b>一般</span></label>
-          <label><input type="radio" name="coreScore" value="4"><span><b>4</b>不错</span></label>
-          <label><input type="radio" name="coreScore" value="5"><span><b>5</b>很好</span></label>
+        <div class="section-heading"><span>01</span><div><h2>体验价值</h2><p>目标玩家、核心幻想和游玩动机是否清楚、有吸引力？</p></div></div>
+        <div class="score-grid" role="radiogroup" aria-label="体验价值评分">
+          <label><input type="radio" name="experienceValueScore" value="1"><span><b>1</b>很差</span></label>
+          <label><input type="radio" name="experienceValueScore" value="2"><span><b>2</b>较差</span></label>
+          <label><input type="radio" name="experienceValueScore" value="3"><span><b>3</b>一般</span></label>
+          <label><input type="radio" name="experienceValueScore" value="4"><span><b>4</b>不错</span></label>
+          <label><input type="radio" name="experienceValueScore" value="5"><span><b>5</b>很好</span></label>
         </div>
-        <fieldset class="reasons" id="core-reasons" hidden><legend>哪里需要改进？</legend>
-          <label><input type="checkbox" name="coreReasons" value="unclear_goal">目标不清晰</label>
-          <label><input type="checkbox" name="coreReasons" value="repetitive">玩法重复</label>
-          <label><input type="checkbox" name="coreReasons" value="weak_feedback">反馈不足</label>
-          <label><input type="checkbox" name="coreReasons" value="poor_pacing">节奏不佳</label>
-          <label><input type="checkbox" name="coreReasons" value="low_agency">选择影响弱</label>
+        <fieldset class="reasons" id="experience-value-reasons" hidden><legend>哪里需要改进？</legend>
+          <label><input type="checkbox" name="experienceValueReasons" value="unclear_goal">体验目标不清</label>
+          <label><input type="checkbox" name="experienceValueReasons" value="weak_motivation">玩家动机不足</label>
+          <label><input type="checkbox" name="experienceValueReasons" value="vague_fantasy">核心幻想模糊</label>
+          <label><input type="checkbox" name="experienceValueReasons" value="low_differentiation">差异化不足</label>
+          <label><input type="checkbox" name="experienceValueReasons" value="unclear_emotion">预期情绪不清</label>
         </fieldset>
       </section>
 
       <section class="rating-section">
-        <div class="section-heading"><span>02</span><div><h2>玩家体验</h2><p>包含 UI 视觉风格与可玩性。</p></div></div>
-        <div class="score-grid" role="radiogroup" aria-label="玩家体验评分">
-          <label><input type="radio" name="experienceScore" value="1"><span><b>1</b>很差</span></label>
-          <label><input type="radio" name="experienceScore" value="2"><span><b>2</b>较差</span></label>
-          <label><input type="radio" name="experienceScore" value="3"><span><b>3</b>一般</span></label>
-          <label><input type="radio" name="experienceScore" value="4"><span><b>4</b>不错</span></label>
-          <label><input type="radio" name="experienceScore" value="5"><span><b>5</b>很好</span></label>
+        <div class="section-heading"><span>02</span><div><h2>玩法与系统</h2><p>循环、选择、反馈、难度和成长系统是否成立？</p></div></div>
+        <div class="score-grid" role="radiogroup" aria-label="玩法与系统评分">
+          <label><input type="radio" name="gameplaySystemsScore" value="1"><span><b>1</b>很差</span></label>
+          <label><input type="radio" name="gameplaySystemsScore" value="2"><span><b>2</b>较差</span></label>
+          <label><input type="radio" name="gameplaySystemsScore" value="3"><span><b>3</b>一般</span></label>
+          <label><input type="radio" name="gameplaySystemsScore" value="4"><span><b>4</b>不错</span></label>
+          <label><input type="radio" name="gameplaySystemsScore" value="5"><span><b>5</b>很好</span></label>
         </div>
-        <fieldset class="reasons" id="experience-reasons" hidden><legend>哪里需要改进？</legend>
-          <label><input type="checkbox" name="experienceReasons" value="ui_clarity">UI 信息不清</label>
-          <label><input type="checkbox" name="experienceReasons" value="visual_style">视觉风格不协调</label>
-          <label><input type="checkbox" name="experienceReasons" value="controls">操作不顺畅</label>
-          <label><input type="checkbox" name="experienceReasons" value="difficulty">难度不合理</label>
-          <label><input type="checkbox" name="experienceReasons" value="low_engagement">吸引力不足</label>
+        <fieldset class="reasons" id="gameplay-systems-reasons" hidden><legend>哪里需要改进？</legend>
+          <label><input type="checkbox" name="gameplaySystemsReasons" value="weak_loop">核心循环薄弱</label>
+          <label><input type="checkbox" name="gameplaySystemsReasons" value="low_agency">选择影响弱</label>
+          <label><input type="checkbox" name="gameplaySystemsReasons" value="weak_feedback">反馈不足</label>
+          <label><input type="checkbox" name="gameplaySystemsReasons" value="poor_difficulty">难度不合理</label>
+          <label><input type="checkbox" name="gameplaySystemsReasons" value="unbalanced_progression">成长或平衡有问题</label>
+        </fieldset>
+      </section>
+
+      <section class="rating-section">
+        <div class="section-heading"><span>03</span><div><h2>内容与呈现</h2><p>内容、叙事、视觉、音频、UI 和信息表达是否清楚一致？</p></div></div>
+        <div class="score-grid" role="radiogroup" aria-label="内容与呈现评分">
+          <label><input type="radio" name="contentPresentationScore" value="1"><span><b>1</b>很差</span></label>
+          <label><input type="radio" name="contentPresentationScore" value="2"><span><b>2</b>较差</span></label>
+          <label><input type="radio" name="contentPresentationScore" value="3"><span><b>3</b>一般</span></label>
+          <label><input type="radio" name="contentPresentationScore" value="4"><span><b>4</b>不错</span></label>
+          <label><input type="radio" name="contentPresentationScore" value="5"><span><b>5</b>很好</span></label>
+        </div>
+        <fieldset class="reasons" id="content-presentation-reasons" hidden><legend>哪里需要改进？</legend>
+          <label><input type="checkbox" name="contentPresentationReasons" value="unclear_structure">内容结构不清</label>
+          <label><input type="checkbox" name="contentPresentationReasons" value="weak_narrative">叙事支撑不足</label>
+          <label><input type="checkbox" name="contentPresentationReasons" value="ui_clarity">UI 信息不清</label>
+          <label><input type="checkbox" name="contentPresentationReasons" value="visual_inconsistency">视觉风格不一致</label>
+          <label><input type="checkbox" name="contentPresentationReasons" value="audio_gap">音频设计不足</label>
         </fieldset>
       </section>
 

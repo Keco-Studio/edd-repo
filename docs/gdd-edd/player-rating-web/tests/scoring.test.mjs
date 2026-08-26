@@ -8,38 +8,44 @@ test('distribution always contains all five labels', () => {
 
 test('aggregates averages, distributions, and reasons', () => {
   const result = aggregateRatings([
-    { coreScore: 4, experienceScore: 3, coreReasons: ['loop'], experienceReasons: ['ui'] },
-    { coreScore: 5, experienceScore: 4, coreReasons: ['loop'], experienceReasons: [] },
+    { experienceValueScore: 4, gameplaySystemsScore: 3, contentPresentationScore: 5, experienceValueReasons: ['unclear_goal'], gameplaySystemsReasons: ['weak_loop'], contentPresentationReasons: ['ui_clarity'] },
+    { experienceValueScore: 5, gameplaySystemsScore: 4, contentPresentationScore: 4, experienceValueReasons: ['unclear_goal'], gameplaySystemsReasons: [], contentPresentationReasons: [] },
   ]);
   assert.equal(result.count, 2);
-  assert.equal(result.coreAverage, 4.5);
-  assert.equal(result.experienceAverage, 3.5);
-  assert.deepEqual(result.coreReasons, [{ reason: 'loop', count: 2 }]);
+  assert.equal(result.experienceValueAverage, 4.5);
+  assert.equal(result.gameplaySystemsAverage, 3.5);
+  assert.equal(result.contentPresentationAverage, 4.5);
+  assert.deepEqual(result.experienceValueReasons, [{ reason: 'unclear_goal', count: 2 }]);
 });
 
-test('combines AI 60%, players 40%, and dimensions equally from the first response', () => {
-  const aggregate = { count: 1, coreAverage: 4, experienceAverage: 3 };
-  const result = combineScores({ aiCoreScore: 40, aiExperienceScore: 45, aggregate });
+test('combines AI 70%, players 30%, then weights dimensions 30/40/30', () => {
+  const aggregate = { count: 1, experienceValueAverage: 4, gameplaySystemsAverage: 3, contentPresentationAverage: 5 };
+  const result = combineScores({ aiExperienceValueScore: 24, aiGameplaySystemsScore: 32, aiContentPresentationScore: 27, aggregate });
   assert.deepEqual(result, {
     provisional: false,
-    aiCorePercent: 80,
-    aiExperiencePercent: 90,
-    playerCorePercent: 80,
-    playerExperiencePercent: 60,
-    core: 80,
-    experience: 78,
-    final: 79,
+    aiExperienceValuePercent: 80,
+    aiGameplaySystemsPercent: 80,
+    aiContentPresentationPercent: 90,
+    playerExperienceValuePercent: 80,
+    playerGameplaySystemsPercent: 60,
+    playerContentPresentationPercent: 100,
+    experienceValue: 80,
+    gameplaySystems: 74,
+    contentPresentation: 93,
+    final: 81.5,
   });
 });
 
 test('clamps AI scores and withholds final only when there are no player ratings', () => {
   const result = combineScores({
-    aiCoreScore: 60,
-    aiExperienceScore: -3,
-    aggregate: { count: 0, coreAverage: null, experienceAverage: null },
+    aiExperienceValueScore: 50,
+    aiGameplaySystemsScore: -3,
+    aiContentPresentationScore: 31,
+    aggregate: { count: 0, experienceValueAverage: null, gameplaySystemsAverage: null, contentPresentationAverage: null },
   });
-  assert.equal(result.aiCorePercent, 100);
-  assert.equal(result.aiExperiencePercent, 0);
+  assert.equal(result.aiExperienceValuePercent, 100);
+  assert.equal(result.aiGameplaySystemsPercent, 0);
+  assert.equal(result.aiContentPresentationPercent, 100);
   assert.equal(result.provisional, true);
   assert.equal(result.final, null);
 });

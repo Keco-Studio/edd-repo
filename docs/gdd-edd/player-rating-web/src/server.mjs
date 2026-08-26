@@ -49,6 +49,8 @@ function statusOf(session) {
   return 'open';
 }
 
+const usesCurrentRatingSchema = (session) => session.ratingSchemaVersion === 2;
+
 export async function createRatingServer(options = {}) {
   const host = options.host || process.env.EDD_HOST || '0.0.0.0';
   const port = Number(options.port ?? process.env.EDD_PORT ?? 4178);
@@ -62,15 +64,28 @@ export async function createRatingServer(options = {}) {
 
   const summary = (session, includePrivate = false) => {
     const aggregate = aggregateRatings(store.getRatings(session.id));
-    const combined = combineScores({ aiCoreScore: session.aiCoreScore, aiExperienceScore: session.aiExperienceScore, aggregate });
-    const publicFields = { id: session.id, gameTitle: session.gameTitle, status: statusOf(session), expiresAt: session.expiresAt, aggregate, combined: { provisional: combined.provisional, core: combined.core, experience: combined.experience, final: combined.final } };
+    const combined = combineScores({
+      aiExperienceValueScore: session.aiExperienceValueScore,
+      aiGameplaySystemsScore: session.aiGameplaySystemsScore,
+      aiContentPresentationScore: session.aiContentPresentationScore,
+      aggregate,
+    });
+    const publicFields = {
+      id: session.id, gameTitle: session.gameTitle, status: statusOf(session), expiresAt: session.expiresAt, aggregate,
+      combined: { provisional: combined.provisional, experienceValue: combined.experienceValue, gameplaySystems: combined.gameplaySystems, contentPresentation: combined.contentPresentation, final: combined.final },
+    };
     return includePrivate ? { ...session, ...publicFields, aggregate, combined } : publicFields;
   };
 
   async function sync(session) {
     try {
       const aggregate = aggregateRatings(store.getRatings(session.id));
-      const combined = combineScores({ aiCoreScore: session.aiCoreScore, aiExperienceScore: session.aiExperienceScore, aggregate });
+      const combined = combineScores({
+        aiExperienceValueScore: session.aiExperienceValueScore,
+        aiGameplaySystemsScore: session.aiGameplaySystemsScore,
+        aiContentPresentationScore: session.aiContentPresentationScore,
+        aggregate,
+      });
       const syncedAt = new Date().toISOString();
       const resultPath = await resolveResultDocument(session.resultDocument, resultRoot);
       const progressPath = await resolveResultDocument(session.progressDocument, progressRoot);
@@ -98,17 +113,19 @@ export async function createRatingServer(options = {}) {
       access(join(problemRoot, names.problem)),
       access(join(resultRoot, names.result)),
     ]);
-    const score = (value, label) => {
+    const score = (value, maximum, label) => {
       const number = Number(value);
-      if (!Number.isFinite(number) || number < 0 || number > 50) throw new Error(`${label}无效`);
+      if (!Number.isFinite(number) || number < 0 || number > maximum) throw new Error(`${label}无效`);
       return number;
     };
     const expiryDays = Number(input.expiryDays || 7);
     const session = await store.createSession({
+      ratingSchemaVersion: 2,
       gameTitle: input.gameTitle,
       resultDocument: names.result,
-      aiCoreScore: score(input.aiCoreScore, 'AI 核心玩法得分'),
-      aiExperienceScore: score(input.aiExperienceScore, 'AI 玩家体验得分'),
+      aiExperienceValueScore: score(input.aiExperienceValueScore, 30, 'AI 体验价值得分'),
+      aiGameplaySystemsScore: score(input.aiGameplaySystemsScore, 40, 'AI 玩法与系统得分'),
+      aiContentPresentationScore: score(input.aiContentPresentationScore, 30, 'AI 内容与呈现得分'),
       expiryDays,
       evaluationId: input.evaluationId,
       progressDocument: names.progress,
@@ -130,12 +147,14 @@ export async function createRatingServer(options = {}) {
         if (request.method === 'GET' && publicRead) {
           const session = store.getSessionByToken(publicRead[1]);
           if (!session) return send(response, 404, { error: '评分链接不存在' });
+          if (!usesCurrentRatingSchema(session)) return send(response, 410, { error: '旧评分链接不兼容，请创建新的三维评价' });
           return send(response, 200, { session: summary(session) });
         }
         const publicRating = url.pathname.match(/^\/api\/public\/sessions\/([^/]+)\/ratings$/);
         if (request.method === 'POST' && publicRating) {
           const session = store.getSessionByToken(publicRating[1]);
           if (!session) return send(response, 404, { error: '评分链接不存在' });
+          if (!usesCurrentRatingSchema(session)) return send(response, 410, { error: '旧评分链接不兼容，请创建新的三维评价' });
           if (statusOf(session) !== 'open') return send(response, 409, { error: statusOf(session) === 'closed' ? '评分会话已关闭' : '评分会话已过期' });
           const input = await bodyJson(request);
           if (typeof input.anonymousId !== 'string' || input.anonymousId.length < 12 || input.anonymousId.length > 128) throw Object.assign(new Error('匿名标识无效'), { status: 400 });

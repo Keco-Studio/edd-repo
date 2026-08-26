@@ -2,8 +2,13 @@ import test from 'node:test';
 import assert from 'node:assert/strict';
 import { replaceRatingSection, renderProgressRatingSection, renderRatingSection } from '../src/markdown-sync.mjs';
 
-const session = { id: 'abc', gameTitle: '流浪猫收养记', resultDocument: 'evaluation-评价结果.md', aiCoreScore: 45, aiExperienceScore: 40 };
-const aggregate = { count: 4, coreAverage: 4.2, experienceAverage: 3.8, coreDistribution: { 1: 0, 2: 0, 3: 1, 4: 1, 5: 2 }, experienceDistribution: { 1: 0, 2: 1, 3: 0, 4: 2, 5: 1 }, coreReasons: [{ reason: 'feedback', count: 2 }], experienceReasons: [] };
+const session = { id: 'abc', gameTitle: '流浪猫收养记', resultDocument: 'evaluation-评价结果.md', aiExperienceValueScore: 24, aiGameplaySystemsScore: 32, aiContentPresentationScore: 27 };
+const aggregate = {
+  count: 4,
+  experienceValueAverage: 4.2, gameplaySystemsAverage: 3.8, contentPresentationAverage: 4.5,
+  experienceValueDistribution: { 1: 0, 2: 0, 3: 1, 4: 1, 5: 2 }, gameplaySystemsDistribution: { 1: 0, 2: 1, 3: 0, 4: 2, 5: 1 }, contentPresentationDistribution: { 1: 0, 2: 0, 3: 0, 4: 2, 5: 2 },
+  experienceValueReasons: [{ reason: 'unclear_goal', count: 2 }], gameplaySystemsReasons: [], contentPresentationReasons: [],
+};
 
 test('renders distributions and provisional state without comments', () => {
   const section = renderRatingSection(session, aggregate, { provisional: true, final: null }, '2026-08-25T00:00:00.000Z');
@@ -14,12 +19,12 @@ test('renders distributions and provisional state without comments', () => {
 });
 
 test('renders a concise player status for Progression', () => {
-  const section = renderProgressRatingSection(session, aggregate, { core: 83.4, experience: 78.2, final: 80.8 }, '2026-08-25T00:00:00.000Z');
-  assert.match(section, /## 玩家评分状态/);
+  const section = renderProgressRatingSection(session, aggregate, { experienceValue: 83.4, gameplaySystems: 78.2, contentPresentation: 88, final: 82.5 }, '2026-08-25T00:00:00.000Z');
+  assert.match(section, /## 玩家评分同步/);
   assert.match(section, /有效样本：4/);
-  assert.match(section, /最终总分：80\.8\/100/);
+  assert.match(section, /Result 已更新/);
   assert.match(section, /Result/);
-  assert.doesNotMatch(section, /### 输入|### 输出|写回验证|合并参数|AI 核心玩法/);
+  assert.doesNotMatch(section, /83\.4|78\.2|88\.0|82\.5|最终|合并|AI 体验价值/);
 });
 
 test('appends then replaces only matching marker block', () => {

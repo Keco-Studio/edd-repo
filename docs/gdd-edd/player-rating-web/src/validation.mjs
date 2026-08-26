@@ -2,8 +2,9 @@ import { access, readdir } from 'node:fs/promises';
 import { basename, resolve } from 'node:path';
 import { fileURLToPath } from 'node:url';
 
-export const CORE_REASONS = ['unclear_goal', 'repetitive', 'weak_feedback', 'poor_pacing', 'low_agency'];
-export const EXPERIENCE_REASONS = ['ui_clarity', 'visual_style', 'controls', 'difficulty', 'low_engagement'];
+export const EXPERIENCE_VALUE_REASONS = ['unclear_goal', 'weak_motivation', 'vague_fantasy', 'low_differentiation', 'unclear_emotion'];
+export const GAMEPLAY_SYSTEMS_REASONS = ['weak_loop', 'low_agency', 'weak_feedback', 'poor_difficulty', 'unbalanced_progression'];
+export const CONTENT_PRESENTATION_REASONS = ['unclear_structure', 'weak_narrative', 'ui_clarity', 'visual_inconsistency', 'audio_gap'];
 
 const fail = (message) => { throw new Error(message); };
 const integer = (value, min, max, label) => {
@@ -13,8 +14,9 @@ const integer = (value, min, max, label) => {
 };
 
 export function validateRating(input = {}) {
-  const coreScore = integer(input.coreScore, 1, 5, '核心玩法评分');
-  const experienceScore = integer(input.experienceScore, 1, 5, '玩家体验评分');
+  const experienceValueScore = integer(input.experienceValueScore, 1, 5, '体验价值评分');
+  const gameplaySystemsScore = integer(input.gameplaySystemsScore, 1, 5, '玩法与系统评分');
+  const contentPresentationScore = integer(input.contentPresentationScore, 1, 5, '内容与呈现评分');
   const validateReasons = (values, allowed) => {
     if (!Array.isArray(values) || values.length > allowed.length || values.some((value) => !allowed.includes(value))) fail('包含未知问题原因');
     return [...new Set(values)];
@@ -22,10 +24,12 @@ export function validateRating(input = {}) {
   const comment = typeof input.comment === 'string' ? input.comment.trim() : '';
   if (comment.length > 300) fail('反馈最多 300 字');
   return {
-    coreScore,
-    experienceScore,
-    coreReasons: validateReasons(input.coreReasons || [], CORE_REASONS),
-    experienceReasons: validateReasons(input.experienceReasons || [], EXPERIENCE_REASONS),
+    experienceValueScore,
+    gameplaySystemsScore,
+    contentPresentationScore,
+    experienceValueReasons: validateReasons(input.experienceValueReasons || [], EXPERIENCE_VALUE_REASONS),
+    gameplaySystemsReasons: validateReasons(input.gameplaySystemsReasons || [], GAMEPLAY_SYSTEMS_REASONS),
+    contentPresentationReasons: validateReasons(input.contentPresentationReasons || [], CONTENT_PRESENTATION_REASONS),
     comment,
   };
 }

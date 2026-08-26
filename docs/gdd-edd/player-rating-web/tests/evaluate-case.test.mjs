@@ -1,9 +1,10 @@
 import test from 'node:test';
 import assert from 'node:assert/strict';
-import { access, mkdir, mkdtemp, writeFile } from 'node:fs/promises';
+import { access, mkdir, mkdtemp, readFile, writeFile } from 'node:fs/promises';
 import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { evaluateCase, formatEvaluationScore, nextEvaluationId, parseCliOptions, runCli } from '../src/evaluate-case.mjs';
+import { renderEvaluationDocuments } from '../src/document-renderer.mjs';
 
 const evalCase = Object.freeze({
   id: 'paws-patience-r97',
@@ -13,21 +14,23 @@ const evalCase = Object.freeze({
   projectId: 'project-id',
   documentId: 'document-id',
   revision: 97,
-  promptPath: 'docs/gdd-edd/prompts/gdd-evaluation-v1.md',
-  rubricPath: 'docs/gdd-edd/rubrics/two-dimension-v1.md',
-  resultTemplatePath: 'docs/gdd-edd/result/评价模板-v6.md',
+  promptPath: 'docs/gdd-edd/prompts/gdd-evaluation-v2.md',
+  rubricPath: 'docs/gdd-edd/rubrics/three-dimension-v2.md',
+  resultTemplatePath: 'docs/gdd-edd/result/评价模板-v7.md',
   outputStem: 'paws-patience-gdd-r97',
 });
 
 const evaluation = {
   source: { projectId: 'project-id', documentId: 'document-id', revision: 97, title: 'Paws & Patience' },
   provider: 'codex',
-  aiCoreScore: 45,
-  aiExperienceScore: 50,
-  aiTotalScore: 95,
+  aiExperienceValueScore: 27,
+  aiGameplaySystemsScore: 36,
+  aiContentPresentationScore: 29,
+  aiTotalScore: 92,
   dimensions: {
-    core: { score: 45, observations: [{ statement: '核心观察', evidence: '第三章' }], rationale: '核心理由', evidenceGaps: [] },
-    experience: { score: 50, observations: [{ statement: '体验观察', evidence: '第四章' }], rationale: '体验理由', evidenceGaps: [] },
+    experienceValue: { score: 27, observations: [{ statement: '价值观察', evidence: '第二章' }], rationale: '价值理由', evidenceGaps: [] },
+    gameplaySystems: { score: 36, observations: [{ statement: '玩法观察', evidence: '第三章' }], rationale: '玩法理由', evidenceGaps: [] },
+    contentPresentation: { score: 29, observations: [{ statement: '呈现观察', evidence: '第四章' }], rationale: '呈现理由', evidenceGaps: [] },
   },
   issues: [],
 };
@@ -53,13 +56,17 @@ test('one selected case creates three documents and returns a human-rating link'
   const result = await evaluateCase({
     evalCase,
     provider: 'codex',
-    assets: { promptTemplate: '评价 {{title}} {{gddPath}} {{rubricPath}}', resultTemplate: 'template', hashes: {} },
+    assets: {
+      promptTemplate: '评价 {{title}} {{gddPath}} {{rubricPath}}',
+      resultTemplate: '# Result\n- 评价标识：{{evaluationId}}\n- AI 体验价值：{{aiExperienceValueScore}}/30\n- AI 玩法与系统：{{aiGameplaySystemsScore}}/40\n- AI 内容与呈现：{{aiContentPresentationScore}}/30\n- AI 总分：{{aiTotalScore}}/100\n- 玩家有效样本：0\n- 最终体验价值：暂无玩家评分\n- 最终玩法与系统：暂无玩家评分\n- 最终内容与呈现：暂无玩家评分\n- 最终总分：暂无玩家评分\n',
+      hashes: { gdd: 'a', prompt: 'b', rubric: 'c', schema: 'd', resultTemplate: 'e' },
+    },
     evaluator: async ({ evalCase: selected, prompt }) => {
       receivedCase = selected;
       assert.match(prompt, /Paws & Patience/);
       return { evaluation, execution: { provider: 'codex', requestedModel: 'test', observedModel: null, startedAt: 'x', finishedAt: 'y', durationMs: 1, status: 'completed', exitCode: 0, prompt, rawOutput: {}, events: [] } };
     },
-    renderer: (input) => { renderedInput = input; return { progress: '# Progression\n', problem: '# Problem\n', result: '# Result\n' }; },
+    renderer: (input) => { renderedInput = input; return renderEvaluationDocuments(input); },
     serverOptions: { ...roots, dataFile: join(root, 'data', 'store.json'), publicRoot: new URL('../public/', import.meta.url), host: '127.0.0.1', port: 0, rateLimit: 100 },
   });
   t.after(() => result.app.close());
@@ -73,10 +80,41 @@ test('one selected case creates three documents and returns a human-rating link'
     access(join(roots.problemRoot, result.documents.problem)),
     access(join(roots.resultRoot, result.documents.result)),
   ]);
-  assert.equal(formatEvaluationScore(result), `核心玩法：45.0/50
-玩家体验：50.0/50
-总分：95.0/100
+  const progress = await readFile(join(roots.progressRoot, result.documents.progress), 'utf8');
+  const evidencePath = join(roots.progressRoot, 'evidence', `${result.evaluationId}-ai-output.json`);
+  assert.deepEqual(JSON.parse(await readFile(evidencePath, 'utf8')), {});
+  assert.match(progress, /AI 评价/);
+  assert.match(progress, /Schema 校验/);
+  assert.match(progress, /文档回读/);
+  assert.match(progress, /评分会话/);
+  assert.match(progress, /evidence\/paws-patience-gdd-r97-ai-output\.json/);
+  assert.doesNotMatch(progress, /AI 体验价值|AI 玩法与系统|AI 内容与呈现|AI 总分|最终总分/);
+  assert.equal(formatEvaluationScore(result), `体验价值：27.0/30
+玩法与系统：36.0/40
+内容与呈现：29.0/30
+总分：92.0/100
 人工评分：${result.playerUrl}`);
+});
+
+test('writes a failure Progression when AI evaluation fails after allocating the run', async () => {
+  const root = await mkdtemp(join(tmpdir(), 'edd-command-failure-'));
+  const roots = { progressRoot: join(root, 'progress'), problemRoot: join(root, 'problem'), resultRoot: join(root, 'result') };
+  await assert.rejects(() => evaluateCase({
+    evalCase,
+    provider: 'claude',
+    model: 'sonnet',
+    assets: { promptTemplate: '评价 {{title}}', resultTemplate: '# Result', hashes: { gdd: 'a', prompt: 'b', rubric: 'c', schema: 'd', resultTemplate: 'e' } },
+    evaluator: async () => { throw new Error('provider authorization: Bearer secret-value failed'); },
+    serverOptions: { ...roots, dataFile: join(root, 'data', 'store.json'), publicRoot: new URL('../public/', import.meta.url), host: '127.0.0.1', port: 0, rateLimit: 100 },
+  }), /provider/);
+
+  const progress = await readFile(join(roots.progressRoot, 'paws-patience-gdd-r97-Progression.md'), 'utf8');
+  assert.match(progress, /状态：failed/);
+  assert.match(progress, /AI 评价/);
+  assert.match(progress, /failed/);
+  assert.match(progress, /重试命令：npm run eval -- --case paws-patience-r97 --provider claude --model sonnet/);
+  assert.doesNotMatch(progress, /secret-value/);
+  assert.doesNotMatch(progress, /AI 体验价值|AI 玩法与系统|AI 内容与呈现|AI 总分|最终总分/);
 });
 
 test('parses case, provider, and list options and rejects unknown arguments', () => {
@@ -111,5 +149,5 @@ test('run mode passes the selected case and provider to evaluation', async () =>
     evaluate: async (options) => { received = options; return fake; },
   });
   assert.deepEqual(received, { caseId: 'paws-patience-r97', provider: 'codex', model: 'gpt-test' });
-  assert.match(lines[0], /核心玩法：45\.0\/50/);
+  assert.match(lines[0], /体验价值：27\.0\/30/);
 });

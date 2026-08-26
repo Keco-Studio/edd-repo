@@ -6,6 +6,8 @@
   "scripts": {
     "start": "node src/server.mjs",
     "eval": "node src/evaluate-case.mjs",
+    "eval:baseline": "node src/eval-sampling.mjs baseline",
+    "eval:compare": "node src/eval-sampling.mjs compare",
     "share": "node src/server.mjs --share",
     "test": "node --test",
     "check": "npm test && node scripts/static-check.mjs"

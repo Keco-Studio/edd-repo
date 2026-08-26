@@ -13,9 +13,9 @@ const evalCase = Object.freeze({
   id: 'paws-patience-r97', type: 'gold', title: 'Paws & Patience',
   gddPath: 'docs/gdd-edd/gdd/paws-patience-gdd-r97.md',
   projectId: 'project-id', documentId: 'document-id', revision: 97,
-  promptPath: 'docs/gdd-edd/prompts/gdd-evaluation-v1.md',
-  rubricPath: 'docs/gdd-edd/rubrics/two-dimension-v1.md',
-  resultTemplatePath: 'docs/gdd-edd/result/评价模板-v6.md', outputStem: 'paws-patience-gdd-r97',
+  promptPath: 'docs/gdd-edd/prompts/gdd-evaluation-v2.md',
+  rubricPath: 'docs/gdd-edd/rubrics/three-dimension-v2.md',
+  resultTemplatePath: 'docs/gdd-edd/result/评价模板-v7.md', outputStem: 'paws-patience-gdd-r97',
 });
 
 const dimension = (score, label) => ({
@@ -27,18 +27,23 @@ const dimension = (score, label) => ({
 
 const valid = {
   source: { projectId: 'project-id', documentId: 'document-id', revision: 97, title: 'Paws & Patience' },
-  dimensions: { core: dimension(34, '核心玩法'), experience: dimension(31, '玩家体验') },
-  issues: [{ dimension: 'core', evidence: '三、核心循环', description: '规则冲突', suggestion: '统一规则' }],
+  dimensions: {
+    experienceValue: dimension(24, '体验价值'),
+    gameplaySystems: dimension(31, '玩法与系统'),
+    contentPresentation: dimension(22, '内容与呈现'),
+  },
+  issues: [{ dimension: 'gameplaySystems', evidence: '三、核心循环', description: '规则冲突', suggestion: '统一规则' }],
 };
 
-test('validates two evidence-backed dimensions and derives all AI scores', () => {
+test('validates three evidence-backed dimensions with 30/40/30 limits', () => {
   const result = validateAiEvaluation(valid, evalCase);
-  assert.equal(result.aiCoreScore, 34);
-  assert.equal(result.aiExperienceScore, 31);
-  assert.equal(result.aiTotalScore, 65);
-  assert.equal(result.dimensions.core.observations[0].statement, '核心玩法客观观察');
-  assert.throws(() => validateAiEvaluation({ ...valid, dimensions: { ...valid.dimensions, core: { ...valid.dimensions.core, score: 51 } } }, evalCase), /0-50/);
-  assert.throws(() => validateAiEvaluation({ ...valid, dimensions: { ...valid.dimensions, core: { ...valid.dimensions.core, observations: [] } } }, evalCase), /客观观察/);
+  assert.equal(result.aiExperienceValueScore, 24);
+  assert.equal(result.aiGameplaySystemsScore, 31);
+  assert.equal(result.aiContentPresentationScore, 22);
+  assert.equal(result.aiTotalScore, 77);
+  assert.equal(result.dimensions.experienceValue.observations[0].statement, '体验价值客观观察');
+  assert.throws(() => validateAiEvaluation({ ...valid, dimensions: { ...valid.dimensions, experienceValue: { ...valid.dimensions.experienceValue, score: 31 } } }, evalCase), /0-30/);
+  assert.throws(() => validateAiEvaluation({ ...valid, dimensions: { ...valid.dimensions, gameplaySystems: { ...valid.dimensions.gameplaySystems, observations: [] } } }, evalCase), /客观观察/);
   assert.throws(() => validateAiEvaluation({ ...valid, source: { ...valid.source, revision: 98 } }, evalCase), /GDD 修订/);
 });
 
@@ -49,7 +54,7 @@ test('renders the short versioned prompt without document-writing instructions',
   });
   assert.match(prompt, /Paws & Patience/);
   assert.match(prompt, /paws-patience-gdd-r97\.md/);
-  assert.match(prompt, /two-dimension-v1\.md/);
+  assert.match(prompt, /three-dimension-v2\.md/);
   assert.doesNotMatch(prompt, /Progression|Problem|Result|创建.*文档/);
   assert.throws(() => buildEvaluationPrompt({ evalCase, promptTemplate: '{{unknown}}' }), /未知 Prompt 占位符/);
 });
@@ -76,7 +81,7 @@ test('captures Codex JSONL events and final structured output without reasoning 
     ].join('\n'), stderr: '' };
   };
   const result = await runAiEvaluation({ provider: 'codex', model: 'gpt-test', evalCase, prompt: 'fixed prompt', runner });
-  assert.equal(result.evaluation.aiTotalScore, 65);
+  assert.equal(result.evaluation.aiTotalScore, 77);
   assert.equal(result.execution.provider, 'codex');
   assert.equal(result.execution.requestedModel, 'gpt-test');
   assert.equal(result.execution.status, 'completed');
@@ -94,7 +99,7 @@ test('captures Claude stream-json and observed model', async () => {
     JSON.stringify({ type: 'result', subtype: 'success', structured_output: valid }),
   ].join('\n');
   const result = await runAiEvaluation({ provider: 'claude', evalCase, prompt: 'fixed prompt', runner: async () => ({ stdout, stderr: '' }) });
-  assert.equal(result.evaluation.aiCoreScore, 34);
+  assert.equal(result.evaluation.aiExperienceValueScore, 24);
   assert.equal(result.execution.requestedModel, 'sonnet');
   assert.equal(result.execution.observedModel, 'claude-sonnet-test');
   assert.match(JSON.stringify(result.execution.events), /Read/);
