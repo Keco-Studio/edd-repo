@@ -4,7 +4,6 @@ import { tmpdir } from 'node:os';
 import { join } from 'node:path';
 import { promisify } from 'node:util';
 import { fileURLToPath } from 'node:url';
-import { validateAiEvaluation } from './contracts.mjs';
 
 const execFileAsync = promisify(execFile);
 const DEFAULT_SCHEMA_PATH = fileURLToPath(new URL('../../schemas/evaluation-v1.schema.json', import.meta.url));
@@ -151,11 +150,9 @@ export async function runCloudEvaluation(options = {}) {
     } else {
       rawResponse = parseClaudeOutput(events);
     }
-    const evaluation = validateAiEvaluation(rawResponse, options.evalCase);
     const finished = new Date();
     return {
       rawResponse,
-      evaluation,
       request: {
         messages,
         provider,

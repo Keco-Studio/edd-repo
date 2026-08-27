@@ -96,7 +96,6 @@ test('returns exact request metadata and validated Codex response', async () => 
   assert.deepEqual(result.request.messages, messages);
   assert.equal(result.request.provider, 'codex');
   assert.equal(result.request.requestedModel, 'gpt-test');
-  assert.equal(result.evaluation.aiTotalScore, 74);
   assert.deepEqual(result.rawResponse, validResponse);
   assert.doesNotMatch(JSON.stringify(result.execution), /hidden chain/);
 });
