@@ -15,7 +15,7 @@ const baseManifest = {
   revision: 97,
   promptPath: 'docs/prompt.md',
   rubricPath: 'docs/rubric.md',
-  resultTemplatePath: 'docs/template.md',
+  isolationManifestPath: 'docs/isolation.json',
   outputStem: 'paws-patience-gdd-r97',
 };
 
@@ -27,7 +27,7 @@ async function fixture(manifest = baseManifest, options = {}) {
   if (options.gdd !== false) await writeFile(join(repositoryRoot, 'docs', 'gdd.md'), '# GDD\n');
   if (options.prompt !== false) await writeFile(join(repositoryRoot, 'docs', 'prompt.md'), '# Prompt\n');
   if (options.rubric !== false) await writeFile(join(repositoryRoot, 'docs', 'rubric.md'), '# Rubric\n');
-  if (options.template !== false) await writeFile(join(repositoryRoot, 'docs', 'template.md'), '# Template\n');
+  if (options.isolation !== false) await writeFile(join(repositoryRoot, 'docs', 'isolation.json'), '{}\n');
   const fileId = options.fileId || manifest.id || 'invalid';
   const content = options.raw ?? JSON.stringify(manifest);
   await writeFile(join(casesRoot, `${fileId}.json`), content);
@@ -75,8 +75,8 @@ test('rejects paths outside the repository and missing input files', async () =>
   const traversal = await fixture({ ...baseManifest, gddPath: '../outside.md' });
   await assert.rejects(loadEvalCase(baseManifest.id, traversal), /gddPath.*仓库/);
 
-  const absolute = await fixture({ ...baseManifest, resultTemplatePath: '/tmp/template.md' });
-  await assert.rejects(loadEvalCase(baseManifest.id, absolute), /resultTemplatePath.*仓库/);
+  const absolute = await fixture({ ...baseManifest, isolationManifestPath: '/tmp/isolation.json' });
+  await assert.rejects(loadEvalCase(baseManifest.id, absolute), /isolationManifestPath.*仓库/);
 
   const missingGdd = await fixture(baseManifest, { gdd: false });
   await assert.rejects(loadEvalCase(baseManifest.id, missingGdd), /gddPath.*不存在/);
@@ -87,6 +87,6 @@ test('rejects paths outside the repository and missing input files', async () =>
   const missingRubric = await fixture(baseManifest, { rubric: false });
   await assert.rejects(loadEvalCase(baseManifest.id, missingRubric), /rubricPath.*不存在/);
 
-  const missingTemplate = await fixture(baseManifest, { template: false });
-  await assert.rejects(loadEvalCase(baseManifest.id, missingTemplate), /resultTemplatePath.*不存在/);
+  const missingIsolation = await fixture(baseManifest, { isolation: false });
+  await assert.rejects(loadEvalCase(baseManifest.id, missingIsolation), /isolationManifestPath.*不存在/);
 });

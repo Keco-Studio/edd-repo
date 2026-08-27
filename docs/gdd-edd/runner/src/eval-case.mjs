@@ -78,7 +78,7 @@ export async function loadEvalCase(id = DEFAULT_CASE_ID, options = {}) {
     revision: manifest.revision,
     promptPath: await validateRepositoryFile(resolvedRoots.repositoryRoot, manifest, 'promptPath'),
     rubricPath: await validateRepositoryFile(resolvedRoots.repositoryRoot, manifest, 'rubricPath'),
-    resultTemplatePath: await validateRepositoryFile(resolvedRoots.repositoryRoot, manifest, 'resultTemplatePath'),
+    isolationManifestPath: await validateRepositoryFile(resolvedRoots.repositoryRoot, manifest, 'isolationManifestPath'),
     outputStem,
   };
   return Object.freeze(evalCase);
