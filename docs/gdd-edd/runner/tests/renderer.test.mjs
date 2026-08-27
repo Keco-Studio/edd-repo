@@ -50,6 +50,9 @@ test('renders technical Progress with full criteria and exact Cloud input', () =
 test('renders one user Result without full Prompt or Rubric', () => {
   const markdown = renderResult(input);
   assert.match(markdown, /暂定 AI 总分：74\.0\/100/);
+  assert.match(markdown, /归一化表现最强的维度是体验价值和玩法与系统并列/);
+  assert.match(markdown, /相对最弱的维度是内容与呈现/);
+  assert.match(markdown, /共 1 项证据缺口/);
   assert.match(markdown, /体验价值.*24\.0\/30/s);
   assert.match(markdown, /价值证据充分/);
   assert.match(markdown, /音频未定义/);

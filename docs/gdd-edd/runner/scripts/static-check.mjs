@@ -1,68 +1,74 @@
 import assert from 'node:assert/strict';
-import { readFile } from 'node:fs/promises';
+import { access, readFile, readdir } from 'node:fs/promises';
 
-const root = new URL('../', import.meta.url);
-const template = await readFile(new URL('../result/评价模板-v7.md', root), 'utf8');
-const evaluator = await readFile(new URL('src/ai-evaluator.mjs', root), 'utf8');
-const renderer = await readFile(new URL('src/document-renderer.mjs', root), 'utf8');
-const progressAudit = await readFile(new URL('src/progress-audit.mjs', root), 'utf8');
-const sampling = await readFile(new URL('src/eval-sampling.mjs', root), 'utf8');
-const progressRules = await readFile(new URL('../progress/README.md', root), 'utf8');
-const prompt = await readFile(new URL('../prompts/gdd-evaluation-v2.md', root), 'utf8');
-const rubric = await readFile(new URL('../rubrics/three-dimension-v2.md', root), 'utf8');
-const schema = await readFile(new URL('src/ai-evaluation.schema.json', root), 'utf8');
-const packageJson = JSON.parse(await readFile(new URL('package.json', root), 'utf8'));
-const caseManifest = JSON.parse(await readFile(new URL('../eval-cases/paws-patience-r97.json', root), 'utf8'));
-const sourceFiles = ['src/scoring.mjs', 'src/server.mjs', 'src/eval-case.mjs', 'src/ai-evaluator.mjs', 'src/document-renderer.mjs', 'src/progress-audit.mjs', 'src/eval-statistics.mjs', 'src/eval-baseline-store.mjs', 'src/eval-sampling.mjs', 'src/evaluate-case.mjs', 'public/index.html'];
-const sources = await Promise.all(sourceFiles.map((path) => readFile(new URL(path, root), 'utf8')));
-const activeDocs = await Promise.all([
-  readFile(new URL('../README.md', root), 'utf8'),
-  readFile(new URL('README.md', root), 'utf8'),
-  readFile(new URL('../result/README.md', root), 'utf8'),
+const runnerRoot = new URL('../', import.meta.url);
+const gddRoot = new URL('../../', import.meta.url);
+
+const readRunner = (path) => readFile(new URL(path, runnerRoot), 'utf8');
+const readGdd = (path) => readFile(new URL(path, gddRoot), 'utf8');
+
+await Promise.all([
+  access(new URL('rubrics/gdd-v1.md', gddRoot)),
+  access(new URL('prompts/evaluator-v1.md', gddRoot)),
+  access(new URL('schemas/evaluation-v1.schema.json', gddRoot)),
+  access(new URL('runs/', gddRoot)),
 ]);
 
-assert.match(template, /\{\{experienceValueObservations\}\}/);
-assert.match(template, /\{\{gameplaySystemsObservations\}\}/);
-assert.match(template, /\{\{contentPresentationObservations\}\}/);
-assert.match(template, /\{\{problemDocument\}\}/);
-assert.match(template, /玩家有效样本/);
-assert.doesNotMatch(template, /基线|退化|通过线|结论：|PASS|FAIL/);
-assert.match(prompt, /只返回符合 JSON Schema 的 JSON/);
-assert.match(prompt, /仅按 GDD 明确证据/);
-assert.match(prompt, /不得补全/);
-assert.match(prompt, /只归入一个维度/);
-assert.match(prompt, /不得推测实际运行质量/);
-assert.ok(prompt.length < 400, 'Prompt 应保持简短');
-assert.doesNotMatch(prompt, /Progression|Problem|Result|创建.*文档/);
-assert.match(rubric, /体验目标 -> 设计响应 -> GDD 证据/);
-assert.match(rubric, /0-9/);
+const packageJson = JSON.parse(await readRunner('package.json'));
+assert.deepEqual(Object.keys(packageJson.scripts).sort(), ['check', 'eval', 'finalize', 'test']);
+assert.equal(packageJson.scripts.eval, 'node src/run.mjs');
+assert.equal(packageJson.scripts.finalize, 'node src/finalize.mjs');
+assert.equal(Object.keys(packageJson).includes('dependencies'), false);
+assert.equal(Object.keys(packageJson).includes('optionalDependencies'), false);
+
+const sourceNames = (await readdir(new URL('src/', runnerRoot))).filter((name) => name.endsWith('.mjs')).sort();
+assert.deepEqual(sourceNames, [
+  'artifacts.mjs',
+  'contracts.mjs',
+  'eval-case.mjs',
+  'evaluator.mjs',
+  'finalize.mjs',
+  'isolation.mjs',
+  'renderer.mjs',
+  'run.mjs',
+]);
+const sources = (await Promise.all(sourceNames.map((name) => readRunner(`src/${name}`)))).join('\n');
+assert.doesNotMatch(sources, /player-rating-web|ngrok|eval-sampling|eval-baseline|server\.mjs|store\.mjs/);
+
+const [readme, runnerReadme, rubric, prompt, schemaText, renderer, finalize, finalizeTest, caseText] = await Promise.all([
+  readGdd('README.md'),
+  readRunner('README.md'),
+  readGdd('rubrics/gdd-v1.md'),
+  readGdd('prompts/evaluator-v1.md'),
+  readGdd('schemas/evaluation-v1.schema.json'),
+  readRunner('src/renderer.mjs'),
+  readRunner('src/finalize.mjs'),
+  readRunner('tests/finalize.test.mjs'),
+  readGdd('eval-cases/paws-patience-r97.json'),
+]);
+const schema = JSON.parse(schemaText);
+const evalCase = JSON.parse(caseText);
+
+assert.match(readme, /全新 session/);
+assert.match(readme, /只能启用 Keco 自研 MCP/);
+assert.match(readme, /AI 40%.*人工 60%/s);
+assert.match(readme, /npm run finalize/);
+assert.match(readme, /result\.md/);
+assert.match(runnerReadme, /不包含 Web 服务/);
+assert.match(rubric, /体验价值/);
 assert.match(rubric, /37-40/);
-assert.match(rubric, /不拆二级分数/);
-assert.match(schema, /"dimensions"/);
-assert.doesNotMatch(schema, /"metrics"|"model"/);
-assert.match(evaluator, /--json/);
-assert.match(evaluator, /stream-json/);
-assert.match(evaluator, /read-only/);
-assert.match(evaluator, /'--tools', 'Read'/);
-assert.match(renderer, /AI 结构化输出/);
-assert.doesNotMatch(renderer, /JSON\.stringify\(execution\.rawOutput/);
-assert.match(progressAudit, /writeAiEvidence/);
-assert.match(progressAudit, /writeFailureProgression/);
-assert.match(progressRules, /不保存正式评分/);
-assert.match(progressRules, /progress\/evidence/);
-assert.equal(packageJson.scripts.eval, 'node src/evaluate-case.mjs');
-assert.equal(packageJson.scripts['eval:baseline'], 'node src/eval-sampling.mjs baseline');
-assert.equal(packageJson.scripts['eval:compare'], 'node src/eval-sampling.mjs compare');
-assert.match(sampling, /runs: 3/);
-assert.doesNotMatch(sampling, /REGRESSION|PASS|FAIL|退化/);
-assert.equal(caseManifest.id, 'paws-patience-r97');
-assert.equal(caseManifest.type, 'gold');
-assert.equal(caseManifest.promptPath, 'docs/gdd-edd/prompts/gdd-evaluation-v2.md');
-assert.equal(caseManifest.rubricPath, 'docs/gdd-edd/rubrics/three-dimension-v2.md');
-assert.equal(caseManifest.resultTemplatePath, 'docs/gdd-edd/result/评价模板-v7.md');
-assert.doesNotMatch(evaluator, /PAWS_SOURCE/);
-assert.doesNotMatch(sources.join('\n'), /evaluate-paws/);
-assert.doesNotMatch(sources.join('\n'), /aiCoreScore|aiExperienceScore|coreAverage|experienceAverage/);
-assert.doesNotMatch(sources.join('\n'), /admin-test-token|ngrok_[A-Za-z0-9]+/);
-assert.doesNotMatch(activeDocs.join('\n'), /two-dimension-v1|评价模板-v6|AI 60%、人工 40%/i);
-console.log('静态检查通过：AI 只返回 JSON，Node 生成三文档，固定三维标尺，无流程判断。');
+assert.doesNotMatch(rubric, /Prompt|Schema|progress\.md|result\.md/);
+assert.match(prompt, /\{\{gdd\}\}/);
+assert.match(prompt, /\{\{rubric\}\}/);
+assert.match(prompt, /只返回符合指定 JSON Schema/);
+assert.deepEqual(schema.required, ['source', 'dimensions']);
+assert.deepEqual(schema.properties.dimensions.required, ['experienceValue', 'gameplaySystems', 'contentPresentation']);
+assert.match(renderer, /EDD_FINAL_START/);
+assert.match(finalize, /AI 分数 \* 0\.40 \+ 人工分数 \* 0\.60/);
+assert.match(finalizeTest, /保持文本不变|preserves text outside/);
+assert.equal(evalCase.promptPath, 'docs/gdd-edd/prompts/evaluator-v1.md');
+assert.equal(evalCase.rubricPath, 'docs/gdd-edd/rubrics/gdd-v1.md');
+assert.equal(evalCase.isolationManifestPath, 'docs/gdd-edd/isolation/paws-patience-r97.json');
+assert.equal('resultTemplatePath' in evalCase, false);
+
+console.log('静态检查通过：受控 GDD 输入、固定三维、Markdown 人工评分、无 Web/基线链路。');

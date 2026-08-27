@@ -118,6 +118,22 @@ ${observations}
 ${gaps}`;
 }
 
+function summaryText(evaluation) {
+  const normalized = DIMENSIONS.map((dimension) => ({
+    dimension,
+    ratio: evaluation.dimensions[dimension.key].score / dimension.maximum,
+    gaps: evaluation.dimensions[dimension.key].evidenceGaps.length,
+  }));
+  const strongestRatio = Math.max(...normalized.map((item) => item.ratio));
+  const weakestRatio = Math.min(...normalized.map((item) => item.ratio));
+  const strongest = normalized.filter((item) => item.ratio === strongestRatio).map((item) => item.dimension.label);
+  const weakest = normalized.filter((item) => item.ratio === weakestRatio).map((item) => item.dimension.label);
+  const gapCount = normalized.reduce((sum, item) => sum + item.gaps, 0);
+  const strongestLabel = strongest.length > 1 ? `${strongest.join('和')}并列` : strongest[0];
+  const weakestLabel = weakest.length > 1 ? `${weakest.join('和')}并列` : weakest[0];
+  return `归一化表现最强的维度是${strongestLabel}，相对最弱的维度是${weakestLabel}；共 ${gapCount} 项证据缺口。`;
+}
+
 function humanSection(evaluation) {
   return `## 人工评分
 
@@ -167,7 +183,7 @@ export function renderResult(input) {
 
 ## 简要总结
 
-AI 已按固定三个维度完成证据评价。当前分数仅为暂定 AI 评价；人工完成同维度评分后，才按 AI 40%、人工 60% 生成最终分。
+${summaryText(evaluation)} AI 已按固定三个维度完成证据评价。当前分数仅为暂定 AI 评价；人工完成同维度评分后，才按 AI 40%、人工 60% 生成最终分。
 
 ## 评分方式
 
