@@ -1,0 +1,44 @@
+{
+  "version": 1,
+  "sliceId": "slice-011-player-walk-animation",
+  "allowedFiles": ["paws_patience/exploration/player_controller.gd", "paws_patience/exploration/exploration_map.tscn", "paws_patience/assets/player/**", "paws_patience/main.gd", "planning/v3/**", "progress/v3/**", "result/v3/**", "docs/keco-godot-slices/v3/**", "docs/development-index.md", "docs/version-layout.md", "data/keco/v3/**", "review-dashboard/v3/**", "release/v3/**"],
+  "tasks": [
+    {
+      "id": "task-1101",
+      "files": ["planning/v3/**", "progress/v3/**", "docs/keco-godot-slices/v3/**", "data/keco/v3/**"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-1101-animation-assets"],
+      "red": {"command": "query Visual Assets and V3 Player Animation Files", "expected": "no player parent row or animation-file table exists"},
+      "green": {"command": "Keco schema and planned-row read-back", "expected": "one planned parent and four stable planned child rows"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1102",
+      "files": ["data/keco/v3/generated/slice-011/**", "progress/v3/**"],
+      "dependsOn": ["task-1101"],
+      "servesEvaluations": ["eval-1101-animation-assets"],
+      "red": {"command": "PixelLab character lookup and Test-Path generated sheets", "expected": "no Slice 011 provider IDs or sheets"},
+      "green": {"command": "Keco read-back plus PNG dimension, alpha, hash and frame-grid validation", "expected": "four ready 6-frame transparent sheets"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1103",
+      "files": ["paws_patience/exploration/player_controller.gd", "paws_patience/exploration/exploration_map.tscn", "paws_patience/assets/player/**"],
+      "dependsOn": ["task-1102"],
+      "servesEvaluations": ["eval-1101-animation-assets", "eval-1102-direction-playback", "eval-1103-exploration-regression"],
+      "red": {"command": "rg _draw player_controller.gd and inspect scene Player children", "expected": "procedural drawing exists and AnimatedSprite2D is absent"},
+      "green": {"command": "Godot resource import and animation-state assertions", "expected": "four animations exist and movement/idle selection passes"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1104",
+      "files": ["paws_patience/main.gd", "planning/v3/**", "progress/v3/**", "result/v3/**", "docs/keco-godot-slices/v3/**", "docs/development-index.md", "docs/version-layout.md", "data/keco/v3/**", "review-dashboard/v3/**", "release/v3/**"],
+      "dependsOn": ["task-1103"],
+      "servesEvaluations": ["eval-1101-animation-assets", "eval-1102-direction-playback", "eval-1103-exploration-regression", "eval-1104-adjacent-v1-v3-regression", "eval-1105-player-presentation"],
+      "red": {"command": "rg eval-110 paws_patience/main.gd and inspect V3 release manifest", "expected": "Slice 011 evidence and rebuilt release are absent"},
+      "green": {"command": "Godot run_project to get_debug_output to stop_project plus V3 validators", "expected": "objective checks pass and visual acceptance remains manual_required"},
+      "review": {"spec": "required", "quality": "required"}
+    }
+  ]
+}
+

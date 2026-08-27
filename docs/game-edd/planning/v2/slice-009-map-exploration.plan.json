@@ -1,0 +1,34 @@
+{
+  "version": 1,
+  "sliceId": "slice-009-map-exploration",
+  "allowedFiles": ["paws_patience/main.gd", "paws_patience/main.tscn", "paws_patience/exploration/**", "planning/v2/**", "progress/v2/**", "result/v2/**", "docs/keco-godot-slices/v2/**", "data/keco/v2/resource-provenance.json", "release/v2/test8-24-v2/**"],
+  "tasks": [
+    {
+      "id": "task-901",
+      "files": ["paws_patience/exploration/player_controller.gd", "paws_patience/exploration/exploration_map.gd", "paws_patience/exploration/exploration_map.tscn"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-901-exploration-shell", "eval-902-location-zones"],
+      "red": {"command": "rg --files paws_patience/exploration", "expected": "fails because the exploration directory does not exist"},
+      "green": {"command": "mcp Godot runtime batch on res://exploration/exploration_map.tscn: run_project -> get_debug_output -> stop_project", "expected": "the standalone exploration scene loads with zero parser/runtime errors; final eval-901 and eval-902 run after integration"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-902",
+      "files": ["paws_patience/main.gd", "paws_patience/main.tscn"],
+      "dependsOn": ["task-901"],
+      "servesEvaluations": ["eval-901-exploration-shell", "eval-902-location-zones", "eval-904-map-regression"],
+      "red": {"command": "rg -n \"ExplorationMap|location_activated\" paws_patience/main.gd", "expected": "fails because main has no exploration integration"},
+      "green": {"command": "mcp Godot runtime batch: run_project -> get_debug_output -> stop_project", "expected": "new exploration evaluations and all existing objective evaluations pass"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-903",
+      "files": ["paws_patience/main.gd", "planning/v2/slice-009-map-exploration.plan.json", "progress/v2/paws-patience-20260827-map-exploration.md", "progress/v2/paws-patience-20260827-map-exploration.jsonl", "result/v2/paws-patience-20260827-map-exploration.json", "result/v2/paws-patience-map-exploration-evaluation.md", "docs/keco-godot-slices/v2/**", "data/keco/v2/resource-provenance.json", "release/v2/test8-24-v2/**"],
+      "dependsOn": ["task-902"],
+      "servesEvaluations": ["eval-903-player-save", "eval-904-map-regression", "eval-905-map-presentation"],
+      "red": {"command": "rg -n \"eval-903-player-save\" paws_patience/main.gd; rg -n \"slice-009-map-exploration\" release/v2/test8-24-v2/manifest.json", "expected": "fails because save evaluation and release entries are absent"},
+      "green": {"command": "mcp Godot runtime batch plus JSON, Slice document, required-entry, source-hash, and ZIP-hash validation", "expected": "objective evaluations and validators pass; visual remains manual_required"},
+      "review": {"spec": "required", "quality": "required"}
+    }
+  ]
+}

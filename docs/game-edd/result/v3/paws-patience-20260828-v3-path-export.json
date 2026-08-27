@@ -1,0 +1,71 @@
+{
+  "version": 1,
+  "runId": "paws-patience-20260828-v3-path-export",
+  "sliceId": "slice-012-path-portability-windows-export",
+  "projectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "folderId": "778ea7fc-2695-4681-87e1-b46918c1bcf9",
+  "sourceDocumentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+  "sourceRevision": 2,
+  "status": "passed",
+  "validationStatus": "passed",
+  "implementation": {
+    "gameplayChanged": false,
+    "assetBytesChanged": false,
+    "kecoTableWrites": 0,
+    "historicalRecordsChanged": false,
+    "correctedCurrentFiles": ["AGENTS.md","docs/development-index.md","docs/version-layout.md"],
+    "exportPreset": "paws_patience/export_presets.cfg"
+  },
+  "pathAudit": {
+    "status": "passed",
+    "rowsPassed": 7,
+    "rowsFailed": 0,
+    "evidence": "data/keco/v3/path-portability/keco-asset-paths.json"
+  },
+  "runtime": {
+    "status": "passed",
+    "sequence": ["run_project","get_debug_output","stop_project"],
+    "snapshotHash": "sha256:b86400d0fe6b8fc519eb33c008ad5cffc44cfcd16375a06b6688096bc3509be7",
+    "errors": [],
+    "evidence": "data/keco/v3/path-portability/runtime-evidence.json"
+  },
+  "sourceHashes": {
+    "paws_patience/project.godot": "sha256:dbb93eb9112aecbedb16da5d9858699741364791e77621229013481defdb5d1a",
+    "paws_patience/main.tscn": "sha256:c7222f1e05acaa94107f1d53bebfdfb45c049826c221c03e59bd916bde6a34c1",
+    "paws_patience/main.gd": "sha256:0bd498f96d0f701cbc0b51f7b1a584a0fbc75f067f9fe5cd99b80de62ddb5316",
+    "paws_patience/exploration/player_controller.gd": "sha256:8f09ce503858c0960c349d5ab93602b610b94dc7b37897e7f325ac096ee3096d",
+    "paws_patience/exploration/exploration_map.gd": "sha256:e6a9a5228f1055cd8a8400205b6d50c3f21eeedf465e27d84368a939fd5c00b2",
+    "paws_patience/exploration/exploration_map.tscn": "sha256:58b6875444a5e46ee34ae037288351e32140edf67463dd1982f3be9bda550f8d"
+  },
+  "windowsExecutable": {
+    "status": "passed",
+    "path": "paws_patience/build/windows/PawsAndPatience.exe",
+    "bytes": 109110016,
+    "sha256": "sha256:376a11d491a7f5ac8e7fcfc17e6f4ab6824f2b8a1c289389ed94fb30adb50874",
+    "runExitCode": 0,
+    "stderrBytes": 0
+  },
+  "kecoDocuments": {
+    "roadmap": {"id":"09f94c32-c67f-45e0-9247-5918a350ad9a","revision":3},
+    "spec": {"id":"e98cf79c-3b22-412d-87e3-3e2edddf24d0","revision":2},
+    "plan": {"id":"995eb12d-2e49-4e93-a273-432ac5a927c0","revision":2},
+    "status": {"id":"ba64e436-77fb-4116-b00f-2c8bea868dd4","revision":4},
+    "evalReport": {"id":"8f861f63-1538-4792-aea9-49e1f2192f71","revision":1}
+  },
+  "plan": "planning/v3/paws-patience-20260828-v3-path-export.plan.json",
+  "progress": ["progress/v3/paws-patience-20260828-v3-path-export.md","progress/v3/paws-patience-20260828-v3-path-export.jsonl"],
+  "evalReport": "docs/keco-godot-slices/v3/slice-012-path-portability-windows-export/eval-report.json",
+  "validators": {
+    "plan": "passed",
+    "runContext": "passed",
+    "evalReport": "passed",
+    "sliceDocuments": "passed",
+    "snapshot": {"status":"passed","aggregateSha256":"sha256:5c9a521e16c4f976e4a5aaa23e5e1349ac0f575bb5468fdc70977487f61edb5d"},
+    "jsonAndJsonl": "passed",
+    "staleCurrentPathAudit": "passed",
+    "releaseAbsent": "passed"
+  },
+  "humanReview": {"artStyle": null, "playerFun": null, "total": null},
+  "residualRisks": ["The Windows executable is unsigned; Windows may show a publisher warning.","Historical completed run-context files retain their original absolute paths by policy."],
+  "releaseAbsent": true
+}

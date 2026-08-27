@@ -1,0 +1,43 @@
+{
+  "version": 1,
+  "sliceId": "slice-010-pixellab-art-replacement",
+  "allowedFiles": ["paws_patience/main.gd", "paws_patience/assets/backgrounds/neighborhood.png", "paws_patience/assets/backgrounds/neighborhood.png.import", "paws_patience/assets/cats/sick-cat.png", "paws_patience/assets/cats/sick-cat.png.import", "planning/v3/**", "progress/v3/**", "result/v3/**", "docs/keco-godot-slices/v3/**", "docs/development-index.md", "docs/version-layout.md", "data/keco/v3/**", "review-dashboard/v3/**", "release/v3/**"],
+  "tasks": [
+    {
+      "id": "task-1001",
+      "files": ["data/keco/v3/generated/slice-010/**", "progress/v3/**", "docs/keco-godot-slices/v3/**"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-1001-new-map-asset"],
+      "red": {"command": "query Visual Assets Provider Asset ID plus Test-Path data/keco/v3/generated/slice-010/map.png", "expected": "the map row has no provider job ID and no generated map file exists"},
+      "green": {"command": "Keco Visual Assets read-back plus authoritative PNG dimension, alpha, hash, and non-empty validation", "expected": "ready 400x224 opaque map bound to a persisted PixelLab Pro job identity"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1002",
+      "files": ["data/keco/v3/generated/slice-010/**", "progress/v3/**", "docs/keco-godot-slices/v3/**"],
+      "dependsOn": ["task-1001"],
+      "servesEvaluations": ["eval-1002-new-cat-asset"],
+      "red": {"command": "PixelLab list_characters plus Test-Path data/keco/v3/generated/slice-010/sick-cat-south.png", "expected": "no Slice 010 character identity and no generated south PNG"},
+      "green": {"command": "Keco Visual Assets read-back plus authoritative PNG dimension, alpha, hash, and non-empty validation", "expected": "ready transparent 136x136 south PNG with PixelLab character identity"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1003",
+      "files": ["paws_patience/assets/backgrounds/neighborhood.png", "paws_patience/assets/backgrounds/neighborhood.png.import", "paws_patience/assets/cats/sick-cat.png", "paws_patience/assets/cats/sick-cat.png.import", "paws_patience/main.gd", "data/keco/v3/**", "progress/v3/**"],
+      "dependsOn": ["task-1002"],
+      "servesEvaluations": ["eval-1001-new-map-asset", "eval-1002-new-cat-asset", "eval-1003-old-assets-retired"],
+      "red": {"command": "Get-FileHash paws_patience/assets/backgrounds/neighborhood.png,paws_patience/assets/cats/sick-cat.png -Algorithm SHA256", "expected": "runtime paths still equal the archived newPaws hashes"},
+      "green": {"command": "compare runtime, Keco read-back, and data/keco/v3/archive/slice-010 SHA256 values", "expected": "runtime hashes equal new Keco rows while archived bytes retain both old hashes"},
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1004",
+      "files": ["paws_patience/main.gd", "planning/v3/**", "progress/v3/**", "result/v3/**", "docs/keco-godot-slices/v3/**", "docs/development-index.md", "docs/version-layout.md", "data/keco/v3/**", "review-dashboard/v3/**", "release/v3/**"],
+      "dependsOn": ["task-1003"],
+      "servesEvaluations": ["eval-1001-new-map-asset", "eval-1002-new-cat-asset", "eval-1003-old-assets-retired", "eval-1004-art-regression", "eval-1005-art-presentation"],
+      "red": {"command": "rg -n \"eval-1001|eval-1002|eval-1003|eval-1004|eval-1005\" paws_patience/main.gd; Test-Path release/v3/test8-24-v3/test8-24-v3.zip", "expected": "Slice 010 runtime evidence and rebuilt V3 release are absent"},
+      "green": {"command": "Godot run_project to get_debug_output to stop_project plus V3 JSON, Slice, source-hash, required-entry, and ZIP-hash validators", "expected": "objective evaluations and validators pass while visual acceptance remains manual_required"},
+      "review": {"spec": "required", "quality": "required"}
+    }
+  ]
+}

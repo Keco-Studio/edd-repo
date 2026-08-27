@@ -1,0 +1,25 @@
+[gd_scene load_steps=5 format=3]
+
+[ext_resource type="Script" path="res://exploration/exploration_map.gd" id="1_map"]
+[ext_resource type="Texture2D" path="res://assets/backgrounds/neighborhood.png" id="2_texture"]
+[ext_resource type="Script" path="res://exploration/player_controller.gd" id="3_player"]
+[ext_resource type="SpriteFrames" path="res://assets/player/paws-player-world-character/player_walk_frames.tres" id="4_frames"]
+
+[node name="ExplorationMap" type="Node2D"]
+script = ExtResource("1_map")
+
+[node name="Map" type="Sprite2D" parent="."]
+texture_filter = 1
+position = Vector2(200, 112)
+texture = ExtResource("2_texture")
+
+[node name="Player" type="CharacterBody2D" parent="."]
+position = Vector2(208, 154)
+script = ExtResource("3_player")
+
+[node name="AnimatedSprite2D" type="AnimatedSprite2D" parent="Player"]
+texture_filter = 1
+position = Vector2(0, -16)
+scale = Vector2(0.5, 0.5)
+sprite_frames = ExtResource("4_frames")
+animation = &"walk_south"

@@ -1,0 +1,121 @@
+{
+  "version": 1,
+  "deliveryId": "paws-patience-20260828-v3-path-export",
+  "sliceId": "slice-012-path-portability-windows-export",
+  "objective": "Audit current names and paths after the workspace move, correct only confirmed current-document errors, and export a verified Windows executable without changing gameplay or valid Keco asset rows.",
+  "scope": {
+    "included": [
+      "Current workspace identity and delivery policy",
+      "Active V3 development index and version layout",
+      "Read-only validation of Keco Visual Assets and V3 Player Animation Files Target Path values",
+      "Godot Windows export configuration and executable",
+      "Fresh adjacent runtime regression and delivery evidence"
+    ],
+    "excluded": [
+      "V1 and V2 historical evidence rewrites",
+      "Silent edits to completed V3 run logs",
+      "Keco table mutations because the existing res:// paths are valid Godot project paths",
+      "Gameplay, balance, visual asset bytes, paid generation, external release, Git operations, release staging, and ZIP packaging"
+    ]
+  },
+  "allowedFiles": [
+    "AGENTS.md",
+    "docs/development-index.md",
+    "docs/version-layout.md",
+    "paws_patience/export_presets.cfg",
+    "paws_patience/build/windows/**",
+    "planning/v3/paws-patience-20260828-v3-path-export.plan.json",
+    "progress/v3/paws-patience-20260828-v3-path-export.md",
+    "progress/v3/paws-patience-20260828-v3-path-export.jsonl",
+    "result/v3/paws-patience-20260828-v3-path-export.json",
+    "docs/keco-godot-slices/v3/test8-24-v3-path-portability/roadmap.md",
+    "docs/keco-godot-slices/v3/slice-012-path-portability-windows-export/**",
+    "data/keco/v3/path-portability/**"
+  ],
+  "source": {
+    "projectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+    "folderId": "778ea7fc-2695-4681-87e1-b46918c1bcf9",
+    "documentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+    "revision": 2,
+    "godotProjectPath": "C:/Users/lenovo/Desktop/edd-repo/docs/game-edd/paws_patience",
+    "godotVersion": "4.7.stable.official.5b4e0cb0f",
+    "mainScene": "res://main.tscn"
+  },
+  "evaluations": [
+    "eval-1201-delivery-paths",
+    "eval-1202-keco-target-paths",
+    "eval-1203-windows-export",
+    "eval-1204-adjacent-runtime-regression"
+  ],
+  "tasks": [
+    {
+      "id": "task-1201",
+      "files": ["AGENTS.md", "docs/development-index.md", "docs/version-layout.md", "data/keco/v3/path-portability/**"],
+      "dependsOn": [],
+      "servesEvaluations": ["eval-1201-delivery-paths"],
+      "red": {
+        "command": "rg -n 'C:/Users/lenovo/Desktop/edd-repo/docs/game-edd|slice-012-path-portability|f43f17ba-0e7c-45b1-a72b-7b3e2ecec80e' AGENTS.md docs/development-index.md docs/version-layout.md",
+        "expected": "The canonical root, new maintenance Slice, and corrected Slice 011 spec ID are not all documented."
+      },
+      "green": {
+        "command": "rg -n 'C:/Users/lenovo/Desktop/edd-repo/docs/game-edd|slice-012-path-portability|f43f17ba-0e7c-45b1-a72b-7b3e2ecec80e' AGENTS.md docs/development-index.md docs/version-layout.md",
+        "expected": "Current identity, naming, path policy, corrected ID, and Slice 012 mapping are present while historical records remain explicitly immutable."
+      },
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1202",
+      "files": ["data/keco/v3/path-portability/keco-asset-paths.json"],
+      "dependsOn": ["task-1201"],
+      "servesEvaluations": ["eval-1202-keco-target-paths"],
+      "red": {
+        "command": "mcp__keco__query_table_rows for Visual Assets and V3 Player Animation Files Target Path",
+        "expected": "The table contains Godot res:// paths that require validation against the current project."
+      },
+      "green": {
+        "command": "mcp__keco__query_table_rows plus conversion of each res:// Target Path under the current paws_patience root, followed by Test-Path and SHA256 checks",
+        "expected": "Every existing Keco Target Path resolves to a current local asset with its recorded SHA256; no Keco row write is needed."
+      },
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1203",
+      "files": ["paws_patience/export_presets.cfg", "paws_patience/build/windows/**"],
+      "dependsOn": ["task-1202"],
+      "servesEvaluations": ["eval-1203-windows-export"],
+      "red": {
+        "command": "Test-Path paws_patience/export_presets.cfg; Test-Path paws_patience/build/windows/PawsAndPatience.exe",
+        "expected": "The export preset and executable are absent."
+      },
+      "green": {
+        "command": "Godot 4.7 --headless --path paws_patience --export-release Windows Desktop build/windows/PawsAndPatience.exe, then launch the exported executable headlessly",
+        "expected": "Export exits successfully, the EXE starts from outside the editor, emits KECO_EVAL records, and receives a final SHA256."
+      },
+      "review": {"spec": "required", "quality": "required"}
+    },
+    {
+      "id": "task-1204",
+      "files": ["progress/v3/paws-patience-20260828-v3-path-export.md", "progress/v3/paws-patience-20260828-v3-path-export.jsonl", "result/v3/paws-patience-20260828-v3-path-export.json", "docs/keco-godot-slices/v3/test8-24-v3-path-portability/roadmap.md", "docs/keco-godot-slices/v3/slice-012-path-portability-windows-export/**", "data/keco/v3/path-portability/**"],
+      "dependsOn": ["task-1203"],
+      "servesEvaluations": ["eval-1201-delivery-paths", "eval-1202-keco-target-paths", "eval-1203-windows-export", "eval-1204-adjacent-runtime-regression"],
+      "red": {
+        "command": "Validate the new Slice documents and inspect for fresh runtime/export evidence",
+        "expected": "No Slice 012 completion documents or fresh evidence exist."
+      },
+      "green": {
+        "command": "run_project -> get_debug_output -> stop_project, then validate plan, run context, snapshot, eval report, Slice documents, JSON/JSONL, Keco read-back, EXE hash, and release absence",
+        "expected": "All objective checks pass with current hashes, no relevant runtime errors, and release remains absent."
+      },
+      "review": {"spec": "required", "quality": "required"}
+    }
+  ],
+  "rollback": "Preserve historical records and valid Keco rows. A failed export keeps its logs and does not create release staging; a confirmed current-document error is changed only in the current index/policy files.",
+  "completionCriteria": [
+    "Keco roadmap and Slice 012 documents are read back and mirrored locally.",
+    "Current delivery documentation names the canonical workspace and portable path policy.",
+    "All active Keco res:// Target Path values resolve under the current Godot project and retain their content hashes without table mutation.",
+    "Godot runtime regression produces fresh KECO_EVAL evidence through the required MCP sequence.",
+    "PawsAndPatience.exe is exported, starts successfully, emits runtime evidence, and has a final SHA256.",
+    "All validators pass and release/ remains absent."
+  ]
+}

@@ -1,1 +1,11 @@
 .worktrees/
+
+# Local Keco records and review material are not part of the game delivery.
+docs/game-edd/AGENTS.md
+docs/game-edd/data/
+docs/game-edd/docs/
+docs/game-edd/review-dashboard/
+
+# Godot generates these files locally.
+**/.godot/
+docs/game-edd/paws_patience/build/**/*.log

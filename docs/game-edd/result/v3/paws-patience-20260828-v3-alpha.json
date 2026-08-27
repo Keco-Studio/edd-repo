@@ -1,0 +1,83 @@
+{
+  "version": 2,
+  "runId": "paws-patience-20260828-v3-alpha",
+  "projectId": "26dec3f7-19a0-4596-b7c5-0eceb1cd98cb",
+  "projectName": "test8-24",
+  "kecoFolder": {"name": "V3", "id": "778ea7fc-2695-4681-87e1-b46918c1bcf9"},
+  "source": {
+    "documentId": "b7c65647-36ed-4c73-9634-439755b0ea37",
+    "name": "game-gdd",
+    "revision": 2,
+    "contentHash": "sha256:91f082aa2a51d315d2500aaf5d8cbe872ec01c939c797ea80314d96dbf93398d"
+  },
+  "implementationStatus": "completed",
+  "evaluationStatus": "partial",
+  "buildHash": "sha256:b86400d0fe6b8fc519eb33c008ad5cffc44cfcd16375a06b6688096bc3509be7",
+  "slices": [
+    {
+      "sliceId": "slice-009-map-exploration",
+      "status": "partial",
+      "objectiveEvaluationsPassed": 4,
+      "manualEvaluations": ["eval-905-map-presentation"],
+      "evalReport": "docs/keco-godot-slices/v3/slice-009-map-exploration/eval-report.json",
+      "runtimeEvidence": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/slice-results/paws-patience-20260827-map-exploration-runtime-evidence.json"
+    },
+    {
+      "sliceId": "slice-010-pixellab-art-replacement",
+      "status": "partial",
+      "objectiveEvaluationsPassed": 4,
+      "manualEvaluations": ["eval-1005-art-presentation"],
+      "evalReport": "docs/keco-godot-slices/v3/slice-010-pixellab-art-replacement/eval-report.json",
+      "runtimeEvidence": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/slice-results/paws-patience-20260828-art-replacement-runtime-evidence.json"
+    },
+    {
+      "sliceId": "slice-011-player-walk-animation",
+      "status": "partial",
+      "objectiveEvaluationsPassed": 4,
+      "manualEvaluations": ["eval-1105-player-presentation"],
+      "evalReport": "docs/keco-godot-slices/v3/slice-011-player-walk-animation/eval-report.json",
+      "runtimeEvidence": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/slice-results/paws-patience-20260828-player-animation-runtime-evidence.json"
+    }
+  ],
+  "claudeReview": {
+    "evaluationId": "test8-24-v3-alpha-20260828",
+    "provider": "Claude Code CLI",
+    "providerModel": "claude-opus-4-8-thinking",
+    "status": "partial",
+    "coverage": 1.0,
+    "dimensionScores": {"artStyle": 29, "playerFun": 35},
+    "totalScore": 64,
+    "threshold": 60,
+    "severityCounts": {"P0": 0, "P1": 1, "P2": 3, "P3": 2},
+    "reportPath": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/report.json",
+    "rawReviewPath": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/claude-review.raw.json",
+    "evidencePath": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/evidence.json"
+  },
+  "manualRequirements": [
+    {"dimension": "artStyle", "score": null, "comment": null, "nextIteration": null},
+    {"dimension": "playerFun", "score": null, "comment": null, "nextIteration": null},
+    {"dimension": "total", "score": null, "comment": null, "nextIteration": null}
+  ],
+  "humanReview": {
+    "artStyle": {"score": null, "max": 50, "comment": null, "nextIteration": null},
+    "playerFun": {"score": null, "max": 50, "comment": null, "nextIteration": null},
+    "total": {"score": null, "max": 100}
+  },
+  "assetProvenance": {
+    "path": "data/keco/v3/resource-provenance.json",
+    "pixelLabCostUSD": 0.4
+  },
+  "paths": {
+    "progress": "progress/v3/",
+    "planning": "planning/v3/",
+    "documents": "docs/keco-godot-slices/v3/",
+    "gameEvaluation": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/",
+    "sliceResultArchive": "docs/keco-game-evaluations/test8-24-v3-alpha-20260828/slice-results/"
+  },
+  "residualRisks": [
+    "eval-905-map-presentation, eval-1005-art-presentation and eval-1105-player-presentation remain manual_required.",
+    "Claude could not render the supplied images; visual findings are evidence-bounded.",
+    "No player-session, retention or telemetry evidence exists; playerFun is potential appeal only.",
+    "The workspace is not a Git repository; Keco revisions and SHA256 identities remain authoritative."
+  ]
+}

@@ -1,0 +1,1 @@
+docs/game-edd/paws_patience/build/windows/*.exe filter=lfs diff=lfs merge=lfs -text
