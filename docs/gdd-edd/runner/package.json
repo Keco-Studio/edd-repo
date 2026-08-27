@@ -1,0 +1,12 @@
+{
+  "name": "gdd-edd-runner",
+  "version": "1.0.0",
+  "private": true,
+  "type": "module",
+  "scripts": {
+    "eval": "node src/run.mjs",
+    "finalize": "node src/finalize.mjs",
+    "test": "node --test",
+    "check": "npm test && node scripts/static-check.mjs"
+  }
+}
