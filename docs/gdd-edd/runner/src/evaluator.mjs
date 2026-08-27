@@ -30,16 +30,26 @@ export function buildEvaluationMessages({ evalCase, gdd, rubric, promptTemplate 
   return Object.freeze([Object.freeze({ role: 'user', content })]);
 }
 
+export function reasoningEffortForProvider(provider) {
+  if (provider === 'codex') return 'low';
+  if (provider === 'claude') return 'medium';
+  fail(`不支持的 Provider：${provider}`);
+}
+
 export function buildProviderInvocation(provider, { cwd, schemaPath, outputPath, schema, prompt, model }) {
+  const reasoningEffort = reasoningEffortForProvider(provider);
+  const generationParameters = { reasoningEffort };
   if (provider === 'codex') {
     const modelArgs = model ? ['--model', model] : [];
     return {
       command: 'codex',
       args: [
-        'exec', '--ephemeral', '--sandbox', 'read-only', '-c', 'model_reasoning_effort="medium"',
+        'exec', '--ephemeral', '--skip-git-repo-check',
+        '--sandbox', 'read-only', '-c', `model_reasoning_effort="${reasoningEffort}"`,
         ...modelArgs, '--json', '--output-schema', schemaPath, '--output-last-message', outputPath,
         '--color', 'never', '-C', cwd, prompt,
       ],
+      generationParameters,
     };
   }
   if (provider === 'claude') {
@@ -47,10 +57,11 @@ export function buildProviderInvocation(provider, { cwd, schemaPath, outputPath,
     return {
       command: 'claude',
       args: [
-        '-p', '--safe-mode', '--tools', '', '--model', model || 'sonnet', '--effort', 'medium',
+        '-p', '--safe-mode', '--tools', '', '--model', model || 'sonnet', '--effort', reasoningEffort,
         '--permission-mode', 'dontAsk', '--no-session-persistence', '--verbose', '--output-format',
         'stream-json', '--json-schema', JSON.stringify(claudeSchema), prompt,
       ],
+      generationParameters,
     };
   }
   fail(`不支持的 Provider：${provider}`);
@@ -71,6 +82,17 @@ function findObservedModel(events) {
     if (typeof event?.message?.model === 'string') return event.message.model;
   }
   return null;
+}
+
+function parseCodexEventOutput(events) {
+  for (let index = events.length - 1; index >= 0; index -= 1) {
+    const item = events[index]?.item;
+    if (item?.type === 'agent_message' && typeof item.text === 'string') {
+      try { return JSON.parse(item.text); } catch { /* keep searching */ }
+    }
+  }
+  const error = [...events].reverse().find((event) => event?.type === 'error' || event?.type === 'turn.failed');
+  fail(error?.message || error?.error?.message || 'Codex 未写入有效结构化 JSON');
 }
 
 function eventDetail(value) {
@@ -138,7 +160,7 @@ export async function runCloudEvaluation(options = {}) {
   try {
     const result = await runner(invocation.command, invocation.args, {
       cwd: temporaryRoot,
-      timeout: options.timeoutMs || 600_000,
+      timeout: options.timeoutMs || 180_000,
       maxBuffer: 8 * 1024 * 1024,
       env: process.env,
     });
@@ -146,7 +168,7 @@ export async function runCloudEvaluation(options = {}) {
     let rawResponse;
     if (provider === 'codex') {
       try { rawResponse = JSON.parse(await readFile(outputPath, 'utf8')); }
-      catch { fail('Codex 未写入有效结构化 JSON'); }
+      catch { rawResponse = parseCodexEventOutput(events); }
     } else {
       rawResponse = parseClaudeOutput(events);
     }
@@ -157,13 +179,13 @@ export async function runCloudEvaluation(options = {}) {
         messages,
         provider,
         requestedModel,
-        generationParameters: { reasoningEffort: 'medium' },
+        generationParameters: invocation.generationParameters,
       },
       execution: {
         provider,
         requestedModel,
         observedModel: findObservedModel(events),
-        generationParameters: { reasoningEffort: 'medium' },
+        generationParameters: invocation.generationParameters,
         startedAt: started.toISOString(),
         finishedAt: finished.toISOString(),
         durationMs: finished.getTime() - started.getTime(),
@@ -173,6 +195,9 @@ export async function runCloudEvaluation(options = {}) {
       },
     };
   } catch (error) {
+    if (error.code === 'ETIMEDOUT' || error.killed) {
+      throw new Error(`${provider} 评价超时（${options.timeoutMs || 180_000} ms）`);
+    }
     const detail = String(error.stderr || error.message || '').trim();
     throw new Error(`${provider} 评价失败${detail ? `：${detail}` : ''}`);
   } finally {

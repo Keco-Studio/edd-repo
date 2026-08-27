@@ -11,11 +11,13 @@ const input = {
   },
   assets: {
     rubric: '# Fixed rubric\n严重缺失 / 清晰有效',
+    promptTemplate: '你是评分器。\n<GDD>{{gdd}}</GDD>\n<RUBRIC>{{rubric}}</RUBRIC>',
     hashes: { gdd: 'g'.repeat(64), rubric: 'r'.repeat(64), prompt: 'p'.repeat(64), schema: 's'.repeat(64), isolation: 'i'.repeat(64) },
     paths: { gdd: 'gdd.md', rubric: 'rubric.md', prompt: 'prompt.md', schema: 'schema.json', isolation: 'isolation.json' },
   },
   messages: [{ role: 'user', content: 'exact cloud message' }],
   evaluation: {
+    summary: '治愈养猫的情感定位鲜明，羁绊、天气与相遇系统形成了可执行的核心循环；但寿命规则与消失机制仍有矛盾，视觉、音频和 UI 规格也需要在制作前补齐。',
     aiTotalScore: 74,
     dimensions: {
       experienceValue: { score: 24, observations: [{ statement: '目标明确', evidence: '第 1 节' }], rationale: '价值证据充分', evidenceGaps: [] },
@@ -35,14 +37,21 @@ const input = {
   },
 };
 
-test('renders technical Progress with full criteria and exact Cloud input', () => {
+test('renders a visible User Prompt template with an accurate injection note', () => {
   const markdown = renderProgress(input);
   assert.match(markdown, /demo-run1/);
   assert.match(markdown, /session-new/);
   assert.match(markdown, /keco/);
   assert.match(markdown, /AI 40%.*人工 60%/);
-  assert.match(markdown, /Fixed rubric/);
-  assert.match(markdown, /exact cloud message/);
+  assert.match(markdown, /## 输入提示词/);
+  assert.match(markdown, /### User Prompt/);
+  assert.match(markdown, /运行时已注入本次 GDD 和固定 Rubric/);
+  assert.match(markdown, /Progress 仅保留占位符版本/);
+  assert.doesNotMatch(markdown, /### System Prompt|尚未注入/);
+  assert.match(markdown, /你是评分器/);
+  assert.match(markdown, /\{\{gdd\}\}/);
+  assert.doesNotMatch(markdown, /<details>|<summary>/);
+  assert.doesNotMatch(markdown, /exact cloud message|Fixed rubric\n严重缺失/);
   assert.match(markdown, /g{64}/);
   assert.match(markdown, /evidence\/request\.json/);
 });
@@ -50,14 +59,16 @@ test('renders technical Progress with full criteria and exact Cloud input', () =
 test('renders one user Result without full Prompt or Rubric', () => {
   const markdown = renderResult(input);
   assert.match(markdown, /暂定 AI 总分：74\.0\/100/);
-  assert.match(markdown, /归一化表现最强的维度是体验价值和玩法与系统并列/);
-  assert.match(markdown, /相对最弱的维度是内容与呈现/);
-  assert.match(markdown, /共 1 项证据缺口/);
+  assert.match(markdown, /治愈养猫的情感定位鲜明，羁绊、天气与相遇系统形成了可执行的核心循环/);
+  assert.match(markdown, /寿命规则与消失机制仍有矛盾，视觉、音频和 UI 规格也需要在制作前补齐/);
+  assert.doesNotMatch(markdown, /整体方向清晰、基础扎实|人工完成同维度评分后/);
   assert.match(markdown, /体验价值.*24\.0\/30/s);
   assert.match(markdown, /价值证据充分/);
   assert.match(markdown, /音频未定义/);
   assert.match(markdown, /术语不一致/);
   assert.match(markdown, /评分人：`__`/);
+  assert.match(markdown, /Provider：codex/);
+  assert.match(markdown, /过程记录：progress\.md/);
   assert.match(markdown, /EDD_FINAL_START/);
   assert.doesNotMatch(markdown, /exact cloud message|Fixed rubric/);
 });
@@ -71,4 +82,10 @@ test('renders incomplete Result and operational Problem on failure', () => {
   assert.match(problem, /Cloud 评价/);
   assert.match(problem, /Cloud unavailable/);
   assert.match(problem, /npm run eval/);
+});
+
+test('renders a user-visible running Result', () => {
+  const markdown = renderResult({ ...input, status: 'running', evaluation: null, failedStage: undefined });
+  assert.match(markdown, /AI 评分中/);
+  assert.doesNotMatch(markdown, /problem\.md/);
 });

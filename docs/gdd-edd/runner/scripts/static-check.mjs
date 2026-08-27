@@ -12,7 +12,24 @@ await Promise.all([
   access(new URL('prompts/evaluator-v1.md', gddRoot)),
   access(new URL('schemas/evaluation-v1.schema.json', gddRoot)),
   access(new URL('runs/', gddRoot)),
+  access(new URL('runs/_template/result.md', gddRoot)),
+  access(new URL('runs/_template/progress.md', gddRoot)),
+  access(new URL('runs/_template/problem.md', gddRoot)),
+  access(new URL('runs/_template/evidence/README.md', gddRoot)),
 ]);
+
+const [resultTemplate, progressTemplate, problemTemplate] = await Promise.all([
+  readGdd('runs/_template/result.md'),
+  readGdd('runs/_template/progress.md'),
+  readGdd('runs/_template/problem.md'),
+]);
+assert.match(resultTemplate, /简要总结/);
+assert.match(resultTemplate, /人工评分/);
+assert.match(progressTemplate, /评分参数/);
+assert.match(progressTemplate, /输入提示词/);
+assert.match(progressTemplate, /User Prompt/);
+assert.match(progressTemplate, /审计证据与产物/);
+assert.match(problemTemplate, /失败阶段/);
 
 const packageJson = JSON.parse(await readRunner('package.json'));
 assert.deepEqual(Object.keys(packageJson.scripts).sort(), ['check', 'eval', 'finalize', 'test']);
@@ -61,7 +78,10 @@ assert.doesNotMatch(rubric, /Prompt|Schema|progress\.md|result\.md/);
 assert.match(prompt, /\{\{gdd\}\}/);
 assert.match(prompt, /\{\{rubric\}\}/);
 assert.match(prompt, /只返回符合指定 JSON Schema/);
-assert.deepEqual(schema.required, ['source', 'dimensions']);
+assert.match(prompt, /仅使用本次 GDD 和固定标尺/);
+assert.doesNotMatch(prompt, /评分要求：|additionalFindings/);
+assert.ok(Buffer.byteLength(prompt, 'utf8') <= 600, '评分 Prompt 必须保持精简（不超过 600 bytes）');
+assert.deepEqual(schema.required, ['source', 'summary', 'dimensions']);
 assert.deepEqual(schema.properties.dimensions.required, ['experienceValue', 'gameplaySystems', 'contentPresentation']);
 assert.match(renderer, /EDD_FINAL_START/);
 assert.match(finalize, /AI 分数 \* 0\.40 \+ 人工分数 \* 0\.60/);

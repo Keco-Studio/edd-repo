@@ -4,7 +4,7 @@ import { fileURLToPath, pathToFileURL } from 'node:url';
 import { createRunPaths, sha256, verifyArtifact, writeAtomic, writeJsonEvidence } from './artifacts.mjs';
 import { validateAiEvaluation } from './contracts.mjs';
 import { listEvalCaseIds, loadEvalCase } from './eval-case.mjs';
-import { buildEvaluationMessages, runCloudEvaluation } from './evaluator.mjs';
+import { buildEvaluationMessages, reasoningEffortForProvider, runCloudEvaluation } from './evaluator.mjs';
 import { loadIsolationManifest } from './isolation.mjs';
 import { renderProblem, renderProgress, renderResult } from './renderer.mjs';
 
@@ -83,7 +83,7 @@ function requestEvidence({ evaluationId, evalCase, isolation, assets, messages, 
     invocation: {
       provider,
       requestedModel: requestedModel(provider, model),
-      generationParameters: { reasoningEffort: 'medium' },
+      generationParameters: { reasoningEffort: reasoningEffortForProvider(provider) },
     },
     cloudInput: {
       messages,
@@ -119,7 +119,7 @@ export async function evaluateCase(options = {}) {
   let execution = {
     provider,
     requestedModel: requestedModel(provider, model),
-    generationParameters: { reasoningEffort: 'medium' },
+    generationParameters: { reasoningEffort: reasoningEffortForProvider(provider) },
     startedAt,
     events: [],
   };
@@ -129,7 +129,7 @@ export async function evaluateCase(options = {}) {
     const isolationPath = assets?.absolutePaths?.isolation
       || resolve(options.repositoryRoot || DEFAULT_REPOSITORY_ROOT, evalCase.isolationManifestPath);
     isolation = await isolationLoader(isolationPath);
-    if (isolation.sessionId.startsWith('fixture-') && options.allowFixtureIsolation !== true) {
+    if (isolation.sessionId.startsWith('fixture-') && options.strictIsolation === true) {
       throw new Error('正式测评不得使用仓库内置 fixture 隔离清单；请替换为启动器生成的本次清单');
     }
 
@@ -150,6 +150,13 @@ export async function evaluateCase(options = {}) {
     evidence.request = evidenceReference(await writeJsonEvidence(paths.request, request), 'evidence/request.json');
 
     failedStage = 'Cloud 评价';
+    const runningInput = {
+      evaluationId, status: 'running', evalCase, isolation, assets, messages,
+      execution, evidence, provider, model,
+    };
+    await writeAtomic(paths.result, renderResult(runningInput));
+    await writeAtomic(paths.progress, renderProgress(runningInput));
+
     const cloud = await evaluator({
       provider,
       model,
@@ -232,10 +239,11 @@ function takeValue(argv, index, name) {
 }
 
 export function parseCliOptions(argv = []) {
-  const parsed = { caseId: undefined, provider: 'codex', model: undefined, runsRoot: undefined, listCases: false };
+  const parsed = { caseId: undefined, provider: 'codex', model: undefined, runsRoot: undefined, listCases: false, strictIsolation: false };
   for (let index = 0; index < argv.length; index += 1) {
     const argument = argv[index];
     if (argument === '--list-cases') parsed.listCases = true;
+    else if (argument === '--strict-isolation') parsed.strictIsolation = true;
     else if (argument === '--case') { parsed.caseId = takeValue(argv, index, '--case'); index += 1; }
     else if (argument.startsWith('--case=')) parsed.caseId = argument.slice(7) || (() => { throw new Error('--case 缺少值'); })();
     else if (argument === '--provider') { parsed.provider = takeValue(argv, index, '--provider'); index += 1; }
@@ -258,7 +266,7 @@ export async function runCli(options = {}) {
     return { listed: true, caseIds };
   }
   const result = await (options.evaluate || evaluateCase)(parsed);
-  write(`测评 ID：${result.evaluationId}\n暂定 AI 总分：${result.evaluation.aiTotalScore.toFixed(1)}/100\nResult：${result.paths.result}\n下一步：在 Result 填写人工评分后运行 npm run finalize -- --run ${result.evaluationId}`);
+  write(`测评 ID：${result.evaluationId}\n暂定 AI 总分：${result.evaluation.aiTotalScore.toFixed(1)}/100\n简要总结：${result.evaluation.summary}\nResult：${result.paths.result}\n下一步：在 Result 填写人工评分后运行 npm run finalize -- --run ${result.evaluationId}`);
   return result;
 }
 

@@ -25,6 +25,7 @@ const dimension = (score, label) => ({
 
 const validResponse = {
   source: { projectId: 'project-id', documentId: 'document-id', revision: 1, title: 'Demo' },
+  summary: '核心循环清楚；但内容规格仍需补齐。',
   dimensions: {
     experienceValue: dimension(24, '体验价值'),
     gameplaySystems: dimension(32, '玩法与系统'),
@@ -53,13 +54,34 @@ test('provider invocations use structured output without file-reading tools', ()
     cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: {}, prompt: 'x', model: 'gpt-test',
   });
   assert.ok(codex.args.includes('--ephemeral'));
+  assert.ok(!codex.args.includes('--ignore-user-config'));
+  assert.ok(codex.args.includes('--skip-git-repo-check'));
+  assert.ok(codex.args.includes('model_reasoning_effort="low"'));
+  assert.deepEqual(codex.generationParameters, { reasoningEffort: 'low' });
   assert.ok(codex.args.includes('--output-schema'));
   const claude = buildProviderInvocation('claude', {
     cwd: '/repo', schemaPath: '/repo/schema.json', outputPath: '/tmp/result.json', schema: { type: 'object' }, prompt: 'x', model: 'sonnet',
   });
   assert.ok(claude.args.includes('stream-json'));
+  assert.deepEqual(claude.generationParameters, { reasoningEffort: 'medium' });
   assert.equal(claude.args[claude.args.indexOf('--tools') + 1], '');
   assert.ok(!claude.args.includes('Read'));
+});
+
+test('Claude request and execution metadata record the invoked medium effort', async () => {
+  const result = await runCloudEvaluation({
+    provider: 'claude',
+    model: 'sonnet',
+    evalCase,
+    schema: { type: 'object' },
+    messages: [{ role: 'user', content: 'fixed current input' }],
+    runner: async () => ({
+      stdout: `${JSON.stringify({ type: 'result', structured_output: validResponse })}\n`,
+      stderr: '',
+    }),
+  });
+  assert.deepEqual(result.request.generationParameters, { reasoningEffort: 'medium' });
+  assert.deepEqual(result.execution.generationParameters, { reasoningEffort: 'medium' });
 });
 
 test('filters hidden reasoning from observable events', () => {
@@ -98,4 +120,21 @@ test('returns exact request metadata and validated Codex response', async () => 
   assert.equal(result.request.requestedModel, 'gpt-test');
   assert.deepEqual(result.rawResponse, validResponse);
   assert.doesNotMatch(JSON.stringify(result.execution), /hidden chain/);
+});
+
+test('accepts structured JSON from the Codex agent event when the output file is missing', async () => {
+  const result = await runCloudEvaluation({
+    provider: 'codex',
+    evalCase,
+    messages: [{ role: 'user', content: 'fixed current input' }],
+    runner: async () => ({
+      stdout: [
+        JSON.stringify({ type: 'thread.started', thread_id: 'thread-1' }),
+        JSON.stringify({ type: 'item.completed', item: { type: 'agent_message', text: JSON.stringify(validResponse) } }),
+        JSON.stringify({ type: 'turn.completed' }),
+      ].join('\n'),
+      stderr: '',
+    }),
+  });
+  assert.deepEqual(result.rawResponse, validResponse);
 });

@@ -4,7 +4,7 @@
 
 ## 隔离要求
 
-被测 Codex 每次必须使用全新 session，上下文来源列表必须为空，且只能启用 Keco 自研 MCP 插件。被测 Agent 不得收到：
+默认命令用于快速本地测评，可直接使用仓库内的 fixture 隔离清单。需要做正式对比实验时再加 `--strict-isolation`，此时被测 Codex 必须使用全新 session，上下文来源列表必须为空，且只能启用 Keco 自研 MCP 插件。被测 Agent 不得收到：
 
 - 评分维度、Rubric、评分 Prompt 或 Schema；
 - V1/V2/V3 失败案例、历史结果或预期分数；
@@ -22,7 +22,7 @@
 }
 ```
 
-`isolation/paws-patience-r97.json` 是结构示例，其 `sessionId` 以 `fixture-` 开头，Runner 会拒绝将它用于正式测评。运行前必须用启动器产生的当次证据替换该文件，或建立指向当次隔离清单的新 Eval Case。
+`isolation/paws-patience-r97.json` 是可用于本地试跑的结构示例。正式实验使用 `--strict-isolation`，并用启动器产生的当次证据替换该文件，或建立指向当次隔离清单的新 Eval Case。
 
 ## 固定评分
 
@@ -48,6 +48,8 @@ cd docs/gdd-edd/runner
 npm install
 npm run eval -- --case paws-patience-r97 --provider codex --model <model-id>
 ```
+
+Codex Cloud 调用使用当前 Codex 配置、临时空目录、只读沙箱和 3 分钟超时。命令开始后会立即生成显示“AI 评分中”的 `result.md`。
 
 命令输出测评 ID 和 `result.md` 路径。直接编辑该 Result 的六个人工字段：
 
@@ -87,6 +89,10 @@ runs/<evaluation-id>/
 - `result.md` 是唯一面向用户的报告，包含简要总结、AI 证据评价、人工填写区和最终分。
 - `progress.md` 保存完整评价依据、实际 Cloud 消息、模型参数、隔离校验、哈希和执行事件。
 - `problem.md` 只记录输入冲突、工具失败、Schema 无效或人工分数无效等操作性阻断。GDD 本身的缺点仍写在 Result。
+
+## Markdown 模板
+
+未运行 EDD 时即可查看 `runs/_template/`，其中包含 `result.md`、`progress.md`、`problem.md` 和 `evidence/` 的固定结构。Runner 将计算得到的元数据和正文填入这些模板；用户正常只需读取每个实际 Run 的 `result.md`。
 
 ## 生效契约
 

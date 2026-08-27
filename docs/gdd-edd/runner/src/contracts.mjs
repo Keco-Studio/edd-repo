@@ -82,14 +82,19 @@ function validateAdditionalFindings(raw = []) {
   });
 }
 
-export function validateAiEvaluation(raw = {}, evalCase) {
+export function validateAiEvaluation(raw = {}, evalCase, options = {}) {
   if (!evalCase) fail('必须提供 Eval Case');
   const rootKeys = Object.keys(raw).sort();
+  const legacySummary = options.allowLegacySummary === true && raw.summary === undefined;
   const allowedRootKeys = raw.additionalFindings === undefined
-    ? ['dimensions', 'source']
-    : ['additionalFindings', 'dimensions', 'source'];
+    ? legacySummary ? ['dimensions', 'source'] : ['dimensions', 'source', 'summary']
+    : legacySummary ? ['additionalFindings', 'dimensions', 'source'] : ['additionalFindings', 'dimensions', 'source', 'summary'];
   if (rootKeys.length !== allowedRootKeys.length || rootKeys.some((key, index) => key !== allowedRootKeys[index])) {
-    fail('AI 输出只能包含 source、dimensions 和可选 additionalFindings');
+    fail('AI 输出必须包含 source、summary、dimensions 和可选 additionalFindings');
+  }
+  const summary = legacySummary ? '' : requiredText(raw.summary, '客户简要总结', 600);
+  if (summary && /AI\s*40%|人工\s*60%|人工评分|最终分|合并.*分|暂定\s*AI|维度排名|证据缺口.*\d+\s*项/i.test(summary)) {
+    fail('客户简要总结只能概括 GDD 优缺点，不得包含评分流程、权重、排名或缺口数量');
   }
   exactKeys(raw.dimensions, DIMENSION_KEYS, 'AI 输出必须包含三个固定维度');
   const dimensions = Object.fromEntries(DIMENSIONS.map((dimension) => [
@@ -99,6 +104,7 @@ export function validateAiEvaluation(raw = {}, evalCase) {
   const scores = Object.fromEntries(DIMENSIONS.map(({ key }) => [key, dimensions[key].score]));
   return {
     source: validateSource(raw.source, evalCase),
+    summary,
     dimensions,
     additionalFindings: validateAdditionalFindings(raw.additionalFindings),
     aiExperienceValueScore: scores.experienceValue,

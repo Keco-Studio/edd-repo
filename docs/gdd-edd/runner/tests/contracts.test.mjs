@@ -21,6 +21,7 @@ const raw = {
     revision: 1,
     title: 'Demo',
   },
+  summary: '核心循环和角色定位清楚；但内容规格与关键数值仍需补齐。',
   dimensions: {
     experienceValue: {
       score: 24,
@@ -55,7 +56,15 @@ test('fixed dimensions are 30/40/30', () => {
 test('AI validation accepts evidence-backed fixed dimensions', () => {
   const result = validateAiEvaluation(raw, evalCase);
   assert.equal(result.aiTotalScore, 74);
+  assert.equal(result.summary, raw.summary);
   assert.deepEqual(result.additionalFindings, raw.additionalFindings);
+});
+
+test('AI validation rejects scoring workflow language in the customer summary', () => {
+  assert.throws(
+    () => validateAiEvaluation({ ...raw, summary: '设计基础不错，人工评分后按 AI 40%、人工 60% 计算最终分。' }, evalCase),
+    /只能概括 GDD 优缺点/,
+  );
 });
 
 test('AI validation rejects missing and extra dimensions', () => {

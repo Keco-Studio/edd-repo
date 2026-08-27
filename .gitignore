@@ -1,5 +1,1 @@
 .worktrees/
-
-# Local data left by the removed GDD rating Web app.
-docs/gdd-edd/player-rating-web/node_modules/
-docs/gdd-edd/player-rating-web/data/*

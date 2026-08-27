@@ -163,7 +163,7 @@ export async function finalizeRun(options = {}) {
       revision: source.revision,
       title: source.title,
     };
-    const evaluation = validateAiEvaluation(response.rawResponse, evalCase);
+    const evaluation = validateAiEvaluation(response.rawResponse, evalCase, { allowLegacySummary: true });
     const ai = Object.fromEntries(DIMENSIONS.map(({ key }) => [key, evaluation.dimensions[key].score]));
     const scores = combineScores(ai, human.scores);
     const finalResult = replaceFinalBlock(originalResult, renderFinalSection({ ai, human, scores }));
