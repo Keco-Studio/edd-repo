@@ -1,19 +1,19 @@
-# GDD EDD Problem
+# Problem
 
-{{metadata}}
+- 项目：
+- GDD 版本：
+- 发生时间：
+- 阶段：GDD 生成 / MCP 问答 / EDD 分析 / 人工评价
+- 状态：阻断 / 待处理 / 已恢复
 
-## 恢复动作
+## 问题描述
 
-{{recovery}}
+记录可复核的错误、缺失输入或中断原因。不要把 GDD 的设计缺点重复写在这里。
 
-<!-- TEMPLATE_GUIDE_START -->
-<!--
-problem.md 只在阻断时生成，固定记录：
-- 测评 ID
-- 状态
-- 失败阶段
-- 错误摘要
-- Result 与 Progress 路径
-- 恢复动作
--->
-<!-- TEMPLATE_GUIDE_END -->
+## 影响
+
+说明受影响的生成版本、Summary 或 Progress 章节。
+
+## 处理与恢复
+
+记录重试、补充输入、重新调用工具或人工确认的结果。

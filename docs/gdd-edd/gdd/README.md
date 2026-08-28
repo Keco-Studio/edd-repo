@@ -1,5 +1,5 @@
 # GDD 快照
 
-本目录保存进入 EDD 评价流程的固定 GDD 输入。`eval-cases/*.json` 通过仓库相对路径引用这些快照。
+本目录保存进入 EDD 评价流程的生成后 GDD 快照。每个版本的用户需求和生成过程直接记录在对应的 EDD Summary 中，不另建输入目录。
 
-`paws-patience-gdd-r97.md` 是 Keco 文档 `8d45eaa5-bb69-4d74-9d44-c9a93492b13f` revision 97 的完整仓库快照，对应 Gold Case `paws-patience-r97`。Cloud 评分输入由 Runner 直接内嵌该快照，不在运行时访问或修改 Keco。更新 GDD 时必须新增快照和对应 Case，不得把历史评价作为 Cloud 输入。
+`paws-patience-gdd-r97.md` 是 Keco 文档 `8d45eaa5-bb69-4d74-9d44-c9a93492b13f` revision 97 的完整仓库快照。每个新 GDD 版本都应新增快照，并在对应的 EDD Summary 和 Progress 中记录来源、生成过程与评价过程；不得用历史评价替代当前 GDD。
