@@ -1,81 +1,49 @@
-# GDD EDD 执行记录
+# Progress - Paws & Patience
 
-- 测评 ID：paws-patience-gdd-r97
-- 状态：awaiting_human
-- Eval Case：paws-patience-r97
-- 评价对象：Paws & Patience
-- 目标：根据固定 GDD、Prompt 和 Rubric 生成可人工复核的评价文档
-- Provider：claude
-- 请求模型：sonnet
-- 可观测模型：claude-opus-4-8
-- 开始时间：2026-08-27T11:28:15.488Z
-- 结束时间：2026-08-27T11:30:34.034Z
-- 耗时：138546 ms
-- 退出码：0
-- Schema 校验：通过
+## 基本信息
 
-## 评分参数
+- 项目：Paws & Patience
+- GDD 版本：revision 97
+- Summary：`edd-summary.md`
+- 当前状态：EDD AI 评价已完成，等待人工评分
 
-- 固定维度：体验价值 30 分、玩法与系统 40 分、内容与呈现 30 分
-- 合并权重：AI 40%，人工 60%
-- 计算公式：合并维度分 = AI 维度分 * 0.40 + 人工维度分 * 0.60
-- 最终总分：三个合并维度分之和
-- 推理强度：medium
-- 隔离清单：fixture-paws-patience-r97
-- 清单插件：keco
+## 1. 生成参数与 Prompt
 
-## 固定输入
+| 阶段 | 记录 |
+| --- | --- |
+| 用户需求 | 单人治愈系模拟养成 + 轻叙事 + 地图探索；中文、温柔治愈；不可逆时间线；固定美术、地图、行动点、猫咪和对话约束。完整内容已并入 `edd-summary.md` 的“用户需求”章节。 |
+| GDD 生成 Prompt | 以用户需求为输入，要求生成项目概览、核心体验、循环、角色、玩法机制、羁绊/概率体系和示例对话。 |
+| EDD 分析 Prompt | 仅使用生成后的 GDD 和固定评分标尺，从体验价值、玩法与系统、内容与呈现三个维度输出证据、理由和缺口。Prompt 原文已并入 `edd-summary.md`。 |
 
-| 输入 | 路径 | SHA-256 |
-| --- | --- | --- |
-| GDD | docs/gdd-edd/gdd/paws-patience-gdd-r97.md | 04d31395fac4ca9f3bf96f0e1df56547501e872bae0017fda7994999afb1a459 |
-| Prompt | docs/gdd-edd/prompts/evaluator-v1.md | 9b6a38a655c4c4a173bcae22d53df318f921de2fbd52d055822e1c1d92c4c3ba |
-| Rubric | docs/gdd-edd/rubrics/gdd-v1.md | a39b052fa0fac1261361a0b8eeb76c8c0c887b982a93bbe26dc5c0cca172df70 |
-| Schema | docs/gdd-edd/schemas/evaluation-v1.schema.json | 13caab707e4b053bd5cec4e02ddfa02ef9f0d9bdfcb48e1444040a630f4bc185 |
-| Isolation | docs/gdd-edd/isolation/paws-patience-r97.json | 3964c05db65cbb08424e08c91f6764341a9a7a2c7f2e500ce1578aaec3cdb015 |
+## 2. MCP GDD 生成
 
-## 执行事实
+| 阶段 | MCP 工具 | 关键参数/目标 | 返回/产物 | 状态 |
+| --- | --- | --- | --- | --- |
+| GDD 生成 | MCP GDD 生成面板 | 使用上述用户需求和生成 Prompt | `docs/gdd-edd/gdd/paws-patience-gdd-r97.md` | 已生成 |
 
-| # | 组件 | 动作 | 状态 | 结果摘要 |
-| ---: | --- | --- | --- | --- |
-| 1 | Node | 加载 Eval Case 与固定输入 | completed | paws-patience-r97；固定资产已读取并计算哈希 |
-| 2 | AI | AI 评价 | completed | claude 返回结构化结果，AI 总分 71.0/100 |
-| 3 | Provider | system | observed | init |
-| 4 | Provider | result | observed | success |
-| 5 | Node | Schema 校验 | completed | 来源、三个维度、证据与问题结构通过校验 |
-| 6 | Node | 写入评价文档 | completed | Result、Progress 与 Evidence 按固定结构写入 |
+本仓库没有保存本次 MCP 调用的原始请求、响应或工具事件；上表仅记录已知产物，不补写未能核对的工具名称和参数。
 
-## 输入提示词
+## 3. MCP 澄清问答
 
-### User Prompt
+本次仓库未保存 MCP 中途提问与回答的逐条 transcript。后续生成必须逐条追加：问题、回答、影响的 GDD 章节和生成版本。
 
-下面展示本次使用的 User Prompt 模板。运行时已注入本次 GDD 和固定 Rubric；Progress 仅保留占位符版本：
+## 4. GDD 版本
 
-<pre>你是 GDD 证据评价器，评价《{{title}}》。
+- 生成结果：已形成项目概览、核心体验、核心循环、角色、玩法机制、羁绊值、概率体系和示例对话。
+- 文档 ID：`8d45eaa5-bb69-4d74-9d44-c9a93492b13f`
+- 修订号：97
+- 保存位置：`docs/gdd-edd/gdd/paws-patience-gdd-r97.md`
 
-仅使用本次 GDD 和固定标尺，按体验价值、玩法与系统、内容与呈现三个固定维度评分。面向 GDD 提交者具体总结主要优点、缺点和改进方向。缺失内容记为证据缺口，不得补全；同一问题不得跨维度重复计分或扣分。
+## 5. EDD 分析与工具调用
 
-&lt;fixed-rubric&gt;
-{{rubric}}
-&lt;/fixed-rubric&gt;
+| 阶段 | 工具/模型 | 输入 | 输出 | 状态 |
+| --- | --- | --- | --- | --- |
+| AI 评价 | Claude（请求模型 sonnet，可观测模型 claude-opus-4-8） | 生成后的 GDD、固定 Rubric、EDD Prompt | 三维 AI 评分，总分 71.0/100；证据和缺口见 `edd-summary.md` | 已完成 |
+| 人工评价 | 待指定 | EDD Summary 中的 AI 评价 | 待填写 | 等待 |
 
-&lt;current-gdd&gt;
-{{gdd}}
-&lt;/current-gdd&gt;
+本次没有保留可核对的 MCP/EDD 工具事件清单；以后应在本节记录每个工具名称、参数摘要、返回摘要和时间。
 
-不得修改文件。只返回符合指定 JSON Schema 的 JSON。
-</pre>
+## 6. 问题、重试与确认
 
-完整实际请求保存在 <code>evidence/request.json</code>。
-
-## 审计证据与产物
-
-| 类型 | 路径 | SHA-256 |
-| --- | --- | --- |
-| Request | evidence/request.json | e86b8f8d8b91390f3b02342a7c2f8cf695ddcf34e03861acfafe7799ebf893ec |
-| Response | evidence/response.json | ba8a1a80e1439ca2d4b4d327b1fdd0a1e9e22343d7788aba5fba689890fef523 |
-
-- Progress：progress.md
-- Problem：未生成
-- Result：result.md
-- 下一人工动作：查看 Result，填写人工评分并运行 finalize
+- 已知问题：本次旧记录缺少 MCP 原始调用及中途问答 transcript，因此相关内容标注为“未保存”，没有虚构工具调用。
+- 当前确认：EDD Summary 已包含用户需求、生成过程摘要、Prompt 原文、评分方法和 AI 评价。

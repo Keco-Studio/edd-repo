@@ -1,104 +1,62 @@
-# GDD EDD 受控测评流程
+# GDD EDD 文档
 
-本目录只用于测评 GDD 产物。正式流程隔离被测 Agent 和 Cloud 评分器，固定三个评分维度，并把每次运行保存到独立 Run 目录。不包含游戏构建、实际可玩性或运行质量评价。
+本目录用于保存 GDD 的 EDD（Evidence-Driven Design）总结。EDD 不依赖 Runner，也不要求单独的输入目录；每次评价把用户需求、过程摘要、评分 Prompt、评分标尺、AI 评价和人工评价记录在 `edd-summary.md`，把逐步执行细节记录在同目录的 `progress.md`。
 
-## 隔离要求
-
-默认命令用于快速本地测评，可直接使用仓库内的 fixture 隔离清单。需要做正式对比实验时再加 `--strict-isolation`，此时被测 Codex 必须使用全新 session，上下文来源列表必须为空，且只能启用 Keco 自研 MCP 插件。被测 Agent 不得收到：
-
-- 评分维度、Rubric、评分 Prompt 或 Schema；
-- V1/V2/V3 失败案例、历史结果或预期分数；
-- Superpowers、Atlassian 或其他无关插件。
-
-启动器需要为本次实验生成隔离清单：
-
-```json
-{
-  "sessionId": "gdd-run-20260827-001",
-  "freshSession": true,
-  "contextSources": [],
-  "enabledPlugins": ["keco"],
-  "createdAt": "2026-08-27T10:00:00.000Z"
-}
-```
-
-`isolation/paws-patience-r97.json` 是可用于本地试跑的结构示例。正式实验使用 `--strict-isolation`，并用启动器产生的当次证据替换该文件，或建立指向当次隔离清单的新 Eval Case。
-
-## 固定评分
-
-| 维度 | 满分 |
-| --- | ---: |
-| 体验价值 | 30 |
-| 玩法与系统 | 40 |
-| 内容与呈现 | 30 |
-
-AI 和人工使用同一刻度，不创建二级分数。固定权重为 AI 40% + 人工 60%，每个维度按以下公式合并：
+## 文档结构
 
 ```text
-合并维度分 = AI 维度分 * 0.40 + 人工维度分 * 0.60
-最终总分 = 三个合并维度分之和
+gdd-edd/
+├── gdd/                         # 生成后的 GDD
+└── runs/<evaluation-id>/
+    ├── edd-summary.md           # 结论、固定输入和评分
+    ├── progress.md              # 生成与评价过程、工具调用
+    └── problem.md               # 可选：发生阻断或异常时生成
 ```
 
-AI 必须对每个维度输出 GDD 证据、评分理由和证据缺口。人工评分前，AI 分数只是暂定结果。
+## EDD Summary 必须包含
 
-## 使用
+1. 用户需求：用户在明确要求生成 GDD 时提交的目标、范围和固定约束。它不是 GDD。
+2. GDD 生成过程摘要：用户与 AI 在生成 GDD 面板中的澄清、取舍、草稿和修改概览；逐条过程记录放在同目录 `progress.md`，不能只记录第一条消息。
+3. 生成后的 GDD：本次 EDD 真正评价的版本。
+4. Prompt：评价任务使用的指令。它不是用户在 GDD 生成面板中的全部对话。
+5. Rubric：体验价值、玩法与系统、内容与呈现三个评分维度及其标准。
+6. AI 评价：每个维度的分数、GDD 证据、评分理由和证据缺口。
+7. 人工评价：评分人、时间、三个维度分数和理由。
+8. 最终评分：如采用合并分，明确 AI 与人工的权重和计算公式。
 
-```bash
-cd docs/gdd-edd/runner
-npm install
-npm run eval -- --case paws-patience-r97 --provider codex --model <model-id>
-```
+操作性问题不写入 EDD Summary。MCP 调用失败、输入缺失、过程被中断或需要重试时，在同一 Run 目录单独生成 `problem.md`；GDD 的设计缺点和证据缺口仍写在 EDD Summary。
 
-Codex Cloud 调用使用当前 Codex 配置、临时空目录、只读沙箱和 3 分钟超时。命令开始后会立即生成显示“AI 评分中”的 `result.md`。
+## Progress 必须记录
 
-命令输出测评 ID 和 `result.md` 路径。直接编辑该 Result 的六个人工字段：
+Progress 是过程日志，不是评分结论。至少记录以下阶段：
 
-```markdown
-- 评分人：`Li`
-- 评分时间：`2026-08-27T18:00:00+08:00`
-- 体验价值（0-30）：`20`
-- 玩法与系统（0-40）：`35`
-- 内容与呈现（0-30）：`25`
-- 评分理由：`核心循环明确，但体验目标仍需收紧。`
-```
+1. 用户提交的生成参数和 GDD 生成 Prompt。
+2. 调用的 MCP 工具、调用时间、关键参数和返回结果。
+3. MCP 在生成过程中提出的问题、用户回答和因此产生的修改。
+4. GDD 生成完成后的版本、文档 ID 和保存位置。
+5. EDD 分析阶段调用的 AI/工具、使用的 Prompt 和生成的评分结果。
+6. 失败、重试、人工修订和最终确认。
 
-然后运行：
+每条记录标注发起者（用户、AI、MCP 或 EDD）以及可核对的输出；没有原始调用证据时明确写“未保存”，不要补写成已发生的工具调用。
 
-```bash
-npm run finalize -- --run <evaluation-id>
-```
+## 本项目固定需求
 
-finalize 校验三个人工分数，只替换 Result 的最终评分标记区，并向 Progress 追加终结事实。无效人工输入不会修改 Result，但会生成 `problem.md` 说明恢复动作。
+本次《Paws & Patience》的定位是单人治愈系模拟养成 + 轻叙事 + 地图探索，中文表达，温柔治愈，有情感重量但不虐心。时间线不可逆，猫会老去或消失，无读档重来。
 
-## Cloud 输入边界
+类型为 `Simulation / Narrative / RPG / Management`；设计哲学为有意义决策、可读系统、叙事优先、玩家能动性和涌现玩法。
 
-Cloud 只获得四类评分输入：当前 GDD、固定 Rubric、固定评分 Prompt 和固定输出 Schema。`evidence/request.json` 保存实际消息、参数和输入哈希；`evidence/response.json` 保存未改写的 Cloud 结构化响应。
+美术采用 Pixel Art v2：浅蓝、暖灰、奶油、淡绿、暮光橙，低饱和柔和像素，圆角半透明 UI，俯视角 2.5D。参考 PicoCat、林间暖巢、A Street Cat's Tale；避免霓虹、血腥、Q 版夸张、赛博冷色和写实 3D。
 
-## 固定产物
+地图包含公司、巷尾、街道、公园，右下角有小地图。公司用于上班领取小鱼干；巷尾常见病弱猫，夏天更容易遇到，可捡纸箱和旧毛衣；街道常见傲娇猫，秋天更容易遇到，可捡轮胎；公园春天更容易遇到猫，雪天可捡厚外套。
 
-```text
-runs/<evaluation-id>/
-|-- progress.md
-|-- result.md
-|-- problem.md              # 只在阻断时存在
-`-- evidence/
-    |-- request.json
-    `-- response.json       # Cloud 有响应时存在
-```
+每日有 4 个行动点，对应早、中、晚、凌晨；暴雨或雪天为 3 点。点击地图地点消耗行动点。遇见猫时可喂食（+5）、摸摸（+3）、搭窝（+20）或忽视。羁绊越高越容易再次遇见；羁绊满 150 触发“跟我回家”。天气与四季影响相遇和庇护所，搭窝后猫更常留下。
 
-- `result.md` 是唯一面向用户的报告，包含简要总结、AI 证据评价、人工填写区和最终分。
-- `progress.md` 保存完整评价依据、实际 Cloud 消息、模型参数、隔离校验、哈希和执行事件。
-- `problem.md` 只记录输入冲突、工具失败、Schema 无效或人工分数无效等操作性阻断。GDD 本身的缺点仍写在 Result。
+三种猫分别是：病弱猫，虚弱敏感、感恩、偶尔送小礼物；傲娇猫，嘴硬心软、自称本大王、先嫌弃后真香；孤僻猫，警惕慢热，可用“放下就走”喂食，减少直接对话。
 
-## Markdown 模板
+对话使用短句和留白，猫台词不超过 40 字，可加一句旁白。温暖但不圣母，禁止血腥、虐待和烂梗。
 
-未运行 EDD 时即可查看 `runs/_template/`，其中包含 `result.md`、`progress.md`、`problem.md` 和 `evidence/` 的固定结构。Runner 将计算得到的元数据和正文填入这些模板；用户正常只需读取每个实际 Run 的 `result.md`。
+## 评价方式
 
-## 生效契约
+EDD 只评价文档中明确写出的设计，不替 GDD 补全缺失内容。固定维度为：体验价值 30 分、玩法与系统 40 分、内容与呈现 30 分。人工评分可以在 Summary 的预留区直接填写。
 
-- Rubric：`rubrics/gdd-v1.md`
-- Prompt：`prompts/evaluator-v1.md`
-- Schema：`schemas/evaluation-v1.schema.json`
-- Runner：`runner/`
-
-历史模板、旧评分逻辑和以前运行产物只通过 Git 历史查看，不进入正式测评上下文。
+需要重新评价时，复制一份新的 Summary，更新评价对象、需求/过程记录、Prompt、评分标尺和评分内容，并保留旧版本。
